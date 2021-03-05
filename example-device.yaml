@@ -1,0 +1,30 @@
+# Some substitutions as used by the included yaml file.
+
+substitutions:
+  name: bedside_lamp_office
+  friendly_name: Bedside Lamp Office
+  transition_length: 1s
+
+# Configuration options to connect the device to the network.
+# The api is used for allowing connections from Home Assistant.
+# The ota is used for over the air updates after the first deployment.
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: ${friendly_name}
+    password: !secret wifi_ap_fallback_password
+
+captive_portal:
+
+api:
+  password: !secret api_password
+
+ota:
+  password: !secret ota_password
+
+# The rest of the configuration is included.
+
+<<: !include esphome-yeelight_bs2/yeelight_bs2.yaml

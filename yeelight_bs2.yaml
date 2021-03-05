@@ -1,0 +1,51 @@
+esphome:
+  name: $name
+  platform: ESP32
+  board: esp32doit-devkit-v1
+  platformio_options:
+    platform: espressif32@1.11.0
+    platform_packages: |-4
+          framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.4
+  includes:
+    - esphome-yeelight_bs2/yeelight_bs2.h
+
+# Enable logging
+logger:
+
+# The front panel of the device uses I2C for communication
+# with the ESP32 main board. The panel uses ID 0x10.
+i2c:
+  sda: 17
+  scl: 18
+  scan: True
+  
+output:
+  - platform: gpio
+    id: master1
+    pin: GPIO33
+  - platform: gpio
+    id: master2
+    pin: GPIO4    
+  - platform: ledc
+    id: led_r
+    pin: GPIO13
+  - platform: ledc
+    id: led_g
+    pin: GPIO14
+  - platform: ledc
+    id: led_b
+    pin: GPIO5
+  - platform: ledc
+    id: led_w
+    pin: GPIO12
+
+light:
+  - platform: custom
+    lambda: |-
+      auto bs2light = new esphome::rgbww::YeelightBedsideLampV2LightOutput(
+           led_r, led_g, led_b, led_w, master1, master2);
+      App.register_component(bs2light);
+      return {bs2light};
+    lights:
+      - name: ${friendly_name} RGBW Light
+        default_transition_length: ${transition_length}
