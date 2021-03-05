@@ -125,6 +125,7 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
 
     float volt_scaler = 3.23f;
 
+    // Temperature band 370 - 588
     if (temperature <= HOME_ASSISTANT_MIRED_MAX && temperature >= 371)
     {
       float start = 371;
@@ -156,6 +157,7 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
       master1_->turn_on();
       return;
     }
+    // Temperature band 334 - 370
     else if (temperature >= 334)
     {
       float red_volt = (1.0f - brightness) * 2.86f;
@@ -178,10 +180,51 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
       master2_->turn_on();
       master1_->turn_on();
       return;
-    } else if (temperature >= 313) {
-    } else if (temperature >= 251) {
-    } else if (temperature >= 223) {
-    } else if (temperature >= HOME_ASSISTANT_MIRED_MIN) {
+    }
+    // Temperature band 313 - 333
+    //
+    // TODO maybe check if we can git rid of a little bug in the original firmware.
+    // The light becomes noticably brighter when moving from temperature 334 to
+    // temperature 333. There's a little jump in the lighting output here.
+    // Possibly this is a switch from warm to cold lighting as imposed by the
+    // LED circuitry, making this unavoidable. However, it would be interesting
+    // to see if we can smoothen this out. For now, I'll keep the GPIO output
+    // for this bug-by-bug-compatible.
+    else if (temperature >= 313)
+    {
+      float red_volt = 2.89f - brightness * (2.89f - 0.32f);
+      float red = red_volt / volt_scaler;
+
+      float green_volt = 2.96f - brightness * (2.96f - 1.03f);
+      float green = green_volt / volt_scaler;
+
+      float blue = 1.0f;
+
+      float white_volt = 0.42f + brightness * (2.43f - 0.42f);
+      float white = white_volt / volt_scaler;
+
+      ESP_LOGD("temperature_mode", "LED voltages : RGBW %f, %f, %f, %f", red_volt, green_volt, 3.3f, white_volt);
+      ESP_LOGD("temperature_mode", "LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
+
+      red_->set_level(red);
+      green_->set_level(green);
+      blue_->set_level(blue);
+      white_->set_level(white);
+      master2_->turn_on();
+      master1_->turn_on();
+      return;
+    }
+    // Temperature band 251 - 312
+    else if (temperature >= 251)
+    {
+    }
+    // Temperature band 223 - 250
+    else if (temperature >= 223)
+    {
+    }
+    // Temperature band 153 - 222
+    else if (temperature >= HOME_ASSISTANT_MIRED_MIN)
+    {
     }
 
     red_->set_level(0.5);
