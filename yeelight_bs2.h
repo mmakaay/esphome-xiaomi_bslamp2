@@ -123,11 +123,17 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
   {
     ESP_LOGD("temperature_mode", "Activate TEMPERATURE %f, BRIGHTNESS %f", temperature, brightness);
 
-    float volt_scaler = 3.23f;
+    // Empirically determined during programming the temperature GPIO output
+    // code from below, by checking how far my outputs were off from the
+    // original lamp firmeware's outputs. This scaler is used for correcting
+    // my output towards the original output.
+    float volt_scaler;
 
     // Temperature band 370 - 588
     if (temperature <= HOME_ASSISTANT_MIRED_MAX && temperature >= 371)
     {
+      volt_scaler = 3.23f;
+
       float start = 371;
       float end = 588;
       float band = end - start;
@@ -160,6 +166,8 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
     // Temperature band 334 - 370
     else if (temperature >= 334)
     {
+      volt_scaler = 3.23f;
+
       float red_volt = (1.0f - brightness) * 2.86f;
       float red = red_volt / volt_scaler;
 
@@ -192,6 +200,8 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
     // for this bug-by-bug-compatible.
     else if (temperature >= 313)
     {
+      volt_scaler = 3.23f;
+
       float red_volt = 2.89f - brightness * (2.89f - 0.32f);
       float red = red_volt / volt_scaler;
 
@@ -201,9 +211,9 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
       float blue = 1.0f;
 
       float white_volt = 0.42f + brightness * (2.43f - 0.42f);
-      float white = white_volt / volt_scaler;
+      float volt_scaler_white = 3.45f;
+      float white = white_volt / volt_scaler_white;
 
-      ESP_LOGD("temperature_mode", "LED voltages : RGBW %f, %f, %f, %f", red_volt, green_volt, 3.3f, white_volt);
       ESP_LOGD("temperature_mode", "LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
 
       red_->set_level(red);
@@ -217,6 +227,24 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
     // Temperature band 251 - 312
     else if (temperature >= 251)
     {
+      volt_scaler = 3.48f;
+
+      float red = 1.0f;
+      float green = 1.0f;
+      float blue = 1.0f;
+
+      float white_volt = 0.5f + brightness * (3.28f - 0.5f);
+      float white = white_volt / volt_scaler;
+
+      ESP_LOGD("temperature_mode", "LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
+
+      red_->set_level(red);
+      green_->set_level(green);
+      blue_->set_level(blue);
+      white_->set_level(white);
+      master2_->turn_on();
+      master1_->turn_on();
+      return;
     }
     // Temperature band 223 - 250
     else if (temperature >= 223)

@@ -3,7 +3,6 @@
 substitutions:
   name: bedside_lamp_office
   friendly_name: Bedside Lamp Office
-  transition_length: 1s
 
 # Configuration options to connect the device to the network.
 # The api is used for allowing connections from Home Assistant.

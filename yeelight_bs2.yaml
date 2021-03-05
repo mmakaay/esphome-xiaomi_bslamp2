@@ -48,4 +48,4 @@ light:
       return {bs2light};
     lights:
       - name: ${friendly_name} RGBW Light
-        default_transition_length: ${transition_length}
+        default_transition_length: 0s
