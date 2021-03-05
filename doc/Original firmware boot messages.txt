@@ -1,0 +1,180 @@
+Using 'COM3' as serial port.
+Showing logs:
+[20:26:59]
+[20:27:01]Br[20:27:01]
+[20:27:01]rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+[20:27:01]configsip: 0, SPIWP:0xee
+[20:27:01]clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[20:27:01]mode:DIO, clock div:2
+[20:27:01]load:0x3fff0018,len:4
+[20:27:01]load:0x3fff001c,len:5220
+[20:27:01]load:0x40078000,len:0
+[20:27:01]load:0x40078000,len:12348
+[20:27:01]entry 0x40079194
+[20:27:01]I (66) boot: Detected ESP32
+[20:27:01]I (32) boot: ESP-IDF 854b5cd 2nd stage bootloader
+[20:27:01]I (32) boot: compile time 04:41:35
+[20:27:01]I (32) boot: Enabling RNG early entropy source...
+[20:27:01]I (37) boot: SPI Flash RID  : 0xB20B4
+[20:27:01]I (41) boot: SPI Flash  MF  : 0xB4
+[20:27:01]I (45) boot: SPI Flash  ID  : 0x200B
+[20:27:01]I (49) boot: SPI Speed      : 40MHz
+[20:27:01]I (53) boot: SPI Mode       : DIO
+[20:27:01]I (57) boot: SPI Flash Size : 4MB
+[20:27:01]I (61) boot: Partition Table:
+[20:27:01]I (65) boot: ## Label            Usage          Type ST Offset   Length
+[20:27:01]I (72) boot:  0 nvs              WiFi data        01 02 00009000 00004000
+[20:27:01]I (80) boot:  1 otadata          OTA data         01 00 0000d000 00002000
+[20:27:01]I (87) boot:  2 phy_init         RF data          01 01 0000f000 00001000
+[20:27:01]I (95) boot:  3 miio_fw1         OTA app          00 10 00010000 001e0000
+[20:27:01]I (102) boot:  4 miio_fw2         OTA app          00 11 001f0000 001e0000
+[20:27:01]I (110) boot:  5 test             test app         00 20 003d0000 00013000
+[20:27:01]I (117) boot:  6 mfi_p            Unknown data     01 82 003e3000 00001000
+[20:27:01]I (125) boot:  7 factory_nvs      WiFi data        01 02 003e4000 00004000
+[20:27:01]I (132) boot:  8 coredump         Unknown data     01 03 003e8000 00010000
+[20:27:01]I (140) boot:  9 minvs            Unknown data     01 fe 003f8000 00004000
+[20:27:01]I (148) boot: End of partition table
+[20:27:01]I (152) esp_image: segment 0: paddr=0x001f0020 vaddr=0x3f400020 size=0x3b26c (242284) map
+[20:27:01]I (210) esp_image: segment 1: paddr=0x0022b294 vaddr=0x3ffbdb60 size=0x03fe8 ( 16360) load
+[20:27:01]I (215) esp_image: segment 2: paddr=0x0022f284 vaddr=0x3ffc1b48 size=0x00570 (  1392) load
+[20:27:01]I (218) esp_image: segment 3: paddr=0x0022f7fc vaddr=0x40080000 size=0x00400 (  1024) load
+[20:27:01]I (226) esp_image: segment 4: paddr=0x0022fc04 vaddr=0x40080400 size=0x0040c (  1036) load
+[20:27:01]I (235) esp_image: segment 5: paddr=0x00230018 vaddr=0x400d0018 size=0x121978 (1186168) map
+[20:27:01]I (487) esp_image: segment 6: paddr=0x00351998 vaddr=0x4008080c size=0x1734c ( 95052) load
+[20:27:01]I (526) boot: Loaded app from partition at offset 0x1f0000
+[20:27:01]I (526) boot: Disabling RNG early entropy source...
+[20:27:01]08:00:00.040 [I] miio_ot: httpdns disabled
+[20:27:01]08:00:00.040 [I] miio_ot: dlg disabled
+[20:27:01]08:00:00.050 [I] Dysis standby IO=0
+[20:27:01]
+[20:27:01]08:00:00.050 [I] light hints after turnoff, setting: 0 5
+[20:27:01]
+[20:27:01]08:00:00.060 [I] initialize mode data:
+[20:27:01]
+[20:27:01]08:00:00.060 [I] ModeData: 1 1764 3400 0 0 0 0 0
+[20:27:01]
+[20:27:01]08:00:00.060 [I] parse mode data done. ret=0
+[20:27:01]
+[20:27:01]08:00:00.070 [I] ModeData: 2 6083583 16744704 0 0 0 0 0
+[20:27:01]
+[20:27:01]08:00:00.080 [I] parse mode data done. ret=0
+[20:27:01]
+[20:27:01]08:00:00.080 [I] dysis mode idx init, cur_yglc_mode=1
+[20:27:01]
+[20:27:01]08:00:00.090 [I] cur_rgb=0xff3f idx=1
+[20:27:01]
+[20:27:01]08:00:00.090 [I] indicator delayoff setting: 0 15
+[20:27:01]
+[20:27:01]
+[20:27:01][---yglc_speculate_power_on_light_mode] light_unit->selected_channel:0
+[20:27:01]08:00:00.100 [I] Dysis standby IO=1
+[20:27:01]
+[20:27:01]08:00:00.130 [I] new_bright=1 nl_mode=0
+[20:27:01]
+[20:27:01]08:00:00.130 [I] sw_duty=-1 light_hints=0 hints_duty=5
+[20:27:01]
+[20:27:01]08:00:00.130 [I] miio_wifi: cc=NL, schan=1, nchan=13, max_tx_dbm=0
+[20:27:01]08:00:00.130 [I] touch version === 28
+[20:27:01]
+[20:27:01]Coprocessor Version: 3.0 (0x07)
+[20:27:01]Firmware Version: 1
+[20:27:01]Authentication Protocol Version: 3.0
+[20:27:01]Keystore initialised
+[20:27:01]Accessory is Paired with atleast one controller
+[20:27:01]Database initialised. Accessory Device ID: C4:DA:57:48:6A:59
+[20:27:01]mDNS initialised
+[20:27:01]HAP Initialization succeeded. Version : 2.3.r1-5e8ddaf
+[20:27:01]Setup ID: 95XJ
+[20:27:01]
+[20:27:01]
+[20:27:01]_|      _|  _|_|_|  _|_|_|    _|_|  
+[20:27:01]_|_|  _|_|    _|      _|    _|    _|
+[20:27:01]_|  _|  _|    _|      _|    _|    _|
+[20:27:01]_|      _|    _|      _|    _|    _|
+[20:27:01]_|      _|  _|_|_|  _|_|_|    _|_|  
+[20:27:01]08:00:00.200 [I] did=332985470 hostname=MiBedsideLamp2-7651
+[20:27:01]
+[20:27:01]JENKINS BUILD NUMBER: N/A
+[20:27:01]BUILD TIME: Sep  5 2019,07:12:39
+[20:27:01]BUILT BY: N/A
+[20:27:01]MIIO APP VER: 2.0.6_0030
+[20:27:01]Setup ID: 95XJ
+[20:27:01]Getting setup info from factory NVS
+[20:27:01]MIIO MCU VER: 
+[20:27:01]MIIO DID: 332985470
+[20:27:01]MIIO WIFI MAC: 6490c17b7651
+[20:27:01]MIIO MODEL: yeelink.light.bslamp2
+[20:27:01]ARCH TYPE: esp32,0x0000a601
+[20:27:01]ARCH VER: d178b9b
+[20:27:01]Network is Configured
+[20:27:01]Connecting to FOKKE t*************!
+[20:27:01]08:00:00.310 [I] miio_net: Wifi event[2]
+[20:27:01]08:00:00.310 [I] miio_net: Wifi station started
+[20:27:01]HAP Main Loop Started
+[20:27:02]08:00:00.510 [I] miio_net: Wifi event[1]
+[20:27:02]08:00:00.520 [I] miio_net: Wifi scan done
+[20:27:02]08:00:00.720 [I] miio_net: Wifi event[1]
+[20:27:02]08:00:00.720 [I] miio_net: Wifi scan done
+[20:27:02]08:00:00.920 [I] miio_net: Wifi event[1]
+[20:27:02]08:00:00.920 [I] miio_net: Wifi scan done
+[20:27:02]08:00:01.130 [I] miio_net: Wifi event[1]
+[20:27:02]08:00:01.130 [I] miio_net: Wifi scan done
+[20:27:02]08:00:01.330 [I] miio_net: Wifi event[1]
+[20:27:02]08:00:01.330 [I] miio_net: Wifi scan done
+[20:27:03]08:00:01.530 [I] miio_net: Wifi event[1]
+[20:27:03]08:00:01.530 [I] miio_net: Wifi scan done
+[20:27:03]08:00:01.730 [I] miio_net: Wifi event[1]
+[20:27:03]08:00:01.740 [I] miio_net: Wifi scan done
+[20:27:03]08:00:01.940 [I] miio_net: Wifi event[1]
+[20:27:03]08:00:01.940 [I] miio_net: Wifi scan done
+[20:27:03]08:00:02.140 [I] miio_net: Wifi event[1]
+[20:27:03]08:00:02.140 [I] miio_net: Wifi scan done
+[20:27:03]08:00:02.340 [I] miio_net: Wifi event[1]
+[20:27:03]08:00:02.340 [I] miio_net: Wifi scan done
+[20:27:04]08:00:02.550 [I] miio_net: Wifi event[1]
+[20:27:04]08:00:02.550 [I] miio_net: Wifi scan done
+[20:27:04]08:00:02.750 [I] miio_net: Wifi event[1]
+[20:27:04]08:00:02.750 [I] miio_net: Wifi scan done
+[20:27:04]08:00:02.950 [I] miio_net: Wifi event[1]
+[20:27:04]08:00:02.950 [I] miio_net: Wifi scan done
+[20:27:04]08:00:02.950 [I] miio_net: bingo ssid=FOKKE, bssid=FC:EC:DA:8A:B6:16, pri=1, rssi=-44
+[20:27:05]08:00:04.180 [I] miio_net: Wifi event[4]
+[20:27:05]08:00:04.180 [I] miio_net: Wifi station connected
+[20:27:05]Registering HomeKit web handlers
+[20:27:05]Announcing _hap._tcp mDNS service
+[20:27:07]08:00:06.090 [I] miio_net: Wifi event[7]
+[20:27:07]
+[20:27:07]************************
+[20:27:07]Wifi ip=192.168.100.158,mask=255.255.255.0,gw=192.168.100.1
+[20:27:07]************************
+[20:27:07]
+[20:27:07]08:00:06.090 [I] enter lan-ctrl init
+[20:27:07]
+[20:27:07]Value Changed
+[20:27:07]Value Changed
+[20:27:07]08:00:06.100 [I] miio_net: Wifi station got ip
+[20:27:07]08:00:06.110 [W] ots: httpdns resolve start failed, -12 (ots_cloud_host_update,850)
+[20:27:07]08:00:06.130 [I] otu: Opened.
+[20:27:07]08:00:06.160 [I] ots: de.ots.io.mi.com resolved to 3.126.247.75.
+[20:27:07]08:00:06.160 [I] ots: ots connect 3.126.247.75::443...
+[20:27:07]08:00:06.160 [I] tls: connect to server Mijia Cloud, domain is 3.126.247.75, port is 443.
+[20:27:07]08:00:06.310 [W] tls: timeout[100]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+[20:27:08]08:00:06.410 [W] tls: timeout[200]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+[20:27:08]08:00:06.560 [W] tls: timeout[300]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+[20:27:08]08:00:06.660 [W] tls: timeout[400]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+[20:27:08]08:00:06.690 [I] ots: Connected.
+[20:27:08]08:00:06.690 [I] ots: -->sync sent.
+[20:27:08]08:00:06.710 [I] ots: <--sync ack.
+[20:27:08]03:27:08.090 [I] miio_net: Wifi event[19]
+[20:27:09]03:27:08.690 [I] ots: -->login sent.
+[20:27:09]03:27:08.710 [I] ots: <--login ack, code=0.
+[20:27:09]03:27:08.710 [I] miio_ot: info(ots) will start in 0 ms...
+[20:27:09]03:27:08.710 [I] miio_instance: miio_online_hook_default called
+[20:27:09]03:27:08.710 [W] mible_net: net config complete cannot send event (mible_net_state_callback,158)
+[20:27:09]03:27:08.720 [I] app_main: app_online_hook_default called
+[20:27:09]03:27:08.740 [I] miio_instance: miio_info_kvs_hook_default called
+[20:27:09]03:27:08.740 [I] miio_ot: -->info(ots).
+[20:27:09]03:27:08.930 [I] miio_ot: <--info ack(ots).
+[20:27:09]03:27:09.090 [I] miio_net: Wifi event[19]
+[20:27:12]03:27:11.690 [I] ots: -->sync sent.
+[20:27:12]03:27:11.710 [I] ots: <--sync ack.
