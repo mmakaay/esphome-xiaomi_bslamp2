@@ -13,11 +13,20 @@ esphome:
 logger:
 
 # The front panel of the device uses I2C for communication
-# with the ESP32 main board. The panel uses ID 0x10.
+# with the ESP32 main board. The panel uses address 0x2C.
+# There are two I2C busses attached to the ESP32:
+# SDA 17/SCL 18 and SDA 21/SCL 19. The latter is the
+# correct one for the front panel. The former is probably
+# an EEPROM of some sorts.
 i2c:
-  sda: 17
-  scl: 18
-  scan: True
+  - id: eeprom_i2c
+    sda: 17
+    scl: 18
+    scan: True
+  - id: front_panel_i2c
+    sda: 21
+    scl: 19
+    scan: True
   
 output:
   - platform: gpio
@@ -49,3 +58,12 @@ light:
     lights:
       - name: ${friendly_name} RGBW Light
         default_transition_length: 0s
+        effects:
+          - random:
+              name: "Slow Random"
+              transition_length: 30s
+              update_interval: 30s
+          - random:
+              name: "Fast Random"
+              transition_length: 3s
+              update_interval: 4s

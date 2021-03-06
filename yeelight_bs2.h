@@ -94,7 +94,7 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
     // This tunes the power for the red channel a bit, to bring
     // the red=1, green=1, blue=1 color more towards white.
     // (on my lamps, there is a faint hint of red in the color)
-    red = red * 0.95f;
+    red = red * 0.93f;
 
     // Compensate for brightness.
     red = red * brightness;
