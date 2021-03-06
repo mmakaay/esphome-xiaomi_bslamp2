@@ -1,0 +1,17 @@
+4100014-4100157 I²C: Address/data: Address write: 2C
+4100200-4100362 I²C: Address/data: Data write: 02
+4100383-4100546 I²C: Address/data: Data write: 03
+4100567-4100731 I²C: Address/data: Data write: 5F
+4100750-4100913 I²C: Address/data: Data write: FF
+4100934-4101098 I²C: Address/data: Data write: 64
+4101118-4101282 I²C: Address/data: Data write: 00
+4101301-4101464 I²C: Address/data: Data write: 00
+
+4124053-4124196 I²C: Address/data: Address write: 2C
+4124239-4124402 I²C: Address/data: Data write: 02
+4124423-4124587 I²C: Address/data: Data write: 03
+4124606-4124769 I²C: Address/data: Data write: 5F
+4124790-4124953 I²C: Address/data: Data write: FC
+4124974-4125138 I²C: Address/data: Data write: 64
+4125157-4125320 I²C: Address/data: Data write: 00
+4125341-4125505 I²C: Address/data: Data write: 00

@@ -1,0 +1,58 @@
+# READY FOR EVENT
+815305-815448 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# COLOR BUTTON TOUCH
+817147-817290 I²C: Address/data: Address read: 2C
+04 04 01 00 02 01 04
+
+# TURN ON
+1838942-1839085 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+
+# READY FOR EVENT
+2155274-2155417 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# LEVEL 20 TOUCH
+2157074-2157216 I²C: Address/data: Address read: 2C
+04 04 01 00 03 02 06
+
+# READY FOR EVENT
+2205268-2205411 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# LEVEL 20 RELEASE
+2207020-2207163 I²C: Address/data: Address read: 2C
+04 04 01 00 04 02 07
+
+# READY FOR EVENT
+4015474-4015617 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# LEVEL 21 TOUCH
+4017273-4017416 I²C: Address/data: Address read: 2C
+04 04 01 00 03 01 05
+
+# READY FOR EVENT
+4075272-4075415 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# LEVEL 21 RELEASE
+4077020-4077163 I²C: Address/data: Address read: 2C
+04 04 01 00 03 02 06
+
+# READY FOR EVENT
+4365619-4365762 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+4367383-4367526 I²C: Address/data: Address read: 2C
+04 04 01 00 04 02 07
+
+# READY FOR EVENT
+4805628-4805771 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# COLOR BUTTON RELEASE
+4807404-4807546 I²C: Address/data: Address read: 2C
+04 04 01 00 02 02 05

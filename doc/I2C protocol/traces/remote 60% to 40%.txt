@@ -1,0 +1,17 @@
+4518136-4518279 I²C: Address/data: Address write: 2C
+4518322-4518486 I²C: Address/data: Data write: 02
+4518506-4518668 I²C: Address/data: Data write: 03
+4518689-4518852 I²C: Address/data: Data write: 5F
+4518873-4519037 I²C: Address/data: Data write: F0
+4519057-4519219 I²C: Address/data: Data write: 64
+4519240-4519403 I²C: Address/data: Data write: 00
+4519424-4519588 I²C: Address/data: Data write: 00
+
+4542176-4542318 I²C: Address/data: Address write: 2C
+4542362-4542524 I²C: Address/data: Data write: 02
+4542545-4542708 I²C: Address/data: Data write: 03
+4542729-4542893 I²C: Address/data: Data write: 5F
+4542913-4543075 I²C: Address/data: Data write: C0
+4543096-4543259 I²C: Address/data: Data write: 64
+4543280-4543444 I²C: Address/data: Data write: 00
+4543463-4543626 I²C: Address/data: Data write: 00

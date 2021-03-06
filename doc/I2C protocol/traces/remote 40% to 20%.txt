@@ -1,0 +1,17 @@
+3941567-3941709 I²C: Address/data: Address write: 2C
+3941752-3941915 I²C: Address/data: Data write: 02
+3941936-3942099 I²C: Address/data: Data write: 03
+3942120-3942284 I²C: Address/data: Data write: 5F
+3942303-3942466 I²C: Address/data: Data write: C0
+3942487-3942651 I²C: Address/data: Data write: 64
+3942671-3942833 I²C: Address/data: Data write: 00
+3942854-3943017 I²C: Address/data: Data write: 00
+
+3968078-3968221 I²C: Address/data: Address write: 2C
+3968264-3968427 I²C: Address/data: Data write: 02
+3968448-3968612 I²C: Address/data: Data write: 03
+3968632-3968794 I²C: Address/data: Data write: 5F
+3968815-3968978 I²C: Address/data: Data write: 00
+3968999-3969163 I²C: Address/data: Data write: 64
+3969182-3969345 I²C: Address/data: Data write: 00
+3969366-3969530 I²C: Address/data: Data write: 00

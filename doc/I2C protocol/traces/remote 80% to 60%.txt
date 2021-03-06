@@ -1,0 +1,17 @@
+6525880-6526023 I²C: Address/data: Address write: 2C
+6526066-6526229 I²C: Address/data: Data write: 02
+6526250-6526414 I²C: Address/data: Data write: 03
+6526433-6526596 I²C: Address/data: Data write: 5F
+6526617-6526781 I²C: Address/data: Data write: FC
+6526801-6526963 I²C: Address/data: Data write: 64
+6526984-6527147 I²C: Address/data: Data write: 00
+6527168-6527332 I²C: Address/data: Data write: 00
+
+6549916-6550058 I²C: Address/data: Address write: 2C
+6550102-6550266 I²C: Address/data: Data write: 02
+6550285-6550448 I²C: Address/data: Data write: 03
+6550469-6550633 I²C: Address/data: Data write: 5F
+6550653-6550815 I²C: Address/data: Data write: F0
+6550836-6550999 I²C: Address/data: Data write: 64
+6551020-6551184 I²C: Address/data: Data write: 00
+6551204-6551366 I²C: Address/data: Data write: 00

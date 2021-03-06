@@ -1,0 +1,16 @@
+1441489-1441632 I²C: Address/data: Address write: 2C
+1441675-1441838 I²C: Address/data: Data write: 02
+1441859-1442022 I²C: Address/data: Data write: 03
+1442226-1442389 I²C: Address/data: Data write: 00
+1442410-1442574 I²C: Address/data: Data write: 64
+1442594-1442756 I²C: Address/data: Data write: 00
+1442777-1442940 I²C: Address/data: Data write: 00
+
+1466523-1466666 I²C: Address/data: Address write: 2C
+1466710-1466873 I²C: Address/data: Data write: 02
+1466894-1467058 I²C: Address/data: Data write: 03
+1467077-1467240 I²C: Address/data: Data write: 5E
+1467261-1467424 I²C: Address/data: Data write: 00
+1467445-1467609 I²C: Address/data: Data write: 64
+1467628-1467791 I²C: Address/data: Data write: 00
+1467812-1467976 I²C: Address/data: Data write: 00

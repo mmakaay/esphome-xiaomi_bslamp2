@@ -1,0 +1,534 @@
+# READY FOR EVENT
+2251481-2251624 I²C: Address/data: Address write: 2C
+2251667-2251831 I²C: Address/data: Data write: 01
+2251851-2252013 I²C: Address/data: Data write: 00
+2252034-2252197 I²C: Address/data: Data write: 00
+2252218-2252382 I²C: Address/data: Data write: 00
+2252401-2252564 I²C: Address/data: Data write: 00
+2252585-2252749 I²C: Address/data: Data write: 00
+2252769-2252933 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH ??? 
+2253321-2253464 I²C: Address/data: Address read: 2C
+2253507-2253669 I²C: Address/data: Data read: 04
+2253719-2253882 I²C: Address/data: Data read: 04
+2253913-2254077 I²C: Address/data: Data read: 01
+2254106-2254269 I²C: Address/data: Data read: 00
+2254304-2254468 I²C: Address/data: Data read: 03
+2254498-2254662 I²C: Address/data: Data read: 12
+2254729-2254892 I²C: Address/data: Data read: 16
+2254893-2254913 I²C: Address/data: NACK
+
+# LEVEL 1
+2265780-2265923 I²C: Address/data: Address write: 2C
+2265966-2266130 I²C: Address/data: Data write: 02
+2266150-2266312 I²C: Address/data: Data write: 03
+2266333-2266496 I²C: Address/data: Data write: 5E
+2266517-2266681 I²C: Address/data: Data write: 00
+2266700-2266863 I²C: Address/data: Data write: 64
+2266884-2267048 I²C: Address/data: Data write: 00
+2267068-2267230 I²C: Address/data: Data write: 00
+
+# LEVEL 1
+2273866-2274008 I²C: Address/data: Address write: 2C
+2274054-2274218 I²C: Address/data: Data write: 02
+2274238-2274400 I²C: Address/data: Data write: 03
+2274421-2274584 I²C: Address/data: Data write: 5E
+2274605-2274769 I²C: Address/data: Data write: 00
+2274788-2274951 I²C: Address/data: Data write: 64
+2274972-2275136 I²C: Address/data: Data write: 00
+2275156-2275318 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+2301737-2301880 I²C: Address/data: Address write: 2C
+2301923-2302087 I²C: Address/data: Data write: 01
+2302106-2302269 I²C: Address/data: Data write: 00
+2302290-2302453 I²C: Address/data: Data write: 00
+2302474-2302638 I²C: Address/data: Data write: 00
+2302657-2302820 I²C: Address/data: Data write: 00
+2302841-2303005 I²C: Address/data: Data write: 00
+2303025-2303187 I²C: Address/data: Data write: 01
+
+# SLIDER RELEASE 2
+2303534-2303677 I²C: Address/data: Address read: 2C
+2303720-2303884 I²C: Address/data: Data read: 04
+2303913-2304076 I²C: Address/data: Data read: 04
+2304129-2304293 I²C: Address/data: Data read: 01
+2304322-2304485 I²C: Address/data: Data read: 00
+2304520-2304684 I²C: Address/data: Data read: 03
+2304714-2304877 I²C: Address/data: Data read: 13
+2304907-2305070 I²C: Address/data: Data read: 17
+2305071-2305091 I²C: Address/data: NACK
+
+# LEVEL 1
+2313347-2313490 I²C: Address/data: Address write: 2C
+2313533-2313696 I²C: Address/data: Data write: 02
+2313717-2313881 I²C: Address/data: Data write: 03
+2313901-2314063 I²C: Address/data: Data write: 5E
+2314084-2314247 I²C: Address/data: Data write: 00
+2314268-2314432 I²C: Address/data: Data write: 64
+2314451-2314614 I²C: Address/data: Data write: 00
+2314635-2314798 I²C: Address/data: Data write: 00
+
+# LEVEL 1
+2323659-2323802 I²C: Address/data: Address write: 2C
+2323845-2324009 I²C: Address/data: Data write: 02
+2324028-2324191 I²C: Address/data: Data write: 03
+2324212-2324376 I²C: Address/data: Data write: 5E
+2324396-2324560 I²C: Address/data: Data write: 00
+2324579-2324742 I²C: Address/data: Data write: 64
+2324763-2324927 I²C: Address/data: Data write: 00
+2324947-2325109 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+2351365-2351508 I²C: Address/data: Address write: 2C
+2351551-2351715 I²C: Address/data: Data write: 01
+2351735-2351897 I²C: Address/data: Data write: 00
+2351918-2352081 I²C: Address/data: Data write: 00
+2352102-2352266 I²C: Address/data: Data write: 00
+2352285-2352448 I²C: Address/data: Data write: 00
+2352469-2352633 I²C: Address/data: Data write: 00
+2352653-2352817 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH 1
+2353189-2353332 I²C: Address/data: Address read: 2C
+2353375-2353539 I²C: Address/data: Data read: 04
+2353578-2353741 I²C: Address/data: Data read: 04
+2353772-2353936 I²C: Address/data: Data read: 01
+2354006-2354169 I²C: Address/data: Data read: 00
+2354204-2354368 I²C: Address/data: Data read: 03
+2354398-2354562 I²C: Address/data: Data read: 12
+2354596-2354759 I²C: Address/data: Data read: 16
+2354760-2354780 I²C: Address/data: NACK
+
+# LEVEL 1
+2362867-2363010 I²C: Address/data: Address write: 2C
+2363053-2363216 I²C: Address/data: Data write: 02
+2363237-2363401 I²C: Address/data: Data write: 03
+2363421-2363585 I²C: Address/data: Data write: 5E
+2363604-2363767 I²C: Address/data: Data write: 00
+2363788-2363952 I²C: Address/data: Data write: 64
+2363972-2364134 I²C: Address/data: Data write: 00
+2364155-2364318 I²C: Address/data: Data write: 00
+
+# LEVEL 1
+2370485-2370628 I²C: Address/data: Address write: 2C
+2370671-2370834 I²C: Address/data: Data write: 02
+2370855-2371019 I²C: Address/data: Data write: 03
+2371039-2371201 I²C: Address/data: Data write: 5E
+2371222-2371385 I²C: Address/data: Data write: 00
+2371406-2371570 I²C: Address/data: Data write: 64
+2371589-2371752 I²C: Address/data: Data write: 00
+2371773-2371937 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+2372656-2372798 I²C: Address/data: Address write: 2C
+2372842-2373004 I²C: Address/data: Data write: 01
+2373025-2373188 I²C: Address/data: Data write: 00
+2373209-2373373 I²C: Address/data: Data write: 00
+2373393-2373555 I²C: Address/data: Data write: 00
+2373576-2373739 I²C: Address/data: Data write: 00
+2373760-2373924 I²C: Address/data: Data write: 00
+2373943-2374106 I²C: Address/data: Data write: 01
+
+# SLIDER RELEASE 1
+2374441-2374584 I²C: Address/data: Address read: 2C
+2374637-2374801 I²C: Address/data: Data read: 04
+2374830-2374993 I²C: Address/data: Data read: 04
+2375024-2375188 I²C: Address/data: Data read: 01
+2375217-2375380 I²C: Address/data: Data read: 00
+2375435-2375598 I²C: Address/data: Data read: 04
+2375629-2375792 I²C: Address/data: Data read: 12
+2375823-2375985 I²C: Address/data: Data read: 17
+2375986-2376006 I²C: Address/data: NACK
+
+# READY FOR EVENT
+3081670-3081813 I²C: Address/data: Address write: 2C
+3081856-3082020 I²C: Address/data: Data write: 01
+3082040-3082202 I²C: Address/data: Data write: 00
+3082223-3082386 I²C: Address/data: Data write: 00
+3082407-3082571 I²C: Address/data: Data write: 00
+3082590-3082753 I²C: Address/data: Data write: 00
+3082774-3082938 I²C: Address/data: Data write: 00
+3082958-3083122 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH 3
+3083467-3083610 I²C: Address/data: Address read: 2C
+3083653-3083817 I²C: Address/data: Data read: 04
+3083846-3084009 I²C: Address/data: Data read: 04
+3084048-3084210 I²C: Address/data: Data read: 01
+3084241-3084404 I²C: Address/data: Data read: 00
+3084439-3084603 I²C: Address/data: Data read: 03
+3084633-3084797 I²C: Address/data: Data read: 0D
+3084826-3084990 I²C: Address/data: Data read: 11
+3084990-3085011 I²C: Address/data: NACK
+
+# LEVEL 3
+3095935-3096077 I²C: Address/data: Address write: 2C
+3096121-3096285 I²C: Address/data: Data write: 02
+3096304-3096467 I²C: Address/data: Data write: 03
+3096488-3096652 I²C: Address/data: Data write: 5F
+3096672-3096834 I²C: Address/data: Data write: 80
+3096855-3097018 I²C: Address/data: Data write: 64
+3097039-3097203 I²C: Address/data: Data write: 00
+3097223-3097385 I²C: Address/data: Data write: 00
+
+# LEVEL 3
+3104034-3104177 I²C: Address/data: Address write: 2C
+3104220-3104383 I²C: Address/data: Data write: 02
+3104404-3104568 I²C: Address/data: Data write: 03
+3104588-3104750 I²C: Address/data: Data write: 5F
+3104771-3104934 I²C: Address/data: Data write: 80
+3104955-3105119 I²C: Address/data: Data write: 64
+3105138-3105301 I²C: Address/data: Data write: 00
+3105322-3105486 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+3132180-3132323 I²C: Address/data: Address write: 2C
+3132366-3132530 I²C: Address/data: Data write: 01
+3132549-3132712 I²C: Address/data: Data write: 00
+3132733-3132896 I²C: Address/data: Data write: 00
+3132917-3133081 I²C: Address/data: Data write: 00
+3133100-3133263 I²C: Address/data: Data write: 00
+3133284-3133448 I²C: Address/data: Data write: 00
+3133468-3133630 I²C: Address/data: Data write: 01
+
+# RELEASE ??? 4 maybe?
+3134020-3134163 I²C: Address/data: Address read: 2C
+3134206-3134368 I²C: Address/data: Data read: 04
+3134465-3134628 I²C: Address/data: Data read: 04
+3134659-3134821 I²C: Address/data: Data read: 01
+3134852-3135016 I²C: Address/data: Data read: 00
+3135050-3135214 I²C: Address/data: Data read: 03
+3135244-3135408 I²C: Address/data: Data read: 0E
+3135489-3135653 I²C: Address/data: Data read: 12
+3135652-3135673 I²C: Address/data: NACK
+
+# LEVEL 3
+3144001-3144143 I²C: Address/data: Address write: 2C
+3144187-3144351 I²C: Address/data: Data write: 02
+3144370-3144533 I²C: Address/data: Data write: 03
+3144554-3144717 I²C: Address/data: Data write: 5F
+3144738-3144902 I²C: Address/data: Data write: 80
+3144921-3145084 I²C: Address/data: Data write: 64
+3145105-3145269 I²C: Address/data: Data write: 00
+3145289-3145451 I²C: Address/data: Data write: 00
+
+# LEVEL 3
+3150133-3150276 I²C: Address/data: Address write: 2C
+3150319-3150482 I²C: Address/data: Data write: 02
+3150503-3150667 I²C: Address/data: Data write: 03
+3150686-3150849 I²C: Address/data: Data write: 5F
+3150870-3151033 I²C: Address/data: Data write: 80
+3151054-3151218 I²C: Address/data: Data write: 64
+3151237-3151400 I²C: Address/data: Data write: 00
+3151421-3151585 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+3221519-3221662 I²C: Address/data: Address write: 2C
+3221706-3221868 I²C: Address/data: Data write: 01
+3221889-3222052 I²C: Address/data: Data write: 00
+3222073-3222237 I²C: Address/data: Data write: 00
+3222256-3222419 I²C: Address/data: Data write: 00
+3222440-3222603 I²C: Address/data: Data write: 00
+3222624-3222788 I²C: Address/data: Data write: 00
+3222807-3222970 I²C: Address/data: Data write: 01
+
+# LEVEL ??? 
+3223289-3223432 I²C: Address/data: Address read: 2C
+3223475-3223638 I²C: Address/data: Data read: 04
+3223669-3223833 I²C: Address/data: Data read: 04
+3223862-3224025 I²C: Address/data: Data read: 01
+3224124-3224286 I²C: Address/data: Data read: 00
+3224321-3224484 I²C: Address/data: Data read: 04
+3224515-3224678 I²C: Address/data: Data read: 0E
+3224708-3224871 I²C: Address/data: Data read: 13
+3224872-3224892 I²C: Address/data: NACK
+
+# READY FOR EVENT
+3971952-3972095 I²C: Address/data: Address write: 2C
+3972138-3972301 I²C: Address/data: Data write: 01
+3972322-3972486 I²C: Address/data: Data write: 00
+3972506-3972668 I²C: Address/data: Data write: 00
+3972689-3972852 I²C: Address/data: Data write: 00
+3972873-3973037 I²C: Address/data: Data write: 00
+3973056-3973219 I²C: Address/data: Data write: 00
+3973240-3973404 I²C: Address/data: Data write: 01
+
+# LEVEL RELEASE ???
+3973746-3973888 I²C: Address/data: Address read: 2C
+3973931-3974094 I²C: Address/data: Data read: 04
+3974160-3974324 I²C: Address/data: Data read: 04
+3974354-3974516 I²C: Address/data: Data read: 01
+3974547-3974711 I²C: Address/data: Data read: 00
+3974745-3974907 I²C: Address/data: Data read: 03
+3974939-3975103 I²C: Address/data: Data read: 09
+3975178-3975342 I²C: Address/data: Data read: 0D
+3975341-3975362 I²C: Address/data: NACK
+
+# LEVEL 5
+3986292-3986435 I²C: Address/data: Address write: 2C
+3986478-3986641 I²C: Address/data: Data write: 02
+3986662-3986826 I²C: Address/data: Data write: 03
+3986846-3987008 I²C: Address/data: Data write: 5F
+3987029-3987192 I²C: Address/data: Data write: E0
+3987213-3987377 I²C: Address/data: Data write: 64
+3987396-3987559 I²C: Address/data: Data write: 00
+3987580-3987744 I²C: Address/data: Data write: 00
+
+# LEVEL 5
+3994571-3994714 I²C: Address/data: Address write: 2C
+3994757-3994920 I²C: Address/data: Data write: 02
+3994941-3995105 I²C: Address/data: Data write: 03
+3995124-3995287 I²C: Address/data: Data write: 5F
+3995308-3995472 I²C: Address/data: Data write: E0
+3995492-3995656 I²C: Address/data: Data write: 64
+3995675-3995838 I²C: Address/data: Data write: 00
+3995859-3996023 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+4111847-4111990 I²C: Address/data: Address write: 2C
+4112033-4112196 I²C: Address/data: Data write: 01
+4112217-4112381 I²C: Address/data: Data write: 00
+4112401-4112563 I²C: Address/data: Data write: 00
+4112584-4112747 I²C: Address/data: Data write: 00
+4112768-4112932 I²C: Address/data: Data write: 00
+4112951-4113114 I²C: Address/data: Data write: 00
+4113135-4113298 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH 5? 7?
+4113687-4113830 I²C: Address/data: Address read: 2C
+4113873-4114036 I²C: Address/data: Data read: 04
+4114067-4114231 I²C: Address/data: Data read: 04
+4114260-4114423 I²C: Address/data: Data read: 01
+4114454-4114617 I²C: Address/data: Data read: 00
+4114652-4114814 I²C: Address/data: Data read: 04
+4114846-4115008 I²C: Address/data: Data read: 09
+4115039-4115201 I²C: Address/data: Data read: 0E
+4115202-4115222 I²C: Address/data: NACK
+
+# READY FOR EVENT
+4801976-4802119 I²C: Address/data: Address write: 2C
+4802162-4802325 I²C: Address/data: Data write: 01
+4802346-4802510 I²C: Address/data: Data write: 00
+4802530-4802692 I²C: Address/data: Data write: 00
+4802713-4802876 I²C: Address/data: Data write: 00
+4802897-4803061 I²C: Address/data: Data write: 00
+4803081-4803243 I²C: Address/data: Data write: 00
+4803264-4803427 I²C: Address/data: Data write: 01
+
+# LEVEL RELEASE 7
+4803816-4803959 I²C: Address/data: Address read: 2C
+4804002-4804165 I²C: Address/data: Data read: 04
+4804209-4804373 I²C: Address/data: Data read: 04
+4804402-4804565 I²C: Address/data: Data read: 01
+4804596-4804760 I²C: Address/data: Data read: 00
+4804797-4804961 I²C: Address/data: Data read: 03
+4804991-4805155 I²C: Address/data: Data read: 06
+4805243-4805407 I²C: Address/data: Data read: 0A
+4805407-4805428 I²C: Address/data: NACK
+
+# LEVEL 7
+4816406-4816549 I²C: Address/data: Address write: 2C
+4816592-4816755 I²C: Address/data: Data write: 02
+4816776-4816940 I²C: Address/data: Data write: 03
+4816960-4817122 I²C: Address/data: Data write: 5F
+4817143-4817306 I²C: Address/data: Data write: F8
+4817327-4817491 I²C: Address/data: Data write: 64
+4817510-4817673 I²C: Address/data: Data write: 00
+4817694-4817857 I²C: Address/data: Data write: 00
+
+# LEVEL 7
+4822700-4822843 I²C: Address/data: Address write: 2C
+4822886-4823050 I²C: Address/data: Data write: 02
+4823069-4823232 I²C: Address/data: Data write: 03
+4823253-4823417 I²C: Address/data: Data write: 5F
+4823437-4823599 I²C: Address/data: Data write: F8
+4823620-4823783 I²C: Address/data: Data write: 64
+4823804-4823968 I²C: Address/data: Data write: 00
+4823987-4824150 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+4938037-4938180 I²C: Address/data: Address write: 2C
+4938223-4938387 I²C: Address/data: Data write: 01
+4938406-4938569 I²C: Address/data: Data write: 00
+4938590-4938753 I²C: Address/data: Data write: 00
+4938774-4938938 I²C: Address/data: Data write: 00
+4938957-4939120 I²C: Address/data: Data write: 00
+4939141-4939305 I²C: Address/data: Data write: 00
+4939325-4939487 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH
+4939834-4939977 I²C: Address/data: Address read: 2C
+4940020-4940184 I²C: Address/data: Data read: 04
+4940269-4940432 I²C: Address/data: Data read: 04
+4940463-4940627 I²C: Address/data: Data read: 01
+4940656-4940819 I²C: Address/data: Data read: 00
+4940854-4941018 I²C: Address/data: Data read: 04
+4941048-4941211 I²C: Address/data: Data read: 06
+4941294-4941456 I²C: Address/data: Data read: 0B
+4941457-4941477 I²C: Address/data: NACK
+
+# READY FOR EVENT
+5701930-5702072 I²C: Address/data: Address write: 2C
+5702116-5702280 I²C: Address/data: Data write: 01
+5702299-5702462 I²C: Address/data: Data write: 00
+5702483-5702647 I²C: Address/data: Data write: 00
+5702667-5702831 I²C: Address/data: Data write: 00
+5702850-5703013 I²C: Address/data: Data write: 00
+5703034-5703198 I²C: Address/data: Data write: 00
+5703218-5703380 I²C: Address/data: Data write: 01
+
+5703715-5703858 I²C: Address/data: Address read: 2C
+5703901-5704065 I²C: Address/data: Data read: 04
+5704130-5704293 I²C: Address/data: Data read: 04
+5704324-5704486 I²C: Address/data: Data read: 01
+5704517-5704680 I²C: Address/data: Data read: 00
+5704715-5704879 I²C: Address/data: Data read: 03
+5704909-5705073 I²C: Address/data: Data read: 05
+5705154-5705317 I²C: Address/data: Data read: 09
+5705318-5705338 I²C: Address/data: NACK
+
+# LEVEL 7
+5714205-5714348 I²C: Address/data: Address write: 2C
+5714391-5714555 I²C: Address/data: Data write: 02
+5714575-5714737 I²C: Address/data: Data write: 03
+5714758-5714921 I²C: Address/data: Data write: 5F
+5714942-5715106 I²C: Address/data: Data write: F8
+5715125-5715288 I²C: Address/data: Data write: 64
+5715309-5715473 I²C: Address/data: Data write: 00
+5715493-5715657 I²C: Address/data: Data write: 00
+
+# LEVEL 7
+5720286-5720429 I²C: Address/data: Address write: 2C
+5720473-5720635 I²C: Address/data: Data write: 02
+5720656-5720819 I²C: Address/data: Data write: 03
+5720840-5721004 I²C: Address/data: Data write: 5F
+5721024-5721186 I²C: Address/data: Data write: F8
+5721207-5721370 I²C: Address/data: Data write: 64
+5721391-5721555 I²C: Address/data: Data write: 00
+5721574-5721737 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+5761926-5762069 I²C: Address/data: Address write: 2C
+5762112-5762276 I²C: Address/data: Data write: 01
+5762296-5762458 I²C: Address/data: Data write: 00
+5762479-5762642 I²C: Address/data: Data write: 00
+5762663-5762827 I²C: Address/data: Data write: 00
+5762847-5763009 I²C: Address/data: Data write: 00
+5763030-5763193 I²C: Address/data: Data write: 00
+5763214-5763378 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH 8
+5763734-5763877 I²C: Address/data: Address read: 2C
+5763920-5764083 I²C: Address/data: Data read: 04
+5764114-5764278 I²C: Address/data: Data read: 04
+5764307-5764470 I²C: Address/data: Data read: 01
+5764501-5764665 I²C: Address/data: Data read: 00
+5764774-5764938 I²C: Address/data: Data read: 03
+5764968-5765132 I²C: Address/data: Data read: 04
+5765161-5765325 I²C: Address/data: Data read: 08
+5765325-5765346 I²C: Address/data: NACK
+
+# LEVEL 8
+5775857-5776000 I²C: Address/data: Address write: 2C
+5776043-5776207 I²C: Address/data: Data write: 02
+5776227-5776389 I²C: Address/data: Data write: 03
+5776410-5776573 I²C: Address/data: Data write: 5F
+5776594-5776758 I²C: Address/data: Data write: FC
+5776777-5776940 I²C: Address/data: Data write: 64
+5776961-5777124 I²C: Address/data: Data write: 00
+5777145-5777309 I²C: Address/data: Data write: 00
+
+# LEVEL 8
+5785253-5785396 I²C: Address/data: Address write: 2C
+5785440-5785604 I²C: Address/data: Data write: 02
+5785624-5785786 I²C: Address/data: Data write: 03
+5785807-5785970 I²C: Address/data: Data write: 5F
+5785991-5786155 I²C: Address/data: Data write: FC
+5786174-5786337 I²C: Address/data: Data write: 64
+5786358-5786521 I²C: Address/data: Data write: 00
+5786542-5786706 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+5842600-5842743 I²C: Address/data: Address write: 2C
+5842786-5842949 I²C: Address/data: Data write: 01
+5842970-5843134 I²C: Address/data: Data write: 00
+5843154-5843316 I²C: Address/data: Data write: 00
+5843337-5843500 I²C: Address/data: Data write: 00
+5843521-5843685 I²C: Address/data: Data write: 00
+5843705-5843867 I²C: Address/data: Data write: 00
+5843888-5844051 I²C: Address/data: Data write: 01
+
+# LEVEL RELEASE 8
+5844398-5844541 I²C: Address/data: Address read: 2C
+5844583-5844746 I²C: Address/data: Data read: 04
+5844777-5844941 I²C: Address/data: Data read: 04
+5844971-5845133 I²C: Address/data: Data read: 01
+5845164-5845328 I²C: Address/data: Data read: 00
+5845362-5845524 I²C: Address/data: Data read: 04
+5845556-5845718 I²C: Address/data: Data read: 04
+5845772-5845935 I²C: Address/data: Data read: 09
+5845936-5845956 I²C: Address/data: NACK
+
+# READY FOR EVENT
+6602132-6602275 I²C: Address/data: Address write: 2C
+6602318-6602481 I²C: Address/data: Data write: 01
+6602502-6602666 I²C: Address/data: Data write: 00
+6602686-6602848 I²C: Address/data: Data write: 00
+6602869-6603032 I²C: Address/data: Data write: 00
+6603053-6603217 I²C: Address/data: Data write: 00
+6603236-6603399 I²C: Address/data: Data write: 00
+6603420-6603583 I²C: Address/data: Data write: 01
+
+# LEVEL TOUCH 10
+6603929-6604072 I²C: Address/data: Address read: 2C
+6604115-6604278 I²C: Address/data: Data read: 04
+6604309-6604473 I²C: Address/data: Data read: 04
+6604502-6604665 I²C: Address/data: Data read: 01
+6604696-6604860 I²C: Address/data: Data read: 00
+6604893-6605056 I²C: Address/data: Data read: 03
+6605087-6605250 I²C: Address/data: Data read: 02
+6605280-6605443 I²C: Address/data: Data read: 06
+6605444-6605464 I²C: Address/data: NACK
+
+# LEVEL 10
+6616675-6616818 I²C: Address/data: Address write: 2C
+6616862-6617024 I²C: Address/data: Data write: 02
+6617045-6617208 I²C: Address/data: Data write: 03
+6617229-6617393 I²C: Address/data: Data write: 5F
+6617412-6617575 I²C: Address/data: Data write: FF
+6617596-6617760 I²C: Address/data: Data write: 64
+6617780-6617944 I²C: Address/data: Data write: 00
+6617963-6618126 I²C: Address/data: Data write: 00
+
+# LEVEL 10
+6624857-6625000 I²C: Address/data: Address write: 2C
+6625044-6625206 I²C: Address/data: Data write: 02
+6625227-6625390 I²C: Address/data: Data write: 03
+6625411-6625575 I²C: Address/data: Data write: 5F
+6625594-6625757 I²C: Address/data: Data write: FF
+6625778-6625941 I²C: Address/data: Data write: 64
+6625962-6626126 I²C: Address/data: Data write: 00
+6626145-6626308 I²C: Address/data: Data write: 00
+
+# READY FOR EVENT
+6772642-6772785 I²C: Address/data: Address write: 2C
+6772828-6772992 I²C: Address/data: Data write: 01
+6773012-6773174 I²C: Address/data: Data write: 00
+6773195-6773358 I²C: Address/data: Data write: 00
+6773379-6773543 I²C: Address/data: Data write: 00
+6773562-6773725 I²C: Address/data: Data write: 00
+6773746-6773909 I²C: Address/data: Data write: 00
+6773930-6774094 I²C: Address/data: Data write: 01
+
+# LEVEL RELEASE 10 
+6774482-6774625 I²C: Address/data: Address read: 2C
+6774668-6774832 I²C: Address/data: Data read: 04
+6774862-6775024 I²C: Address/data: Data read: 04
+6775117-6775280 I²C: Address/data: Data read: 01
+6775311-6775475 I²C: Address/data: Data read: 00
+6775508-6775671 I²C: Address/data: Data read: 04
+6775703-6775865 I²C: Address/data: Data read: 02
+6775895-6776058 I²C: Address/data: Data read: 07
+6776059-6776079 I²C: Address/data: NACK

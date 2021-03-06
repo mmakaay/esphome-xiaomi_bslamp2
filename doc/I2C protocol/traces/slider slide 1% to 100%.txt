@@ -1,0 +1,188 @@
+3468830-3468973 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+3470551-3470694 I²C: Address/data: Address read: 2C
+04 04 01 00 03 14 18
+3480482-3480625 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3486619-3486762 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3578582-3578725 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+3580272-3580414 I²C: Address/data: Address read: 2C
+04 04 01 00 03 13 17
+3589985-3590127 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3596109-3596252 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3628496-3628639 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+3630170-3630313 I²C: Address/data: Address read: 2C
+04 04 01 00 03 12 16
+3642065-3642208 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3649781-3649924 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3928733-3928876 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+3930451-3930593 I²C: Address/data: Address read: 2C
+04 04 01 00 03 11 15
+3940400-3940543 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+3946525-3946668 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+4173695-4173837 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+4175416-4175558 I²C: Address/data: Address read: 2C
+04 04 01 00 03 10 14
+4187879-4188022 I²C: Address/data: Address write: 2C
+02 03 5F 00 64 00 00
+4193953-4194096 I²C: Address/data: Address write: 2C
+02 03 5F 00 64 00 00
+4258675-4258817 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+4260392-4260535 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0F 13
+4270181-4270324 I²C: Address/data: Address write: 2C
+02 03 5F 00 64 00 00
+4277348-4277491 I²C: Address/data: Address write: 2C
+02 03 5F 00 64 00 00
+4358655-4358798 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+4360341-4360483 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0E 12
+4370049-4370191 I²C: Address/data: Address write: 2C
+02 03 5F 80 64 00 00
+4376143-4376286 I²C: Address/data: Address write: 2C
+02 03 5F 80 64 00 00
+4808673-4808815 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+4810390-4810533 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0D 11
+4820343-4820486 I²C: Address/data: Address write: 2C
+02 03 5F 80 64 00 00
+4826472-4826614 I²C: Address/data: Address write: 2C
+02 03 5F 80 64 00 00
+5048694-5048836 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5050403-5050546 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0C 10
+5062723-5062866 I²C: Address/data: Address write: 2C
+02 03 5F C0 64 00 00
+5071017-5071160 I²C: Address/data: Address write: 2C
+02 03 5F C0 64 00 00
+5148820-5148963 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5150538-5150681 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0A 0E
+5160753-5160896 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5169445-5169588 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5198877-5199019 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5200590-5200733 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0B 0F
+5210621-5210764 I²C: Address/data: Address write: 2C
+02 03 5F C0 64 00 00
+5216759-5216902 I²C: Address/data: Address write: 2C
+02 03 5F C0 64 00 00
+5248767-5248910 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5250476-5250619 I²C: Address/data: Address read: 2C
+04 04 01 00 03 0A 0E
+5260236-5260379 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5266388-5266531 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5498909-5499052 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5500630-5500773 I²C: Address/data: Address read: 2C
+04 04 01 00 03 09 0D
+5510710-5510853 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5516882-5517025 I²C: Address/data: Address write: 2C
+02 03 5F E0 64 00 00
+5908759-5908902 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+5910457-5910599 I²C: Address/data: Address read: 2C
+04 04 01 00 03 08 0C
+5923749-5923892 I²C: Address/data: Address write: 2C
+02 03 5F F0 64 00 00
+5931901-5932044 I²C: Address/data: Address write: 2C
+02 03 5F F0 64 00 00
+5999003-5999146 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+6000724-6000867 I²C: Address/data: Address read: 2C
+04 04 01 00 03 07 0B
+6010843-6010986 I²C: Address/data: Address write: 2C
+02 03 5F F0 64 00 00
+6017035-6017178 I²C: Address/data: Address write: 2C
+02 03 5F F0 64 00 00
+6158863-6159005 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+6160552-6160695 I²C: Address/data: Address read: 2C
+04 04 01 00 03 06 0A
+6170802-6170945 I²C: Address/data: Address write: 2C
+02 03 5F F8 64 00 00
+6176904-6177047 I²C: Address/data: Address write: 2C
+02 03 5F F8 64 00 00
+6518945-6519088 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+6520666-6520809 I²C: Address/data: Address read: 2C
+04 04 01 00 03 05 09
+6530771-6530914 I²C: Address/data: Address write: 2C
+02 03 5F F8 64 00 00
+6536947-6537090 I²C: Address/data: Address write: 2C
+02 03 5F F8 64 00 00
+6929044-6929187 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+6930746-6930889 I²C: Address/data: Address read: 2C
+04 04 01 00 03 04 08
+6943041-6943184 I²C: Address/data: Address write: 2C
+02 03 5F FC 64 00 00
+6951163-6951305 I²C: Address/data: Address write: 2C
+02 03 5F FC 64 00 00
+7109127-7109270 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7110848-7110991 I²C: Address/data: Address read: 2C
+04 04 01 00 03 03 07
+7120964-7121107 I²C: Address/data: Address write: 2C
+02 03 5F FC 64 00 00
+7127077-7127220 I²C: Address/data: Address write: 2C
+02 03 5F FC 64 00 00
+7158984-7159127 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7160674-7160817 I²C: Address/data: Address read: 2C
+04 04 01 00 03 02 06
+7170895-7171038 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7177009-7177152 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7760016-7760159 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7761737-7761879 I²C: Address/data: Address read: 2C
+04 04 01 00 03 01 05
+7772094-7772237 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7778262-7778405 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7809029-7809172 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7810703-7810846 I²C: Address/data: Address read: 2C
+04 04 01 00 03 02 06
+7820501-7820644 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7826630-7826773 I²C: Address/data: Address write: 2C
+02 03 5F FF 64 00 00
+7830448-7830591 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7832121-7832264 I²C: Address/data: Address read: 2C
+04 04 01 00 03 02 06
+7834158-7834301 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+7835832-7835975 I²C: Address/data: Address read: 2C
+04 04 01 00 04 02 07
+8149216-8149358 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+8150937-8151079 I²C: Address/data: Address read: 2C
+04 04 01 00 02 02 05

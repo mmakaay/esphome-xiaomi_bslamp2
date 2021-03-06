@@ -1,0 +1,23 @@
+# READY FOR EVENT
+473535-473678 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# POWER BUTTON TOUCH
+475334-475477 I²C: Address/data: Address read: 2C
+04 04 01 00 01 01 03
+
+# TURN ON
+1479212-1479355 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+
+# TURN ON
+3257909-3258052 I²C: Address/data: Address write: 2C
+02 03 5E 00 64 00 00
+
+# READY FOR EVENT
+6324567-6324710 I²C: Address/data: Address write: 2C
+01 00 00 00 00 00 01
+
+# POWER BUTTON RELEASE
+6326365-6326508 I²C: Address/data: Address read: 2C
+04 04 01 00 01 02 04

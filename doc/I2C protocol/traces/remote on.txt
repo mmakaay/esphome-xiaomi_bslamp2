@@ -1,0 +1,10 @@
+# PANEL ON
+1295975-1296118 I²C: Address/data: Address write: 2C
+1296161-1296324 I²C: Address/data: Data write: 02
+1296345-1296508 I²C: Address/data: Data write: 03
+1296529-1296693 I²C: Address/data: Data write: 5E
+1296712-1296875 I²C: Address/data: Data write: 00
+1296896-1297060 I²C: Address/data: Data write: 64
+1297080-1297242 I²C: Address/data: Data write: 00
+1297263-1297426 I²C: Address/data: Data write: 00
+1297458-1297458 I²C: Address/data: Stop
