@@ -10,59 +10,101 @@ requirements = [
     (0, 0, 0, 1.00,        False, None, None, None),
     (255, 255, 255, 0.00,  False, None, None, None),
     (255, 0,   0, 0.01,    True, 2.95, maxV, maxV),
+    (255, 0,   0, 1.00,    True, 1.82, 3.27, 3.27),
     (255, 255, 0, 0.01,    True, 3.04, 2.86, 3.17),
+    (255, 255, 0, 1.00,    True, 2.56, 1.77, 3.15),
     (255, 255, 255, 0.01,  True, 3.04, 2.86, 3.07),
+    (255, 255, 255, 1.00,  True, 2.56, 1.77, 2.73),
     (0, 255, 0, 0.01,      True, 3.27, 2.95, 3.27),
+    (0, 255, 0, 1.00,      True, 3.27, 1.82, 3.27),
     (0, 255, 255, 0.01,    True, 3.13, 2.86, 3.07),
+    (0, 255, 255, 1.00,    True, 2.97, 1.76, 2.71),
     (0, 0, 255, 0.01,      True, 3.27, 3.27, 2.95),
+    (0, 0, 255, 1.00,      True, 3.27, 3.27, 1.82),
     (255, 0, 255, 0.01,    True, 2.88, 3.12, 2.86),
+    (255, 0, 255, 1.00,    True, 1.85, 2.92, 1.77),
+    (255, 128, 0, 0.01,    True, 2.86, 2.93, 3.17),
+    (255, 128, 0, 1.00,    True, 1.77, 2.10, 3.15),
+    (255, 0 ,128, 0.01,    True, 2.86, 3.12, 3.10),
+    (255, 0 ,128, 1.00,    True, 1.77, 2.94, 2.84),
+    (255, 128, 128, 0.01,  True, 2.86, 2.93, 3.10),
+    (255, 128, 128, 1.00,  True, 1.77, 2.10, 2.86),
+    (128, 255, 0, 0.01,    True, 3.11, 2.86, 3.17),
+    (128, 255, 0, 1.00,    True, 2.87, 1.76, 3.15),
+    (255, 128, 255, 0.01,  True, 2.86, 2.93, 2.87),
+    (255, 128, 255, 1.00,  True, 1.76, 2.06, 1.80),
 ]
 
 def get_red(r, g, b, brightness):
     if r == 0:
         if g == 1 and b == 1:
-            v = round(3.1317 - brightness * 0.16, 2)
-            return v
+            return round(3.13 - (brightness * 100 - 1) * (3.13 - 2.97)/99, 2)
         else:
             return maxV; 
     if g == 1:
-        v = round(r * (3.0417 - brightness * 0.48), 2)
+        if r == 1:
+            return round((3.04 - (brightness * 100 - 1) * (3.04 - 2.56)/99), 2)
+        elif r > 0:
+            return round((3.11 - (brightness * 100 - 1) * (3.11 - 2.87)/99), 2)
+    elif g > 0:
+        if b == 1:
+            return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.76)/99), 2)
+        else:
+            return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.77)/99), 2)
     elif b == 1:
-        v = round(r * (2.88 - (brightness - 0.01) * (2.88 - 1.85)), 2)
+        return round((2.88 - (brightness * 100 - 1) * (2.88 - 1.85)/99), 2)
+    elif b > 0:
+        return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.77)/99), 2)
     else:
-        v = round(r * (2.95 - (brightness - 0.01) * (2.95 - 1.82)), 2)
-        v = round(r * (2.9617 - brightness * 1.13), 2)
-    return v
+        return round((2.95 - (brightness * 100 - 1) * (2.95 - 1.82)/99), 2)
+    raise Exception("Shouldn't get here")
 
 def get_green(r, g, b, brightness):
     if g == 0:
         if r == 1 and b == 1:
-            return round(3.12 - (brightness - 0.01) * (3.12 - 2.92), 2)
+            return round(3.12 - (brightness * 100 - 1) * (3.12 - 2.92)/99, 2)
+        elif r == 1 and b > 0:
+            return round(3.12 - (brightness * 100 - 1) * (3.12 - 2.94)/99, 2)
         else:
             return maxV; 
-    if r == 1:
-        v = round(g * (2.86 - (brightness - 0.01) * (2.86 - 1.77)), 2)
+    if r == 1 and g == 1:
+        return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.77)/99), 2)
+    elif r == 1:
+        if b == 1:
+            return round((2.93 - (brightness * 100 - 1) * (2.93 - 2.06)/99), 2)
+        else:
+            return round((2.93 - (brightness * 100 - 1) * (2.93 - 2.10)/99), 2)
+    elif r > 0:
+        return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.76)/99), 2)
     elif r == 0 and b == 1:
-        v = round(g * (2.86 - (brightness - 0.01) * (2.86 - 1.77)), 2)
+        return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.76)/99), 2)
     else:
-        v = round(g * (2.95 - (brightness - 0.01) * (2.95 - 1.82)), 2)
-    return v
+        return round((2.95 - (brightness * 100 - 1) * (2.95 - 1.82)/99), 2)
+    raise Exception("Shouldn't get here")
 
 def get_blue(r, g, b, brightness):
     if b == 0:
         if r > 0 and g > 0:
-            return 3.17
+            return round((3.17 - (brightness * 100 - 1) * (3.17 - 3.15)/99), 2)
         else:
             return maxV; 
     if r == 1 and g == 1:
-        v = round(r * (3.0717 - brightness * 0.48), 2)
+        return round((3.07 - (brightness * 100 - 1) * (3.07 - 2.73)/99), 2)
     elif r == 1 and g == 0:
-        v = round(r * (2.86 - (brightness - 0.01) * (2.86 - 1.77)), 2)
+        if b == 1:
+            return round((2.86 - (brightness * 100 - 1) * (2.86 - 1.77)/99), 2)
+        elif b > 0:
+            return round((3.10 - (brightness * 100 - 1) * (3.10 - 2.84)/99), 2)
+    elif r == 1 and g > 0:
+        if b == 1:
+            return round((2.87 - (brightness * 100 - 1) * (2.87 - 1.80)/99), 2)
+        else:
+            return round((3.10 - (brightness * 100 - 1) * (3.10 - 2.86)/99), 2)
     elif r == 0 and g == 1:
-        v = round(g * (3.0717 - brightness * 0.48), 2)
+        return round((3.07 - (brightness * 100 - 1) * (3.07 - 2.71)/99), 2)
     else:
-        v = round(b * (2.95 - (brightness - 0.01) * (2.95 - 1.82)), 2)
-    return v
+        return round((2.95 - (brightness * 100 - 1) * (2.95 - 1.82)/99), 2)
+    raise Exception("Shouldn't get here")
 
 def make_rgb_fractions(r, g, b):
     """ These ought to be 0 to 1 on input already, but it won't 
@@ -93,5 +135,5 @@ for r,g,b,brightness,stateExpected, rVexpected, gVexpected, bVexpected in requir
     if rV == rVexpected and gV == gVexpected and bV == bVexpected and state == stateExpected:
         print(" [PASS]");
     else:
-        print(" [FAIL]");
+        print()
 
