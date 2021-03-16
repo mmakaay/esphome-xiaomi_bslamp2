@@ -80,11 +80,12 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
 
   void turn_off_()
   {
+    master2_->turn_off();
     master1_->turn_off();
-    red_->set_level(0);
-    green_->set_level(0);
-    blue_->set_level(0);
-    white_->set_level(0);
+    red_->turn_off();
+    green_->turn_off();
+    blue_->turn_off();
+    white_->turn_off();
   }
 
   void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness)
@@ -117,6 +118,7 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
     blue_->set_level(blue);
     white_->set_level(white);
     master1_->turn_on();
+    master2_->turn_on();
   }
 
   void turn_on_in_color_temperature_mode_(float temperature, float brightness)
