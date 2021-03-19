@@ -33,6 +33,18 @@ requirements = [
     (128, 255, 0, 1.00,    True, 2.87, 1.76, 3.15),
     (255, 128, 255, 0.01,  True, 2.86, 2.93, 2.87),
     (255, 128, 255, 1.00,  True, 1.76, 2.06, 1.80),
+    (255, 64, 0, 0.01,     True, 2.86, 3.07, 3.17),
+    (255, 64, 0, 1.00,     True, 0.01, 2.20, 3.12),
+    (255, 0, 64, 0.01,     True, 2.86, 3.12, 3.15),
+    (255, 0, 64, 1.00,     True, 0.01, 2.68, 2.95),
+    (255, 0, 128, 0.01,    True, 2.86, 3.13, 3,10),
+    (255, 0, 128, 1.00,    True, 0.01, 2.66, 2.41),
+    (192, 255, 192, 0.01,  True, 3.08, 2.86, 3.12),
+    (192, 255, 192, 1.00,  True, 2.22, 0.01, 2.62),
+    (128, 255, 128, 0.01,  True, 3.11, 2.86, 3.15),
+    (128, 255, 128, 1.00,  True, 2.50, 0.01, 2.92),
+    (64, 255, 64, 0.01,    True, 3.12, 2.86, 3.17),
+    (64, 255, 64, 1.00,    True, 2.66, 0.01, 3.09),
 ]
 
 def get_red(r, g, b, brightness):
@@ -113,6 +125,7 @@ def make_rgb_fractions(r, g, b):
     r = r/m
     g = g/m
     b = b/m
+
     return (r, g, b)
 
 
@@ -128,6 +141,7 @@ for r,g,b,brightness,stateExpected, rVexpected, gVexpected, bVexpected in requir
         bV = None
     else:
         r, g, b = make_rgb_fractions(r, g, b)
+        print(f" [{round(r*255)},{round(g*255)},{round(b*255)}] ", end="")
         rV = get_red(r, g, b, brightness)
         gV = get_green(r, g, b, brightness)
         bV = get_blue(r, g, b, brightness)
