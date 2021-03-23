@@ -80,40 +80,44 @@ class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
 
   void turn_off_()
   {
-    master2_->turn_off();
-    master1_->turn_off();
-    red_->turn_off();
-    green_->turn_off();
-    blue_->turn_off();
-    white_->turn_off();
+      master2_->turn_off();
+      master1_->turn_off();
+      red_->turn_off();
+      green_->turn_off();
+      blue_->turn_off();
+      white_->turn_off();
   }
 
   void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness)
   {
-    ESP_LOGD("custom", "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
+      ESP_LOGD("custom", "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
 
-    // Compensate for brightness.
-    red = red * brightness;
-    green = green * brightness;
-    blue = blue * brightness;
+      // The brightness must be at least 3/100 to light up the LEDs.
+      if (brightness < 0.03)
+          brightness = 0.03;
 
-    // Inverse the signal. The LEDs in the lamp's circuit are brighter
-    // when the voltages on the GPIO pins are lower.
-    red = 1.0f - red;
-    green = 1.0f - green;
-    blue = 1.0f - blue;
+      // Compensate for brightness.
+      red = red * brightness;
+      green = green * brightness;
+      blue = blue * brightness;
 
-    float white = 0.0;
+      // Inverse the signal. The LEDs in the lamp's circuit are brighter
+      // when the voltages on the GPIO pins are lower.
+      red = 1.0f - red;
+      green = 1.0f - green;
+      blue = 1.0f - blue;
 
-    ESP_LOGD("rgb_mode", "LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
+      float white = 0.0;
 
-    // Drive the LEDs.
-    red_->set_level(red);
-    green_->set_level(green);
-    blue_->set_level(blue);
-    white_->set_level(white);
-    master1_->turn_on();
-    master2_->turn_on();
+      ESP_LOGD("rgb_mode", "LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
+
+      // Drive the LEDs.
+      red_->set_level(red);
+      green_->set_level(green);
+      blue_->set_level(blue);
+      white_->set_level(white);
+      master1_->turn_on();
+      master2_->turn_on();
   }
 
   void turn_on_in_color_temperature_mode_(float temperature, float brightness)
