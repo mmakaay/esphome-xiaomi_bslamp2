@@ -1,6 +1,6 @@
 {
-  "name": "epshome-YeelightBS2",
-  "version": "0.0.1",
+  "name": "esphome-YeelightBS2",
+  "version": "0.0.2",
   "description": "ESPHome components to fully control a Yeelight Bedside Lamp v2 device.",
   "keywords": "esphome, yeelight, bedside",
   "repository":
