@@ -8,7 +8,7 @@ repo into that folder. For example on the command line:
 
 ```
 # mkdir custom_components
-# cd custom_compnents
+# cd custom_components
 # git clone https://github.com/mmakaay/esphome-yeelight_bs2
 ```
 
@@ -25,5 +25,42 @@ config
 ```
 
 Then add the required configuration to your device's yaml configuration file.
-For an example file, taks a look at `doc/example.yaml` in this repository.
+For an example file, take a look at `doc/example.yaml` in this repository.
+
+## Issue: the device keeps losing its connection to Home Assistant
+
+This is not a problem with the device or the custom firmware, but a problem
+in the upstream library "AsyncTCP". I did identify the issue and have a
+proposed fix for it. The issue was reported at:
+
+https://github.com/me-no-dev/AsyncTCP/issues/116
+
+If you want to try out this change, then create a `libs` folder in the
+folder where your device's yaml configuration file is stored, and clone the
+following repository into that folder:
+
+  https://github.com/mmakaay/AsyncTCP 
+
+For example on the command line:
+
+```
+# mkdir libs
+# cd libs
+# git clone://github.com/mmakaay/AsyncTCP
+```
+
+Then add a pointer to this folder from within your device's yaml
+configuration file, using the `lib_extra_dirs` option. Provide it with the
+absolute path to your `libs` folder. The relevant part of the config change
+looks like this:
+
+```yaml
+esphome:
+  platformio_options:
+    lib_extra_dirs: /config/libs
+```
+
+This way, the repository version of the library will override the version of
+the library that is bundled with ESPHome. Build the device firmware and
+flash the device like you would normally do.
 
