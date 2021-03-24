@@ -110,7 +110,7 @@ namespace esphome
             FloatOutput *white_;
             esphome::gpio::GPIOBinaryOutput *master1_;
             esphome::gpio::GPIOBinaryOutput *master2_;
-            // Used for a bug hack in turn_on_in_rgb_mode_()
+            // Used for a bug hack.
             float previous_state_ = 1;
 
             void turn_off_()
