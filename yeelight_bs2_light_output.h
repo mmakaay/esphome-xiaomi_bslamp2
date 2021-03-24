@@ -1,6 +1,9 @@
 #pragma once
 
-#include "esphome.h"
+#include "esphome/core/component.h"
+#include "esphome/components/output/float_output.h"
+#include "esphome/components/light/light_output.h"
+#include "esphome/components/gpio/output/gpio_binary_output.h"
 
 #define CONSTANT_BRIGHTNESS true
 
@@ -22,17 +25,19 @@ namespace esphome
 {
     namespace rgbww
     {
-
-        class YeelightBedsideLampV2LightOutput : public Component, public LightOutput
+        class YeelightBS2LightOutput : public Component, public light::LightOutput
         {
         public:
-            YeelightBedsideLampV2LightOutput(
-                FloatOutput *r, FloatOutput *g, FloatOutput *b, FloatOutput *w,
-                esphome::gpio::GPIOBinaryOutput *m1, esphome::gpio::GPIOBinaryOutput *m2) : red_(r), green_(g), blue_(b), white_(w), master1_(m1), master2_(m2) {}
+		    void set_red(output::FloatOutput *red) { red_ = red; }
+		    void set_green(output::FloatOutput *green) { green_ = green; }
+		    void set_blue(output::FloatOutput *blue) { blue_ = blue; }
+		    void set_white(output::FloatOutput *white) { white_ = white; }
+            void set_master1(gpio::GPIOBinaryOutput *master1) { master1_ = master1; }
+            void set_master2(gpio::GPIOBinaryOutput *master2) { master2_ = master2; }
 
-            LightTraits get_traits() override
+            light::LightTraits get_traits() override
             {
-                auto traits = LightTraits();
+                auto traits = light::LightTraits();
                 traits.set_supports_rgb(true);
                 traits.set_supports_color_temperature(true);
                 traits.set_supports_brightness(true);
@@ -43,7 +48,7 @@ namespace esphome
                 return traits;
             }
 
-            void write_state(LightState *state) override
+            void write_state(light::LightState *state) override
             {
                 auto values = state->current_values;
 
@@ -103,11 +108,11 @@ namespace esphome
                 }
             }
 
-        private:
-            FloatOutput *red_;
-            FloatOutput *green_;
-            FloatOutput *blue_;
-            FloatOutput *white_;
+        protected:
+            output::FloatOutput *red_;
+            output::FloatOutput *green_;
+            output::FloatOutput *blue_;
+            output::FloatOutput *white_;
             esphome::gpio::GPIOBinaryOutput *master1_;
             esphome::gpio::GPIOBinaryOutput *master2_;
             // Used for a bug hack.

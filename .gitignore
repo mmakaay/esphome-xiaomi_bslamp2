@@ -20,3 +20,6 @@ tags
 
 # OpenOffice temp files
 **/.~*
+
+# Python cache files
+__pycache__

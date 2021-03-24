@@ -1,0 +1,53 @@
+i2c:
+  - id: eeprom_i2c
+    sda: 17
+    scl: 18
+    scan: True
+  - id: front_panel_i2c
+    sda: 21
+    scl: 19
+    scan: True
+
+output:
+  - platform: gpio
+    id: master1
+    pin: GPIO33
+  - platform: gpio
+    id: master2
+    pin: GPIO4
+  - platform: ledc
+    id: led_r
+    pin: GPIO13
+    frequency: "3000Hz"
+  - platform: ledc
+    id: led_g
+    pin: GPIO14
+    frequency: "3000Hz"
+  - platform: ledc
+    id: led_b
+    pin: GPIO5
+    frequency: "3000Hz"
+  - platform: ledc
+    id: led_w
+    pin: GPIO12
+    frequency: "3000Hz"
+
+light:
+  - platform: yeelight_bs2
+    name: ${friendly_name} Custom Light
+    red: led_r
+    green: led_g
+    blue: led_b
+    white: led_w
+    master1: master1
+    master2: master2
+    default_transition_length: 1s
+    effects:
+      - random:
+          name: "Slow Random"
+          transition_length: 30s
+          update_interval: 30s
+      - random:
+          name: "Fast Random"
+          transition_length: 3s
+          update_interval: 4s
