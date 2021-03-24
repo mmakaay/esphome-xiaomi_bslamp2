@@ -3,7 +3,6 @@ import esphome.config_validation as cv
 from esphome.components import light, output, gpio
 from esphome.const import CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_OUTPUT_ID
 
-
 CONF_MASTER1 = "master1"
 CONF_MASTER2 = "master2"
 
@@ -29,13 +28,18 @@ def to_code(config):
 
     red = yield cg.get_variable(config[CONF_RED])
     cg.add(var.set_red(red))
+
     green = yield cg.get_variable(config[CONF_GREEN])
     cg.add(var.set_green(green))
+
     blue = yield cg.get_variable(config[CONF_BLUE])
     cg.add(var.set_blue(blue))
+
     white = yield cg.get_variable(config[CONF_WHITE])
     cg.add(var.set_white(white))
+
     master1 = yield cg.get_variable(config[CONF_MASTER1])
     cg.add(var.set_master1(master1))
+
     master2 = yield cg.get_variable(config[CONF_MASTER2])
     cg.add(var.set_master2(master2))
