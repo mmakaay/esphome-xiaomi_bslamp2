@@ -1,37 +1,48 @@
 #pragma once
 
 #include "esphome/core/component.h"
-#include "esphome/components/output/float_output.h"
+#include "esphome/components/ledc/ledc_output.h"
 #include "esphome/components/light/light_output.h"
 #include "esphome/components/gpio/output/gpio_binary_output.h"
 
-#define CONSTANT_BRIGHTNESS true
 
-// The lamp circuitry does not support having RGB and white
-// channels active at the same time. Therefore, color interlock
-// must be enabled.
-#define COLOR_INTERLOCK true
-
-// Same range as supported by the original Yeelight firmware.
-#define HOME_ASSISTANT_MIRED_MIN 153
-#define HOME_ASSISTANT_MIRED_MAX 588
-
-#define TAG "yeelight_bs2"
+// What seems to be a bug in ESPHome transitioning: when turning on
+// the device, the brightness is scaled along with the state (which
+// runs from 0 to 1), but when turning off the device, the brightness
+// is kept the same while the state goes down from 1 to 0. As a result
+// when turning off the lamp with a transition time of 1s, the light
+// stays on for 1s and then turn itself off abruptly.
+//
+// Reported the issue + fix at:
+// https://github.com/esphome/esphome/pull/1643
+//
+// A work-around for this issue can be enabled using this define:
+#define TRANSITION_TO_OFF_BUGFIX
 
 //#define YEELIGHT_DEBUG_LOG
-//#define TRANSITION_TO_OFF_BUGFIX
+
 
 namespace esphome
 {
     namespace rgbww
     {
+        static const char *TAG = "yeelight_bs2.light";
+
+        // Same range as supported by the original Yeelight firmware.
+        static const int HOME_ASSISTANT_MIRED_MIN = 153;
+        static const int HOME_ASSISTANT_MIRED_MAX = 588;
+        
+        // The PWM frequency as used by the original device
+        // for driving the LED circuitry.
+        const float PWM_FREQUENCY = 3000.0f;
+
         class YeelightBS2LightOutput : public Component, public light::LightOutput
         {
         public:
-		    void set_red(output::FloatOutput *red) { red_ = red; }
-		    void set_green(output::FloatOutput *green) { green_ = green; }
-		    void set_blue(output::FloatOutput *blue) { blue_ = blue; }
-		    void set_white(output::FloatOutput *white) { white_ = white; }
+		    void set_red(ledc::LEDCOutput *red) { red_ = red; red_->set_frequency(PWM_FREQUENCY); }
+		    void set_green(ledc::LEDCOutput *green) { green_ = green; green_->set_frequency(PWM_FREQUENCY); }
+		    void set_blue(ledc::LEDCOutput *blue) { blue_ = blue; blue_->set_frequency(PWM_FREQUENCY); }
+		    void set_white(ledc::LEDCOutput *white) { white_ = white; white_->set_frequency(PWM_FREQUENCY); }
             void set_master1(gpio::GPIOBinaryOutput *master1) { master1_ = master1; }
             void set_master2(gpio::GPIOBinaryOutput *master2) { master2_ = master2; }
 
@@ -42,7 +53,7 @@ namespace esphome
                 traits.set_supports_color_temperature(true);
                 traits.set_supports_brightness(true);
                 traits.set_supports_rgb_white_value(false);
-                traits.set_supports_color_interlock(COLOR_INTERLOCK);
+                traits.set_supports_color_interlock(true);
                 traits.set_min_mireds(HOME_ASSISTANT_MIRED_MIN);
                 traits.set_max_mireds(HOME_ASSISTANT_MIRED_MAX);
                 return traits;
@@ -52,35 +63,41 @@ namespace esphome
             {
                 auto values = state->current_values;
 
-//#ifdef YEELIGHT_DEBUG_LOG
+#ifdef YEELIGHT_DEBUG_LOG
                 ESP_LOGD(TAG, "B = State %f, RGB %f %f %f, BRI %f, TEMP %f",
                          values.get_state(),
                          values.get_red(), values.get_green(), values.get_blue(),
                          values.get_brightness(), values.get_color_temperature());
-//#endif
+#endif
 
                 // Power down the light when its state is 'off'.
                 if (values.get_state() == 0)
                 {
                     this->turn_off_();
+#ifdef YEELIGHT_DEBUG_LOG
+                    previous_state_ = -1;
+                    previous_brightness_ = 0;
+#endif
                     return;
                 }
 
                 auto brightness = values.get_brightness();
 
 #ifdef TRANSITION_TO_OFF_BUGFIX
-                // What seems to be a bug in ESPHome transitioning: when turning on
-                // the device, the brightness is scaled along with the state (which
-                // runs from 0 to 1), but when turning off the device, the brightness
-                // is kept the same while the state goes down from 1 to 0. As a result
-                // when turning off the lamp with a transition time of 1s, the light
-                // stays on for 1s and then turn itself off abruptly.
-                // For turning off, I implemented this hack here to make the
-                // transition work better.
-                if (previous_state_ > values.get_state()) {
-                    brightness = values.get_state() * brightness;
+                // Remember the brightness that is used when the light is fully ON.
+                if (values.get_state() == 1) {
+                    previous_brightness_ = brightness;
                 }
-                previous_state_ = values.get_state();                
+                // When transitioning towards zero brightness ...
+                else if (values.get_state() < previous_state_) {
+                    // ... check if the prevous brightness is the same as the current
+                    // brightness. If yes, then the brightness isn't being scaled ...
+                    if (previous_brightness_ == brightness) {
+                        // ... and we need to do that ourselves.
+                        brightness = values.get_state() * brightness;
+                    }
+                }
+                previous_state_ = values.get_state();
 #endif
 
                 // Leave it to the default tooling to figure out the basics.
@@ -88,9 +105,7 @@ namespace esphome
                 // - red, green, blue zero -> the light is in color temperature mode
                 // - cwhite, wwhite zero -> the light is in RGB mode
                 float red, green, blue, cwhite, wwhite;
-                state->current_values_as_rgbww(
-                    &red, &green, &blue, &cwhite, &wwhite,
-                    CONSTANT_BRIGHTNESS, COLOR_INTERLOCK);
+                state->current_values_as_rgbww(&red, &green, &blue, &cwhite, &wwhite, true, false);
 
                 if (cwhite > 0 || wwhite > 0)
                 {
@@ -104,19 +119,22 @@ namespace esphome
                     // that takes care of the required brightness curve while ramping up
                     // the brightness. Therefore, the actual RGB values are passed here.
                     this->turn_on_in_rgb_mode_(
-                        values.get_red(), values.get_green(), values.get_blue(), brightness);
+                        values.get_red(), values.get_green(), values.get_blue(),
+                        brightness, values.get_state());
                 }
             }
 
         protected:
-            output::FloatOutput *red_;
-            output::FloatOutput *green_;
-            output::FloatOutput *blue_;
-            output::FloatOutput *white_;
+            ledc::LEDCOutput *red_;
+            ledc::LEDCOutput *green_;
+            ledc::LEDCOutput *blue_;
+            ledc::LEDCOutput *white_;
             esphome::gpio::GPIOBinaryOutput *master1_;
             esphome::gpio::GPIOBinaryOutput *master2_;
-            // Used for a bug hack.
+#ifdef TRANSITION_TO_OFF_BUGFIX
             float previous_state_ = 1;
+            float previous_brightness_ = -1;
+#endif
 
             void turn_off_()
             {
@@ -131,14 +149,17 @@ namespace esphome
                 master2_->turn_off();
             }
 
-            void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness)
+            void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness, float state)
             {
 #ifdef YEELIGHT_DEBUG_LOG                
                 ESP_LOGD(TAG, "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
 #endif                
 
                 // The brightness must be at least 3/100 to light up the LEDs.
-                if (brightness < 0.03f)
+                // During transitions (where state is a fraction between 0 and 1,
+                // indicating the transition progress) we don't apply this to
+                // get smoother transitioning when turning on the light.
+                if (state == 1 && brightness < 0.03f)
                     brightness = 0.03f;
 
                 // Apply brightness.
