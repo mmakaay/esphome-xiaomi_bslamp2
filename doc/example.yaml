@@ -18,19 +18,42 @@ esphome:
   platform: ESP32
   board: esp32doit-devkit-v1
   platformio_options:
+    # Special platform + package for enabling unicore and disabling the efuse mac crc check.
+    # These two changes are required for the ESP32-WROOM-32D that is used in the
+    # Yeelight bedside lamp 2.
     platform: espressif32@1.11.0
     platform_packages: |-4
           framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.4
 
+light:
+  - platform: yeelight_bs2
+    name: ${friendly_name} Custom Light
+    red: led_red
+    green: led_green
+    blue: led_blue
+    white: led_white
+    master1: master1
+    master2: master2
+    default_transition_length: 1s
+    effects:
+      - random:
+          name: "Slow Random"
+          transition_length: 30s
+          update_interval: 30s
+      - random:
+          name: "Fast Random"
+          transition_length: 3s
+          update_interval: 4s
+
 # The device uses two I2C busses.
 i2c:
   - id: eeprom_i2c
-    sda: 17
-    scl: 18
+    sda: GPIO17
+    scl: GPIO18
     scan: True
   - id: front_panel_i2c
-    sda: 21
-    scl: 19
+    sda: GPIO21
+    scl: GPIO19
     scan: True
 
 # The device uses six GPIO pins for driving the LED circuitry.
@@ -42,38 +65,14 @@ output:
     id: master2
     pin: GPIO4
   - platform: ledc
-    id: led_r
+    id: led_red
     pin: GPIO13
-    frequency: "3000Hz"
   - platform: ledc
-    id: led_g
+    id: led_green
     pin: GPIO14
-    frequency: "3000Hz"
   - platform: ledc
-    id: led_b
+    id: led_blue
     pin: GPIO5
-    frequency: "3000Hz"
   - platform: ledc
-    id: led_w
+    id: led_white
     pin: GPIO12
-    frequency: "3000Hz"
-
-light:
-  - platform: yeelight_bs2
-    name: ${friendly_name} Custom Light
-    red: led_r
-    green: led_g
-    blue: led_b
-    white: led_w
-    master1: master1
-    master2: master2
-    default_transition_length: ${transition_length}
-    effects:
-      - random:
-          name: "Slow Random"
-          transition_length: 30s
-          update_interval: 30s
-      - random:
-          name: "Fast Random"
-          transition_length: 3s
-          update_interval: 4s
