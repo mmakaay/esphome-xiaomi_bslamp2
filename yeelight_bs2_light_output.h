@@ -16,11 +16,11 @@
 // Reported the issue + fix at:
 // https://github.com/esphome/esphome/pull/1643
 //
-// A work-around for this issue can be enabled using this define:
+// A work-around for this issue can be enabled using the following
+// define. Note that the code provides a forward-compatible fix, so
+// having this define active with a fixed ESPHome version should
+// not be a problem.
 #define TRANSITION_TO_OFF_BUGFIX
-
-//#define YEELIGHT_DEBUG_LOG
-
 
 namespace esphome
 {
@@ -63,18 +63,16 @@ namespace esphome
             {
                 auto values = state->current_values;
 
-#ifdef YEELIGHT_DEBUG_LOG
                 ESP_LOGD(TAG, "B = State %f, RGB %f %f %f, BRI %f, TEMP %f",
                          values.get_state(),
                          values.get_red(), values.get_green(), values.get_blue(),
                          values.get_brightness(), values.get_color_temperature());
-#endif
 
                 // Power down the light when its state is 'off'.
                 if (values.get_state() == 0)
                 {
                     this->turn_off_();
-#ifdef YEELIGHT_DEBUG_LOG
+#ifdef TRANSITION_TO_OFF_BUGFIX
                     previous_state_ = -1;
                     previous_brightness_ = 0;
 #endif
@@ -138,22 +136,17 @@ namespace esphome
 
             void turn_off_()
             {
-                // Using set_level() calls for the RGB GPIOs, and not
-                // turn_off(), because turn_off() causes some unwanted
-                // flashing when powering off at low brightness.
                 red_->set_level(1);
                 green_->set_level(1);
                 blue_->set_level(1);
                 white_->turn_off();
-                master1_->turn_off();
                 master2_->turn_off();
+                master1_->turn_off();
             }
 
             void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness, float state)
             {
-#ifdef YEELIGHT_DEBUG_LOG                
                 ESP_LOGD(TAG, "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
-#endif                
 
                 // The brightness must be at least 3/100 to light up the LEDs.
                 // During transitions (where state is a fraction between 0 and 1,
@@ -162,35 +155,51 @@ namespace esphome
                 if (state == 1 && brightness < 0.03f)
                     brightness = 0.03f;
 
-                // Apply brightness.
-                red = red * brightness;
-                green = green * brightness;
-                blue = blue * brightness;
+                // Apply proper color mixing around the RGB white point.
+                // Overall, the RGB colors are very usable when simply scaling the
+                // RGB channels with the brightness, but around the white point,
+                // the color is a bit on the red side of the spectrum. The following
+                // scaling was created to fix that.
+                //  RGBW 0.432451, 0.013149, 0.556678
+                //  R 0.57 g 1 b 0.45
+                auto red_w = (0.07f + brightness*(0.57f - 0.07f)) * red;
+                auto green_w = (0.13f + brightness*(1.00f - 0.13f)) * green;
+                auto blue_w = (0.06f + brightness*(0.45f - 0.06f)) * blue;
 
-                // Inverse the signal. The LEDs in the lamp's circuit are brighter
+                // For other colors, we can simply scale the RGB channels with the
+                // requested brightness, resulting in a very usable color. Not 100%
+                // the same as the original firmware, but sometimes even better IMO.
+                auto red_c = red * brightness;
+                auto green_c = green * brightness;
+                auto blue_c = blue * brightness;
+
+                // The actual RGB values are a weighed mix of the above two.
+                // The closer to the white point, the more the white point
+                // value applies.
+                auto level_red = (red_w * ((green+blue)/2)) + (red_c * (1-(green+blue)/2));
+                auto level_green = (green_w * ((red+blue)/2)) + (green_c * (1-(red+blue)/2));
+                auto level_blue = (blue_w * ((red+green)/2)) + (blue_c * (1-(red+green)/2));
+
+                // Invert the signal. The LEDs in the lamp's circuit are brighter
                 // when the pwm levels on the GPIO pins are lower.
-                red = 1.0f - red;
-                green = 1.0f - green;
-                blue = 1.0f - blue;
+                level_red = 1.0f - level_red;
+                level_green = 1.0f - level_green;
+                level_blue = 1.0f - level_blue;
 
-#ifdef YEELIGHT_DEBUG_LOG
-                ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f", red, green, blue);
-#endif                
+                ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f, off", level_red, level_green, level_blue);
 
                 // Drive the LEDs.
-                red_->set_level(red);
-                green_->set_level(green);
-                blue_->set_level(blue);
-                white_->turn_off();
-                master1_->turn_on();
                 master2_->turn_on();
+                master1_->turn_on();
+                red_->set_level(level_red);
+                green_->set_level(level_green);
+                blue_->set_level(level_blue);
+                white_->turn_off();
             }
 
             void turn_on_in_color_temperature_mode_(float temperature, float brightness)
             {
-#ifdef YEELIGHT_DEBUG_LOG                
                 ESP_LOGD(TAG, "Activate TEMPERATURE %f, BRIGHTNESS %f", temperature, brightness);
-#endif                
 
                 // Empirically determined during programming the temperature GPIO output
                 // code from below, by checking how far my outputs were off from the
@@ -310,16 +319,14 @@ namespace esphome
                     white = white_volt / scaler_white;
                 }
 
-#ifdef YEELIGHT_DEBUG_LOG
                 ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f, %f", red, green, blue, white);
-#endif                
 
+                master2_->turn_on();
+                master1_->turn_on();
                 red_->set_level(red);
                 green_->set_level(green);
                 blue_->set_level(blue);
                 white_->set_level(white);
-                master2_->turn_on();
-                master1_->turn_on();
             }
         };
 
