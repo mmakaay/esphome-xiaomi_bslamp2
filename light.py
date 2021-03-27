@@ -28,19 +28,19 @@ def to_code(config):
     yield light.register_light(var, config)
 
     led_red = yield cg.get_variable(config[CONF_RED])
-    cg.add(var.set_red(led_red))
+    cg.add(var.set_red_output(led_red))
 
     led_green = yield cg.get_variable(config[CONF_GREEN])
-    cg.add(var.set_green(led_green))
+    cg.add(var.set_green_output(led_green))
 
     led_blue = yield cg.get_variable(config[CONF_BLUE])
-    cg.add(var.set_blue(led_blue))
+    cg.add(var.set_blue_output(led_blue))
 
     led_white = yield cg.get_variable(config[CONF_WHITE])
-    cg.add(var.set_white(led_white))
+    cg.add(var.set_white_output(led_white))
 
     master1 = yield cg.get_variable(config[CONF_MASTER1])
-    cg.add(var.set_master1(master1))
+    cg.add(var.set_master1_output(master1))
 
     master2 = yield cg.get_variable(config[CONF_MASTER2])
-    cg.add(var.set_master2(master2))
+    cg.add(var.set_master2_output(master2))
