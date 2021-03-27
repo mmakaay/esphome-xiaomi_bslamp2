@@ -34,7 +34,7 @@ namespace rgbww {
     // The PWM frequencies as used by the original device
     // for driving the LED circuitry.
     const float RGB_PWM_FREQUENCY = 3000.0f;
-    const float WHITE_PWM_FREQUENCY = 10000.0f;
+    const float WHITE_PWM_FREQUENCY = 3000.0f;
 
     class YeelightBS2LightOutput : public Component, public light::LightOutput
     {
@@ -92,7 +92,7 @@ namespace rgbww {
             // Power down the light when its state is 'off'.
             if (values.get_state() == 0)
             {
-                this->turn_off_();
+                turn_off_();
 #ifdef TRANSITION_TO_OFF_BUGFIX
                 previous_state_ = -1;
                 previous_brightness_ = 0;
@@ -160,7 +160,7 @@ namespace rgbww {
             red_->set_level(1);
             green_->set_level(1);
             blue_->set_level(1);
-            white_->turn_off();
+            white_->set_level(0);
             master2_->turn_off();
             master1_->turn_off();
         }
@@ -181,8 +181,6 @@ namespace rgbww {
             // RGB channels with the brightness, but around the white point,
             // the color is a bit on the red side of the spectrum. The following
             // scaling was created to fix that.
-            //  RGBW 0.432451, 0.013149, 0.556678
-            //  R 0.57 g 1 b 0.45
             auto red_w = (0.07f + brightness*(0.57f - 0.07f)) * red;
             auto green_w = (0.13f + brightness*(1.00f - 0.13f)) * green;
             auto blue_w = (0.06f + brightness*(0.45f - 0.06f)) * blue;
@@ -215,7 +213,8 @@ namespace rgbww {
             red_->set_level(level_red);
             green_->set_level(level_green);
             blue_->set_level(level_blue);
-            white_->turn_off();
+            white_->set_level(0);
+
         }
 
         void turn_on_in_white_mode_(float temperature, float brightness)
@@ -234,7 +233,6 @@ namespace rgbww {
             red_->set_level(white_light_.red);
             green_->set_level(white_light_.green);
             blue_->set_level(white_light_.blue);
-            white_->turn_on();
             white_->set_level(white_light_.white);
         }
     };
