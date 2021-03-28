@@ -34,7 +34,11 @@ namespace rgbww {
     // The PWM frequencies as used by the original device
     // for driving the LED circuitry.
     const float RGB_PWM_FREQUENCY = 3000.0f;
-    const float WHITE_PWM_FREQUENCY = 3000.0f;
+    // I measured 10kHz for this channel, but making this 10000.0f results
+    // in the blue channel failing. So possibly this is the actual
+    // frequency to use (it's the frequency that provides a 13 bit
+    // bith depth to the PWM channel).
+    const float WHITE_PWM_FREQUENCY = 9765.0f;
 
     class YeelightBS2LightOutput : public Component, public light::LightOutput
     {
