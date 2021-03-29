@@ -1,9 +1,3 @@
-[General]
-decode_signals=4
-generated_signals=0
-views=1
-meta_objs=0
-
 [D0]
 name=RED
 enabled=true
@@ -136,12 +130,18 @@ channel0\name=Data
 channel0\initial_pin_state=2
 channel0\assigned_signal_name=WHITE
 
+[General]
+decode_signals=4
+generated_signals=0
+views=1
+meta_objs=1
+
 [view0]
-scale=0.0022591644444444445
-v_offset=-328
+scale=1.68559670781893e-6
+v_offset=-303
 splitter_state=@ByteArray(\0\0\0\xff\0\0\0\x1\0\0\0\x2\0\0\0`\0\0\a\x19\x1\0\0\0\x1\x1\0\0\0\x1\0)
 segment_display_mode=1
-offset=22 serialization::archive 14 0 0 0 0 0 0 0 0 0 0 0 0 0 6
+offset=22 serialization::archive 14 0 0 0 0 402478 35390946 50784255 64880763 85391166 95091709 -8 0 0 6
 zero_offset=22 serialization::archive 14 0 0 0 0 0 0 0 0 0 0 0 0 0 6
 D0\trace_height=26
 D1\trace_height=26
@@ -151,3 +151,9 @@ D4\trace_height=26
 D5\trace_height=26
 D6\trace_height=26
 D7\trace_height=26
+
+[meta_obj0]
+type=time_marker
+assoc_view=0
+time=22 serialization::archive 14 0 0 0 0 1 98462641 88189374 98815552 9270411 75496443 0 0 0 6
+text=A
