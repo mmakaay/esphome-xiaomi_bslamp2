@@ -88,7 +88,7 @@ namespace rgbww {
         {
             auto values = state->current_values;
 
-            ESP_LOGD(TAG, "B = State %f, RGB %f %f %f, BRI %f, TEMP %f",
+            ESP_LOGD(TAG, "write_state: STATE %f, RGB %f %f %f, BRI %f, TEMP %f",
                      values.get_state(),
                      values.get_red(), values.get_green(), values.get_blue(),
                      values.get_brightness(), values.get_color_temperature());
@@ -134,6 +134,13 @@ namespace rgbww {
             {
                 turn_on_in_white_mode_(values.get_color_temperature(), brightness);
             }
+            else if (
+                values.get_red() == 1 &&
+                values.get_green() == 1 &&
+                values.get_blue() == 1 &&
+                brightness < 0.012f) {
+                turn_on_in_night_light_mode_();
+            }
             else
             {
                 // The RGB mode does not use the RGB values as determined by
@@ -154,6 +161,8 @@ namespace rgbww {
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
         esphome::rgbww::yeelight_bs2::WhiteLight white_light_;
+        esphome::rgbww::yeelight_bs2::RGBLight rgb_light_;
+        esphome::rgbww::yeelight_bs2::NightLight night_light_;
 #ifdef TRANSITION_TO_OFF_BUGFIX
         float previous_state_ = 1;
         float previous_brightness_ = -1;
@@ -169,56 +178,38 @@ namespace rgbww {
             master1_->turn_off();
         }
 
-        void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness, float state)
+        void turn_on_in_night_light_mode_()
         {
-            ESP_LOGD(TAG, "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
+            ESP_LOGD(TAG, "Activate Night light feature");
 
-            // The brightness must be at least 3/100 to light up the LEDs.
-            // During transitions (where state is a fraction between 0 and 1,
-            // indicating the transition progress) we don't apply this to
-            // get smoother transitioning when turning on the light.
-            if (state == 1 && brightness < 0.03f)
-                brightness = 0.03f;
+            night_light_.set_color(1, 1, 1, 0.01, 1);
 
-            // Apply proper color mixing around the RGB white point.
-            // Overall, the RGB colors are very usable when simply scaling the
-            // RGB channels with the brightness, but around the white point,
-            // the color is a bit on the red side of the spectrum. The following
-            // scaling was created to fix that.
-            auto red_w = (0.07f + brightness*(0.57f - 0.07f)) * red;
-            auto green_w = (0.13f + brightness*(1.00f - 0.13f)) * green;
-            auto blue_w = (0.06f + brightness*(0.45f - 0.06f)) * blue;
-
-            // For other colors, we can simply scale the RGB channels with the
-            // requested brightness, resulting in a very usable color. Not 100%
-            // the same as the original firmware, but sometimes even better IMO.
-            auto red_c = red * brightness;
-            auto green_c = green * brightness;
-            auto blue_c = blue * brightness;
-
-            // The actual RGB values are a weighed mix of the above two.
-            // The closer to the white point, the more the white point
-            // value applies.
-            auto level_red = (red_w * ((green+blue)/2)) + (red_c * (1-(green+blue)/2));
-            auto level_green = (green_w * ((red+blue)/2)) + (green_c * (1-(red+blue)/2));
-            auto level_blue = (blue_w * ((red+green)/2)) + (blue_c * (1-(red+green)/2));
-
-            // Invert the signal. The LEDs in the lamp's circuit are brighter
-            // when the pwm levels on the GPIO pins are lower.
-            level_red = 1.0f - level_red;
-            level_green = 1.0f - level_green;
-            level_blue = 1.0f - level_blue;
-
-            ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f, off", level_red, level_green, level_blue);
+            ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f, %f", night_light_.red, night_light_.green, night_light_.blue, night_light_.white);
 
             // Drive the LEDs.
             master2_->turn_on();
             master1_->turn_on();
-            red_->set_level(level_red);
-            green_->set_level(level_green);
-            blue_->set_level(level_blue);
-            white_->set_level(0);
+            red_->set_level(night_light_.red);
+            green_->set_level(night_light_.green);
+            blue_->set_level(night_light_.blue);
+            white_->set_level(night_light_.white);
+        }
 
+        void turn_on_in_rgb_mode_(float red, float green, float blue, float brightness, float state)
+        {
+            ESP_LOGD(TAG, "Activate RGB %f, %f, %f, BRIGHTNESS %f", red, green, blue, brightness);
+
+            rgb_light_.set_color(red, green, blue, brightness, state);
+
+            ESP_LOGD(TAG, "New LED state : RGBW %f, %f, %f, off", rgb_light_.red, rgb_light_.green, rgb_light_.blue);
+
+            // Drive the LEDs.
+            master2_->turn_on();
+            master1_->turn_on();
+            red_->set_level(rgb_light_.red);
+            green_->set_level(rgb_light_.green);
+            blue_->set_level(rgb_light_.blue);
+            white_->set_level(rgb_light_.white);
         }
 
         void turn_on_in_white_mode_(float temperature, float brightness)
