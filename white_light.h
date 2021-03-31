@@ -11,7 +11,7 @@ namespace yeelight_bs2 {
 static const int MIRED_MAX = 153;
 static const int MIRED_MIN = 588;
 
-struct RgbwLevelsByTemperature {
+struct RGBWLevelsByTemperature {
     float from_temperature;
     float red;
     float green;
@@ -19,9 +19,9 @@ struct RgbwLevelsByTemperature {
     float white;
 };
 
-using RgbwLevelsTable = std::array<RgbwLevelsByTemperature, 15>;
+using RGBWLevelsTable = std::array<RGBWLevelsByTemperature, 15>;
 
-static const RgbwLevelsTable rgbw_levels_1_ {{
+static const RGBWLevelsTable rgbw_levels_1_ {{
     { 501.0f, 0.873f, 0.907f, 1.000f,  0.063f },
     { 455.0f, 0.873f, 0.896f, 1.000f,  0.063f },
     { 417.0f, 0.873f, 0.891f, 1.000f,  0.068f },
@@ -39,7 +39,7 @@ static const RgbwLevelsTable rgbw_levels_1_ {{
     { 153.0f, 1.000f, 0.873f, 0.892f,  0.088f }
 }};
 
-static const RgbwLevelsTable rgbw_levels_100_ {{
+static const RGBWLevelsTable rgbw_levels_100_ {{
     { 501.0f, 0.000f, 0.344f, 1.000f, 0.068f },
     { 455.0f, 0.000f, 0.237f, 1.000f, 0.093f },
     { 417.0f, 0.000f, 0.186f, 1.000f, 0.120f },
@@ -98,9 +98,9 @@ protected:
         return brightness;
     }
 
-    RgbwLevelsByTemperature lookup_in_table_(RgbwLevelsTable table, float temperature)
+    RGBWLevelsByTemperature lookup_in_table_(RGBWLevelsTable table, float temperature)
     {
-        for (RgbwLevelsByTemperature& item : table) 
+        for (RGBWLevelsByTemperature& item : table) 
             if (temperature >= item.from_temperature) 
                 return item;
         throw std::invalid_argument("received too low temperature");
