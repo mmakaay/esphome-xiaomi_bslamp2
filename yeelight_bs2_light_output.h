@@ -22,6 +22,11 @@
 // not be a problem.
 #define TRANSITION_TO_OFF_BUGFIX
 
+// The PWM frequencies as used by the original device
+// for driving the LED circuitry.
+const float RGB_PWM_FREQUENCY = 3000.0f;
+const float WHITE_PWM_FREQUENCY = 9765.0f;
+
 namespace esphome {
 namespace rgbww {
 
@@ -31,15 +36,6 @@ namespace rgbww {
     static const int HOME_ASSISTANT_MIRED_MIN = 153;
     static const int HOME_ASSISTANT_MIRED_MAX = 588;
     
-    // The PWM frequencies as used by the original device
-    // for driving the LED circuitry.
-    const float RGB_PWM_FREQUENCY = 3000.0f;
-    // I measured 10kHz for this channel, but making this 10000.0f results
-    // in the blue channel failing. So possibly this is the actual
-    // frequency to use (it's the frequency that provides a 13 bit
-    // bith depth to the PWM channel).
-    const float WHITE_PWM_FREQUENCY = 9765.0f;
-
     class YeelightBS2LightOutput : public Component, public light::LightOutput
     {
     public:
@@ -73,7 +69,11 @@ namespace rgbww {
 
 	    void set_white_output(ledc::LEDCOutput *white) {
             white_ = white;
-            white_->set_frequency(WHITE_PWM_FREQUENCY);
+            // Quick fix; when using 10kHz like the original device
+            // firmware, the blue channel will use that frequency
+            // instead, causing issues in the RGB color settings.
+            // This looks like an issue with the ledc component.
+            white_->set_frequency(RGB_PWM_FREQUENCY);
         }
 
         void set_master1_output(gpio::GPIOBinaryOutput *master1) {
@@ -209,7 +209,7 @@ namespace rgbww {
             red_->set_level(rgb_light_.red);
             green_->set_level(rgb_light_.green);
             blue_->set_level(rgb_light_.blue);
-            white_->set_level(rgb_light_.white);
+            white_->turn_off();
         }
 
         void turn_on_in_white_mode_(float temperature, float brightness)

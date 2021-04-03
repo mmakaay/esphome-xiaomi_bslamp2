@@ -2,6 +2,7 @@
 
 #include <array>
 #include <stdexcept>
+#include <cmath>
 
 namespace esphome {
 namespace rgbww {
@@ -14,8 +15,8 @@ struct RGB {
 };
 
 struct RGBPoint {
-    RGB rgb_low;
-    RGB rgb_high;
+    RGB low;
+    RGB high;
 };
 
 using RGBRing = std::array<RGBPoint, 24>;
@@ -29,15 +30,15 @@ using RGBCircle = std::array<RGBRing, 7>;
  * The base for this table are measurements against the original
  * device firmware, using the RGB color circle as used in
  * Home Assistant as the color space model.
-
+ *
  * This circle has 7 colored rings around a white center point.
  * The outer ring, with the highest saturation, is numbered as 1.
  * The inner ring around the white center point is numbered as 7.
-
+ *
  * For each ring, there are 24 color positions, starting at the
  * color red (0°), going around the circle clockwise via
  * green (120°) and blue (240°).
-
+ *
  * For each color position, two RGB measurements are registered:
  * - one defining the duty cycles at 1% brightness
  * - one defining the duty cycles at 100% brightness
@@ -45,7 +46,6 @@ using RGBCircle = std::array<RGBRing, 7>;
 static const RGBCircle rgb_circle_ {{
     // Ring 1, min value RGB component value = 0
     {{ 
-
         {{ 0.8998, 0.9997, 0.9997 }, { 0.0000, 0.9997, 0.9997 }}, // 0°   [255,0,0] (red)
         {{ 0.8727, 0.9404, 0.9682 }, { 0.0000, 0.6758, 0.9539 }}, // 15°  [255,0,63]
         {{ 0.8727, 0.8967, 0.9677 }, { 0.0000, 0.2389, 0.9506 }}, // 30°  [255,0,126]
@@ -235,7 +235,7 @@ static const RGBCircle rgb_circle_ {{
     }}
 }};
 
-class YetAnotherRGBLight
+class RGBLight
 {
 public:
     float red = 0;
@@ -243,11 +243,148 @@ public:
     float blue = 0;
     float white = 0;
 
-    void set_color(float temperature, float brightness)
+    void set_color(float red, float green, float blue, float brightness, float state)
     {
+        // Determine the ring level for the color. This is a value between
+        // 0 and 7, determining in what ring of the RGB circle the requested
+        // color resides.
+        auto rgb_min = min(min(red, green), blue);
+        auto ring_level = 7.0f * rgb_min;
+        auto ring_level_a = floor(ring_level);
+        auto ring_level_b = ceil(ring_level);
+
+        // While the default color circle in Home Assistant presents only a
+        // subset of colors, it is possible to request colors outside this
+        // subset as well. Therefore, the ring level might contain a fractional
+        // value instead of a plain integer. To accomodate for this,
+        // interpolation will be done to get the final outputs.
+        // We'll start here by determining the ring above and below the
+        // ring level.
+        auto ring_a = rgb_circle_[ring_level_a];
+        auto ring_b = rgb_circle_[ring_level_b];
+
+        // Now we have the two rings to work with, we'll have to look at the
+        // positions on these rings to determine the RGB value to use for
+        // each ring. Here, we have to accomodate as well for the fact that
+        // we only have a subset of all colors available in the configuration
+        // tables. Therefore, some interpolation is done here as well.
+ 
+        // The ring_pos is basically a hue representation of the requested
+        // RGB color. This is expressed as a number of degrees around the
+        // color circle, starting with red (at 0°). Since we have 24
+        // measurements for each ring, each measurement covers 360°/24 = 15°.
+        // Using that knowledge, the measurements to work with can be picked
+        // from the rings.
+        auto ring_pos = ring_pos_(red, green, blue) / 15.0f;
+        auto ring_pos_x = floor(ring_pos);
+        auto ring_pos_y = ceil(ring_pos);
+
+        // Find RGB values for ring a.
+        auto rgb_a_x = ring_a[ring_pos_x];
+        auto rgb_a_y = ring_a[ring_pos_y > 23 ? 0 : ring_pos_y];
+        RGBPoint rgbp_a;
+        if (ring_pos_x == ring_pos_y) {
+            rgbp_a.low.red = rgb_a_x.low.red;
+            rgbp_a.low.green = rgb_a_x.low.green;
+            rgbp_a.low.blue = rgb_a_x.low.blue;
+            rgbp_a.high.red = rgb_a_x.high.red;
+            rgbp_a.high.green = rgb_a_x.high.green;
+            rgbp_a.high.blue = rgb_a_x.high.blue;
+        } else {
+            auto d_value = ring_pos - ring_pos_x;
+            rgbp_a.low.red = rgb_a_x.low.red + d_value * (rgb_a_y.low.red - rgb_a_x.low.red);
+            rgbp_a.low.green = rgb_a_x.low.green + d_value * (rgb_a_y.low.green - rgb_a_x.low.green);
+            rgbp_a.low.blue = rgb_a_x.low.blue + d_value * (rgb_a_y.low.blue - rgb_a_x.low.blue);
+            rgbp_a.high.red = rgb_a_x.high.red + d_value * (rgb_a_y.high.red - rgb_a_x.high.red);
+            rgbp_a.high.green = rgb_a_x.high.green + d_value * (rgb_a_y.high.green - rgb_a_x.high.green);
+            rgbp_a.high.blue = rgb_a_x.high.blue + d_value * (rgb_a_y.high.blue - rgb_a_x.high.blue);
+        }
+
+        // Find RGB values for ring b.
+        auto rgb_b_x = ring_b[ring_pos_x];
+        auto rgb_b_y = ring_b[ring_pos_y > 23 ? 0 : ring_pos_y];
+        RGBPoint rgbp_b;
+        if (ring_pos_x == ring_pos_y) {
+            rgbp_b.low.red = rgb_b_x.low.red;
+            rgbp_b.low.green = rgb_b_x.low.green;
+            rgbp_b.low.blue = rgb_b_x.low.blue;
+            rgbp_b.high.red = rgb_b_x.high.red;
+            rgbp_b.high.green = rgb_b_x.high.green;
+            rgbp_b.high.blue = rgb_b_x.high.blue;
+        } else {
+            auto d_value = ring_pos - ring_pos_x;
+            rgbp_b.low.red = rgb_b_x.low.red + d_value * (rgb_b_y.low.red - rgb_b_x.low.red);
+            rgbp_b.low.green = rgb_b_x.low.green + d_value * (rgb_b_y.low.green - rgb_b_x.low.green);
+            rgbp_b.low.blue = rgb_b_x.low.blue + d_value * (rgb_b_y.low.blue - rgb_b_x.low.blue);
+            rgbp_b.high.red = rgb_b_x.high.red + d_value * (rgb_b_y.high.red - rgb_b_x.high.red);
+            rgbp_b.high.green = rgb_b_x.high.green + d_value * (rgb_b_y.high.green - rgb_b_x.high.green);
+            rgbp_b.high.blue = rgb_b_x.high.blue + d_value * (rgb_b_y.high.blue - rgb_b_x.high.blue);
+        }
+
+        // Now we have the RGB values to use for the two rings, we can
+        // apply the requested brightness to the RGB values. Brightness
+        // values 0.01 to 1.00 make the RGB values scale linearly. In our
+        // RGB values, we have the low (0.01) and high (1.00) value for
+        // the RGB values. Combined with the brightness input, the required
+        // RGB values can be computed.
+        RGB rgb_a;
+        rgb_a.red = rgbp_a.low.red + (brightness - 0.01) * (rgbp_a.high.red - rgbp_a.low.red);
+        rgb_a.green = rgbp_a.low.green + (brightness - 0.01) * (rgbp_a.high.green - rgbp_a.low.green);
+        rgb_a.blue = rgbp_a.low.blue + (brightness - 0.01) * (rgbp_a.high.blue - rgbp_a.low.blue);
+        RGB rgb_b;
+        rgb_b.red = rgbp_b.low.red + (brightness - 0.01) * (rgbp_b.high.red - rgbp_b.low.red);
+        rgb_b.green = rgbp_b.low.green + (brightness - 0.01) * (rgbp_b.high.green - rgbp_b.low.green);
+        rgb_b.blue = rgbp_b.low.blue + (brightness - 0.01) * (rgbp_b.high.blue - rgbp_b.low.blue);
+
+        // Almost there! We now have the correct RGB values for the
+        // two rings that we were looking at. The last step will interpolate
+        // these two values based on the ring level.
+        RGB rgb;
+        if (ring_level_a == ring_level_b) {
+            rgb.red = rgb_a.red;
+            rgb.green = rgb_a.green;
+            rgb.blue = rgb_a.blue;
+        } else {
+            auto d_value = ring_level - ring_level_a;
+            rgb.red = rgb_a.red + d_value * (rgb_b.red - rgb_a.red);
+            rgb.green = rgb_a.green + d_value * (rgb_b.green - rgb_a.green);
+            rgb.blue = rgb_a.blue + d_value * (rgb_b.blue - rgb_a.blue);
+        }
+        if (rgb.red < 0.01f) {
+            rgb.red = 0.0f;
+        }
+
+        this->red = rgb.red;
+        this->green = rgb.green;
+        this->blue = rgb.blue;
+        this->white = 0.0f;
+
+        ESP_LOGD("rgb", "RGB [%f,%f,%f]", rgb.red, rgb.green, rgb.blue);
     }
 
+protected:
+    /**
+     * Returns the position on an RGB ring in degrees (0 - 359).
+     */
+    float ring_pos_(float red, float green, float blue) {
+        auto rgb_min = min(min(red, green), blue);
+        auto rgb_max = max(max(red, green), blue);
+        auto delta = rgb_max - rgb_min;
+        float pos; 
+        if (delta == 0.0f)
+            pos = 0.0f;
+        else if (red == rgb_max)
+            pos = 60.0f * fmod((green - blue) / delta, 6);
+        else if (green == rgb_max)
+            pos = 60.0f * ((blue - red) / delta + 2.0f);
+        else
+            pos = 60.0f * ((red - green) / delta + 4.0f);
+        if (pos < 0)
+            pos = pos + 360;
+        return pos;
+    }
 };
+
 
 } // namespace yeelight_bs2
 } // namespace rgbww
