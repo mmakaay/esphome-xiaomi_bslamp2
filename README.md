@@ -20,12 +20,29 @@ config
 │   ├── yeelight_bs2/
 │   .   ├── README.md
 .   .   ├── yeelight_bs2_light_output.h
-.       .
-        .
+.   .   .
 ```
 
 Then add the required configuration to your device's yaml configuration file.
 For an example file, take a look at `doc/example.yaml` in this repository.
+
+On a Rapsbery Pi with HomeAssistant and ESPHome as a plugin, the directory should be:
+
+
+/config/esphome/custom_components/yeelight_bs2/
+
+```
+config
+├── epshome
+│   ├── yourdevice.yaml
+│   ├── custom_components/
+|   .   ├── yeelight_bs2/
+│   .   .    ├── README.md
+.   .   .    ├── yeelight_bs2_light_output.h
+.   .   .    .
+```
+
+See [doc/FLASHING.md](doc/FLASHING.md) for hints for opening and flashing the light.
 
 ## Issue: the device keeps losing its connection to Home Assistant
 
@@ -39,7 +56,7 @@ If you want to try out this change, then create a `libs` folder in the
 folder where your device's yaml configuration file is stored, and clone the
 following repository into that folder:
 
-  https://github.com/mmakaay/AsyncTCP 
+  https://github.com/mmakaay/AsyncTCP
 
 For example on the command line:
 
