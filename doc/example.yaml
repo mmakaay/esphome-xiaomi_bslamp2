@@ -4,6 +4,7 @@ substitutions:
   transition_length: 1s
 
 # Use your own preferences for these components.
+
 wifi:
   #ssid: "Your-SSID"
   #password: "Your-Password"
@@ -20,30 +21,27 @@ ota:
 logger:
 
 # Special platform + package are used for enabling unicore and disabling the
-# efuse mac crc check. These two changes are required for the
-# ESP32-WROOM-32D that is used in the Yeelight bedside lamp 2.
+# efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
+# that is used in the Yeelight bedside lamp 2.
 esphome:
   name: $name
   platform: ESP32
   board: esp32doit-devkit-v1
   platformio_options:
-    # Special platform + package for enabling unicore and disabling the efuse mac crc check.
-    # These two changes are required for the ESP32-WROOM-32D that is used in the
-    # Yeelight bedside lamp 2.
     platform: espressif32@1.11.0
     platform_packages: |-4
           framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.4
 
 light:
   - platform: yeelight_bs2
-    name: ${friendly_name} Custom Light
+    name: ${friendly_name} RGBW Light
     red: led_red
     green: led_green
     blue: led_blue
     white: led_white
     master1: master1
     master2: master2
-    default_transition_length: 1s
+    default_transition_length: ${transition_length}
     effects:
       - random:
           name: "Slow Random"
@@ -56,10 +54,19 @@ light:
 
 # The device uses two I2C busses.
 i2c:
+    # This bus is very likely connected to an EEPROM that can be found
+    # on the lamp's board, right next to the GND, TX, RX and GPIO0 debug
+    # pads. The exact use of this component has not yet been reverse
+    # engineered.
   - id: eeprom_i2c
     sda: GPIO17
     scl: GPIO18
     scan: True
+    # This bus is connected to the front panel with the touch buttons.
+    # The touch panel is fully separated form the main board and ESP32,
+    # and communication is done strictly through I2C. The exact protocol
+    # has been reverse engineered and can be found in the file
+    # "doc/reverse_engineering/I2C protocol/i2c_commands.txt".
   - id: front_panel_i2c
     sda: GPIO21
     scl: GPIO19
@@ -67,21 +74,37 @@ i2c:
 
 # The device uses six GPIO pins for driving the LED circuitry.
 output:
+    # master1 + master2 are used for turning on and off the
+    # LED circuitry in the lamp. So these are light the
+    # internal light switch.
   - platform: gpio
     id: master1
     pin: GPIO33
   - platform: gpio
     id: master2
     pin: GPIO4
+    # The following ledc outputs are used to drive the color of the light
+    # in two different modes: white light mode (using color temperature
+    # to set the type of white light) and RGB light (using an RGB mix).
+    # Note: it is important to include the channels and frequencies as-is.
   - platform: ledc
     id: led_red
     pin: GPIO13
+    channel: 0
+    frequency: 3kHz
   - platform: ledc
     id: led_green
     pin: GPIO14
+    channel: 1
+    frequency: 3kHz
   - platform: ledc
     id: led_blue
     pin: GPIO5
+    channel: 2
+    frequency: 3kHz
   - platform: ledc
     id: led_white
     pin: GPIO12
+    channel: 4
+    frequency: 10kHz
+
