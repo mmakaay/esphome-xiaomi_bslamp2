@@ -22,11 +22,6 @@
 // not be a problem.
 #define TRANSITION_TO_OFF_BUGFIX
 
-// The PWM frequencies as used by the original device
-// for driving the LED circuitry.
-const float RGB_PWM_FREQUENCY = 3000.0f;
-const float WHITE_PWM_FREQUENCY = 9765.0f;
-
 namespace esphome {
 namespace rgbww {
 
@@ -54,26 +49,18 @@ namespace rgbww {
 
 	    void set_red_output(ledc::LEDCOutput *red) {
             red_ = red;
-            red_->set_frequency(RGB_PWM_FREQUENCY);
         }
 
 	    void set_green_output(ledc::LEDCOutput *green) {
             green_ = green;
-            green_->set_frequency(RGB_PWM_FREQUENCY);
         }
 
 	    void set_blue_output(ledc::LEDCOutput *blue) {
             blue_ = blue;
-            blue_->set_frequency(RGB_PWM_FREQUENCY);
         }
 
 	    void set_white_output(ledc::LEDCOutput *white) {
             white_ = white;
-            // Quick fix; when using 10kHz like the original device
-            // firmware, the blue channel will use that frequency
-            // instead, causing issues in the RGB color settings.
-            // This looks like an issue with the ledc component.
-            white_->set_frequency(RGB_PWM_FREQUENCY);
         }
 
         void set_master1_output(gpio::GPIOBinaryOutput *master1) {
