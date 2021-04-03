@@ -5,6 +5,15 @@ substitutions:
 
 # Use your own preferences for these components.
 wifi:
+  #ssid: "Your-SSID"
+  #password: "Your-Password"
+  #use_address: 192.168.10.12
+  #
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  #ap:
+  #  ssid: "Bedside_lamp_$name"
+  #  password: "bedside2021"
+
 captive_portal:
 api:
 ota:
