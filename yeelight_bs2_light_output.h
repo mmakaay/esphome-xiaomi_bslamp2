@@ -75,11 +75,6 @@ namespace rgbww {
         {
             auto values = state->current_values;
 
-            ESP_LOGD(TAG, "write_state: STATE %f, RGB %f %f %f, BRI %f, TEMP %f",
-                     values.get_state(),
-                     values.get_red(), values.get_green(), values.get_blue(),
-                     values.get_brightness(), values.get_color_temperature());
-
             // Power down the light when its state is 'off'.
             if (values.get_state() == 0)
             {
@@ -110,6 +105,19 @@ namespace rgbww {
             previous_state_ = values.get_state();
 #endif
 
+            // At the lowest brightness setting, switch to night light mode.
+            // In the Yeelight integration in Home Assistant, this feature is
+            // exposed trough a separate switch. I have found that the switch
+            // is both confusing and made me run into issues when automating
+            // the lights.
+            // I don't simply check for a brightness at or below 0.01 (1%),
+            // because the lowest brightness setting from Home Assistant
+            // turns up as 0.011765 in here (which is 3/255).
+            if (brightness < 0.012f) {
+                turn_on_in_night_light_mode_();
+                return;
+            }
+
             // Leave it to the default tooling to figure out the basics.
             // Because of color interlocking, there are two possible outcomes:
             // - red, green, blue zero -> white light color temperature mode
@@ -121,9 +129,6 @@ namespace rgbww {
             if (cwhite > 0 || wwhite > 0) {
                 turn_on_in_white_mode_(
                     values.get_color_temperature(), brightness);
-            }
-            else if (brightness < 0.012f) {
-                turn_on_in_night_light_mode_();
             }
             else {
                 turn_on_in_rgb_mode_(
