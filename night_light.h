@@ -11,9 +11,6 @@ class NightLight
 {
 public:
     // Based on measurements using the original device firmware.
-    //float red   = 0.968f;
-    //float green = 0.960f;
-    //float blue  = 0.978f;
     float red   = 0.968f;
     float green = 0.968f;
     float blue  = 0.972f;
