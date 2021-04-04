@@ -47,19 +47,19 @@ namespace rgbww {
             return traits;
         }
 
-	    void set_red_output(ledc::LEDCOutput *red) {
+        void set_red_output(ledc::LEDCOutput *red) {
             red_ = red;
         }
 
-	    void set_green_output(ledc::LEDCOutput *green) {
+        void set_green_output(ledc::LEDCOutput *green) {
             green_ = green;
         }
 
-	    void set_blue_output(ledc::LEDCOutput *blue) {
+        void set_blue_output(ledc::LEDCOutput *blue) {
             blue_ = blue;
         }
 
-	    void set_white_output(ledc::LEDCOutput *white) {
+        void set_white_output(ledc::LEDCOutput *white) {
             white_ = white;
         }
 
@@ -111,29 +111,21 @@ namespace rgbww {
 #endif
 
             // Leave it to the default tooling to figure out the basics.
-            // Because of the color interlocking, there are two possible outcomes:
-            // - red, green, blue zero -> the light is in color temperature mode
-            // - cwhite, wwhite zero -> the light is in RGB mode
+            // Because of color interlocking, there are two possible outcomes:
+            // - red, green, blue zero -> white light color temperature mode
+            // - cwhite, wwhite zero -> RGB mode
             float red, green, blue, cwhite, wwhite;
-            state->current_values_as_rgbww(&red, &green, &blue, &cwhite, &wwhite, true, false);
+            state->current_values_as_rgbww(
+                &red, &green, &blue, &cwhite, &wwhite, true, false);
 
-            if (cwhite > 0 || wwhite > 0)
-            {
-                turn_on_in_white_mode_(values.get_color_temperature(), brightness);
+            if (cwhite > 0 || wwhite > 0) {
+                turn_on_in_white_mode_(
+                    values.get_color_temperature(), brightness);
             }
-            else if (
-                values.get_red() == 1 &&
-                values.get_green() == 1 &&
-                values.get_blue() == 1 &&
-                brightness < 0.012f) {
+            else if (brightness < 0.012f) {
                 turn_on_in_night_light_mode_();
             }
-            else
-            {
-                // The RGB mode does not use the RGB values as determined by
-                // current_values_as_rgbww(). The device has LED driving circuitry
-                // that takes care of the required brightness curve while ramping up
-                // the brightness. Therefore, the actual RGB values are passed here.
+            else {
                 turn_on_in_rgb_mode_(
                     values.get_red(), values.get_green(), values.get_blue(),
                     brightness, values.get_state());

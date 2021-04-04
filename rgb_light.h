@@ -27,24 +27,28 @@ using RGBCircle = std::array<RGBRing, 7>;
  * The following table contains GPIO PWM duty cycles as used for driving
  * the LEDs in the device in RGB mode.
  *
- * The base for this table are measurements against the original
- * device firmware, using the RGB color circle as used in
- * Home Assistant as the color space model.
+ * The base for this table are measurements against the original device
+ * firmware, using the RGB color circle as used in Home Assistant as the
+ * color space model.
  *
  * This circle has 7 colored rings around a white center point.
- * The outer ring, with the highest saturation, is numbered as 1.
- * The inner ring around the white center point is numbered as 7.
+ * The outer ring, with the highest saturation, is numbered as 0.
+ * The inner ring around the white center point is numbered as 6.
+ * The white center point itself is numbered as 7, although this one
+ * cannot really be called "a ring".
  *
  * For each ring, there are 24 color positions, starting at the
  * color red (0°), going around the circle clockwise via
  * green (120°) and blue (240°).
  *
- * For each color position, two RGB measurements are registered:
+ * For each color position, two duty cycle measurements are registered:
  * - one defining the duty cycles at 1% brightness
  * - one defining the duty cycles at 100% brightness
+ * Duty cycles for in-between brightnesses can be derived from these
+ * values by means of linear interpolation.
  */
 static const RGBCircle rgb_circle_ {{
-    // Ring 1, min value RGB component value = 0
+    // Ring 0, min value RGB component value = 0
     {{ 
         {{ 0.8998, 0.9997, 0.9997 }, { 0.0000, 0.9997, 0.9997 }}, // 0°   [255,0,0] (red)
         {{ 0.8727, 0.9404, 0.9682 }, { 0.0000, 0.6758, 0.9539 }}, // 15°  [255,0,63]
@@ -71,7 +75,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8727, 0.9542, 0.9467 }, { 0.0000, 0.8145, 0.7889 }}, // 330° [255,126,0]
         {{ 0.8728, 0.9547, 0.9631 }, { 0.0000, 0.8207, 0.9044 }}  // 345° [255,63,0]
     }},
-    // Ring 2, min value RGB component value = 35
+    // Ring 1, min value RGB component value = 35
     {{
         {{ 0.8727, 0.9499, 0.9660 }, { 0.0000, 0.7714, 0.9337 }}, // 0°   [255,35,39] (red)
         {{ 0.8727, 0.9255, 0.9665 }, { 0.0000, 0.5268, 0.9365 }}, // 15°  [255,35,90]
@@ -98,7 +102,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8727, 0.9490, 0.9396 }, { 0.0000, 0.7612, 0.6689 }}, // 330° [255,145,35]
         {{ 0.8727, 0.9496, 0.9580 }, { 0.0000, 0.7683, 0.8512 }}  // 345° [255,90,35]
     }},
-    // Ring 3, min value RGB component value = 73
+    // Ring 2, min value RGB component value = 73
     {{
         {{ 0.8727, 0.9352, 0.9609 }, { 0.0000, 0.6244, 0.8822 }}, // 0°   [255,73,76] (red)
         {{ 0.8727, 0.9035, 0.9616 }, { 0.0000, 0.3068, 0.8888 }}, // 15°  [255,73,119]
@@ -125,7 +129,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8727, 0.9340, 0.9316 }, { 0.0000, 0.6130, 0.5876 }}, // 330° [255,164,73]
         {{ 0.8727, 0.9347, 0.9499 }, { 0.0000, 0.6202, 0.7717 }}  // 345° [255,119,73]
     }},
-    // Ring 4, min value RGB component value = 109
+    // Ring 3, min value RGB component value = 109
     {{
         {{ 0.8727, 0.9114, 0.9526 }, { 0.0000, 0.3850, 0.7983 }}, // 0°   [255,109,112] (red)
         {{ 0.8727, 0.8788, 0.9541 }, { 0.0000, 0.0615, 0.8125 }}, // 15°  [255,109,145]
@@ -152,7 +156,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8727, 0.9101, 0.9236 }, { 0.0000, 0.3737, 0.5083 }}, // 330° [255,182,109]
         {{ 0.8727, 0.9109, 0.9411 }, { 0.0000, 0.3805, 0.6833 }}  // 345° [255,145,109]
     }},
-    // Ring 5, min value RGB component value = 145
+    // Ring 4, min value RGB component value = 145
     {{
         {{ 0.8727, 0.8783, 0.9416 }, { 0.0000, 0.0566, 0.6879 }}, // 0°   [255,145,147] (red)
         {{ 0.8916, 0.8727, 0.9484 }, { 0.1869, 0.0000, 0.7575 }}, // 15°  [255,145,172]
@@ -179,7 +183,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8727, 0.8775, 0.9160 }, { 0.0000, 0.0465, 0.4316 }}, // 330° [255,200,145]
         {{ 0.8727, 0.8778, 0.9306 }, { 0.0000, 0.0523, 0.5798 }}  // 345° [255,172,145]
     }},
-    // Ring 6, min value RGB component value = 181
+    // Ring 5, min value RGB component value = 181
     {{
         {{ 0.8980, 0.8727, 0.9391 }, { 0.5784, 0.4409, 0.8030 }}, // 0°   [255,181,182] (red)
         {{ 0.9079, 0.8727, 0.9445 }, { 0.6330, 0.4409, 0.8327 }}, // 15°  [255,181,199]
@@ -206,7 +210,7 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.8985, 0.8727, 0.9250 }, { 0.5805, 0.4409, 0.7258 }}, // 330° [255,218,181]
         {{ 0.8981, 0.8727, 0.9329 }, { 0.5793, 0.4409, 0.7687 }}  // 345° [255,199,181]
     }},
-    // Ring 7, min value RGB component value = 219
+    // Ring 6, min value RGB component value = 219
     {{
         {{ 0.9167, 0.8727, 0.9389 }, { 0.4399, 0.0000, 0.6606 }}, // 0°   [255,219,219] (red)
         {{ 0.9199, 0.8727, 0.9414 }, { 0.4711, 0.0000, 0.6850 }}, // 15°  [255,219,228]
@@ -243,126 +247,88 @@ public:
     float blue = 0;
     float white = 0;
 
-    void set_color(float red, float green, float blue, float brightness, float state)
-    {
+    void set_color(float red, float green, float blue, float brightness, float state) {
         // Determine the ring level for the color. This is a value between
         // 0 and 7, determining in what ring of the RGB circle the requested
         // color resides.
         auto rgb_min = min(min(red, green), blue);
-        auto ring_level = 7.0f * rgb_min;
-        auto ring_level_a = floor(ring_level);
-        auto ring_level_b = ceil(ring_level);
+        auto level = 7.0f * rgb_min;
 
         // While the default color circle in Home Assistant presents only a
         // subset of colors, it is possible to request colors outside this
-        // subset as well. Therefore, the ring level might contain a fractional
-        // value instead of a plain integer. To accomodate for this,
-        // interpolation will be done to get the final outputs.
-        // We'll start here by determining the ring above and below the
-        // ring level.
-        auto ring_a = rgb_circle_[ring_level_a];
-        auto ring_b = rgb_circle_[ring_level_b];
+        // subset as well. Therefore, the ring level might contain a
+        // fractional value instead of a plain integer. To accomodate for
+        // this, interpolation will be done to get the final outputs.
 
-        // Now we have the two rings to work with, we'll have to look at the
-        // positions on these rings to determine the RGB value to use for
-        // each ring. Here, we have to accomodate as well for the fact that
-        // we only have a subset of all colors available in the configuration
-        // tables. Therefore, some interpolation is done here as well.
- 
-        // The ring_pos is basically a hue representation of the requested
-        // RGB color. This is expressed as a number of degrees around the
-        // color circle, starting with red (at 0°). Since we have 24
-        // measurements for each ring, each measurement covers 360°/24 = 15°.
-        // Using that knowledge, the measurements to work with can be picked
-        // from the rings.
-        auto ring_pos = ring_pos_(red, green, blue) / 15.0f;
-        auto ring_pos_x = floor(ring_pos);
-        auto ring_pos_y = ceil(ring_pos);
+        // Determine duty cycle measurements for the outer ring.
+        auto level_a = floor(level);
+        set_duty_cycles_(&rgbp_a_, level_a, red, green, blue, brightness, &rgb_a_);
 
-        // Find RGB values for ring a.
-        auto rgb_a_x = ring_a[ring_pos_x];
-        auto rgb_a_y = ring_a[ring_pos_y > 23 ? 0 : ring_pos_y];
-        RGBPoint rgbp_a;
-        if (ring_pos_x == ring_pos_y) {
-            rgbp_a.low.red = rgb_a_x.low.red;
-            rgbp_a.low.green = rgb_a_x.low.green;
-            rgbp_a.low.blue = rgb_a_x.low.blue;
-            rgbp_a.high.red = rgb_a_x.high.red;
-            rgbp_a.high.green = rgb_a_x.high.green;
-            rgbp_a.high.blue = rgb_a_x.high.blue;
-        } else {
-            auto d_value = ring_pos - ring_pos_x;
-            rgbp_a.low.red = rgb_a_x.low.red + d_value * (rgb_a_y.low.red - rgb_a_x.low.red);
-            rgbp_a.low.green = rgb_a_x.low.green + d_value * (rgb_a_y.low.green - rgb_a_x.low.green);
-            rgbp_a.low.blue = rgb_a_x.low.blue + d_value * (rgb_a_y.low.blue - rgb_a_x.low.blue);
-            rgbp_a.high.red = rgb_a_x.high.red + d_value * (rgb_a_y.high.red - rgb_a_x.high.red);
-            rgbp_a.high.green = rgb_a_x.high.green + d_value * (rgb_a_y.high.green - rgb_a_x.high.green);
-            rgbp_a.high.blue = rgb_a_x.high.blue + d_value * (rgb_a_y.high.blue - rgb_a_x.high.blue);
-        }
+        // Determine duty cycle measurements for the inner ring.
+        auto level_b = ceil(level);
+        set_duty_cycles_(&rgbp_b_, level_b, red, green, blue, brightness, &rgb_b_);
 
-        // Find RGB values for ring b.
-        auto rgb_b_x = ring_b[ring_pos_x];
-        auto rgb_b_y = ring_b[ring_pos_y > 23 ? 0 : ring_pos_y];
-        RGBPoint rgbp_b;
-        if (ring_pos_x == ring_pos_y) {
-            rgbp_b.low.red = rgb_b_x.low.red;
-            rgbp_b.low.green = rgb_b_x.low.green;
-            rgbp_b.low.blue = rgb_b_x.low.blue;
-            rgbp_b.high.red = rgb_b_x.high.red;
-            rgbp_b.high.green = rgb_b_x.high.green;
-            rgbp_b.high.blue = rgb_b_x.high.blue;
-        } else {
-            auto d_value = ring_pos - ring_pos_x;
-            rgbp_b.low.red = rgb_b_x.low.red + d_value * (rgb_b_y.low.red - rgb_b_x.low.red);
-            rgbp_b.low.green = rgb_b_x.low.green + d_value * (rgb_b_y.low.green - rgb_b_x.low.green);
-            rgbp_b.low.blue = rgb_b_x.low.blue + d_value * (rgb_b_y.low.blue - rgb_b_x.low.blue);
-            rgbp_b.high.red = rgb_b_x.high.red + d_value * (rgb_b_y.high.red - rgb_b_x.high.red);
-            rgbp_b.high.green = rgb_b_x.high.green + d_value * (rgb_b_y.high.green - rgb_b_x.high.green);
-            rgbp_b.high.blue = rgb_b_x.high.blue + d_value * (rgb_b_y.high.blue - rgb_b_x.high.blue);
-        }
-
-        // Now we have the RGB values to use for the two rings, we can
-        // apply the requested brightness to the RGB values. Brightness
-        // values 0.01 to 1.00 make the RGB values scale linearly. In our
-        // RGB values, we have the low (0.01) and high (1.00) value for
-        // the RGB values. Combined with the brightness input, the required
-        // RGB values can be computed.
-        RGB rgb_a;
-        rgb_a.red = rgbp_a.low.red + (brightness - 0.01) * (rgbp_a.high.red - rgbp_a.low.red);
-        rgb_a.green = rgbp_a.low.green + (brightness - 0.01) * (rgbp_a.high.green - rgbp_a.low.green);
-        rgb_a.blue = rgbp_a.low.blue + (brightness - 0.01) * (rgbp_a.high.blue - rgbp_a.low.blue);
-        RGB rgb_b;
-        rgb_b.red = rgbp_b.low.red + (brightness - 0.01) * (rgbp_b.high.red - rgbp_b.low.red);
-        rgb_b.green = rgbp_b.low.green + (brightness - 0.01) * (rgbp_b.high.green - rgbp_b.low.green);
-        rgb_b.blue = rgbp_b.low.blue + (brightness - 0.01) * (rgbp_b.high.blue - rgbp_b.low.blue);
-
-        // Almost there! We now have the correct RGB values for the
-        // two rings that we were looking at. The last step will interpolate
-        // these two values based on the ring level.
-        RGB rgb;
-        if (ring_level_a == ring_level_b) {
-            rgb.red = rgb_a.red;
-            rgb.green = rgb_a.green;
-            rgb.blue = rgb_a.blue;
-        } else {
-            auto d_value = ring_level - ring_level_a;
-            rgb.red = rgb_a.red + d_value * (rgb_b.red - rgb_a.red);
-            rgb.green = rgb_a.green + d_value * (rgb_b.green - rgb_a.green);
-            rgb.blue = rgb_a.blue + d_value * (rgb_b.blue - rgb_a.blue);
-        }
-        if (rgb.red < 0.01f) {
-            rgb.red = 0.0f;
-        }
-
-        this->red = rgb.red;
-        this->green = rgb.green;
-        this->blue = rgb.blue;
-        this->white = 0.0f;
-
-        ESP_LOGD("rgb", "RGB [%f,%f,%f]", rgb.red, rgb.green, rgb.blue);
+        // Almost there! We now have the correct duty cycles for the
+        // two rings that we were looking at. In this last step, the
+        // two values are interpolated based on the ring level.
+        auto d = level - level_a;
+        this->red = rgb_a_.red + d * (rgb_b_.red - rgb_a_.red);
+        this->green = rgb_a_.green + d * (rgb_b_.green - rgb_a_.green);
+        this->blue = rgb_a_.blue + d * (rgb_b_.blue - rgb_a_.blue);
     }
 
 protected:
+    RGBPoint rgbp_a_;
+    RGBPoint rgbp_b_;
+    RGB rgb_a_;
+    RGB rgb_b_;
+
+    void set_duty_cycles_(RGBPoint *p, int ring_level,
+        float r, float g, float b, float brightness, RGB *rgb) {
+
+        // Ring level 7 = white light center. The duty cycles for this level
+        // can be computed using a few basic functions.
+        if (ring_level == 7) {
+            rgb->red = 0.932101 - 0.383377 * brightness;
+            rgb->green = 0.883185 - 0.881623 * brightness;
+            rgb->blue = 0.94188 - 0.284498 * brightness;
+            return;
+        }
+
+        // Other ring levels are more complex. Start by retrieving the
+        // duty cycle measurement data for the ring at hand.
+        auto ring = rgb_circle_[ring_level];
+
+        // Because we only have a subset of all colors in the RGB ring
+        // available in the configuration table, some interpolation will
+        // have to be done.
+        // First, compute the position on the ring for the requested RGB
+        // color. This is basically a hue representation of the requested
+        // color. It is expressed as a number of degrees around the ring,
+        // starting with red (at 0°).
+        auto pos = ring_pos_(r, g, b) / 15.0f;
+
+        // Since there are 24 measurements for each ring, each measurement
+        // covers 360°/24 = 15°. Using that knowledge, the measurements to
+        // use for interpolation can be picked from the ring data.
+        auto pos_x = floor(pos);
+        auto x = ring[pos_x];
+        auto pos_y = ceil(pos);
+        auto y = ring[pos_y > 23 ? 0 : pos_y];
+
+        // Interpolate based on the ring position.
+        auto d = pos - pos_x;
+        p->low.red = x.low.red + d * (y.low.red - x.low.red);
+        p->low.green = x.low.green + d * (y.low.green - x.low.green);
+        p->low.blue = x.low.blue + d * (y.low.blue - x.low.blue);
+        p->high.red = x.high.red + d * (y.high.red - x.high.red);
+        p->high.green = x.high.green + d * (y.high.green - x.high.green);
+        p->high.blue = x.high.blue + d * (y.high.blue - x.high.blue);
+
+        // Interpolate based on brightness level.
+        apply_brightness_(p, brightness, rgb);
+    }
+
     /**
      * Returns the position on an RGB ring in degrees (0 - 359).
      */
@@ -382,6 +348,19 @@ protected:
         if (pos < 0)
             pos = pos + 360;
         return pos;
+    }
+
+    /**
+     * Apply brightness interpolation to the duty cycle measurements.
+     * We have the low (0.01) and high (1.00) brightness measurements
+     * in the data. Brightness can be applied by means of linear
+     * interpolation.
+     */
+    void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
+        auto d = brightness - 0.01f;
+        rgb->red = p->low.red + d * (p->high.red - p->low.red);
+        rgb->green = p->low.green + d * (p->high.green - p->low.green);
+        rgb->blue = p->low.blue + d * (p->high.blue - p->low.blue);
     }
 };
 
