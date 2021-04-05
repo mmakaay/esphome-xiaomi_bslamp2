@@ -1,11 +1,15 @@
+/**
+ * This code implements the white light mode (based on temperature +
+ * brigtness) for the Yeelight Bedside Lamp 2.
+ */
 #pragma once
 
 #include <array>
 #include <stdexcept>
 
 namespace esphome {
-namespace rgbww {
-namespace yeelight_bs2 {
+namespace yeelight {
+namespace bs2 {
 
 // Same range as supported by the original Yeelight firmware.
 static const int MIRED_MAX = 153;
@@ -57,7 +61,7 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
     { 153.0f, 1.000f, 0.000f, 0.187f, 0.335f }
 }};
 
-class WhiteLight
+class ColorWhiteLight
 {
 public:
     float red = 0;
@@ -114,6 +118,6 @@ protected:
     }
 };
 
-} // namespace yeelight_bs2
-} // namespace rgbww
+} // namespace bs2
+} // namespace yeelight
 } // namespace esphome

@@ -23,9 +23,10 @@
 #define TRANSITION_TO_OFF_BUGFIX
 
 namespace esphome {
-namespace rgbww {
+namespace yeelight {
+namespace bs2 {
 
-    static const char *TAG = "yeelight_bs2.light";
+    static const char *TAG = "yeelight_bs2";
 
     // Same range as supported by the original Yeelight firmware.
     static const int HOME_ASSISTANT_MIRED_MIN = 153;
@@ -113,7 +114,7 @@ namespace rgbww {
             // I don't simply check for a brightness at or below 0.01 (1%),
             // because the lowest brightness setting from Home Assistant
             // turns up as 0.011765 in here (which is 3/255).
-            if (brightness < 0.012f) {
+            if (brightness < 0.012f && values.get_state() == 1) {
                 turn_on_in_night_light_mode_();
                 return;
             }
@@ -144,9 +145,9 @@ namespace rgbww {
         ledc::LEDCOutput *white_;
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
-        esphome::rgbww::yeelight_bs2::WhiteLight white_light_;
-        esphome::rgbww::yeelight_bs2::RGBLight rgb_light_;
-        esphome::rgbww::yeelight_bs2::NightLight night_light_;
+        ColorWhiteLight white_light_;
+        ColorRGBLight rgb_light_;
+        ColorNightLight night_light_;
 #ifdef TRANSITION_TO_OFF_BUGFIX
         float previous_state_ = 1;
         float previous_brightness_ = -1;
@@ -216,5 +217,6 @@ namespace rgbww {
         }
     };
 
-} // namespace rgbww
+} // namespace bs2
+} // namespace yeelight
 } // namespace esphome

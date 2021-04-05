@@ -1,3 +1,7 @@
+/**
+ * This code implements the RGB light mode (based on RGB + brigtness)
+ * for the Yeelight Bedside Lamp 2.
+ */
 #pragma once
 
 #include <array>
@@ -5,8 +9,8 @@
 #include <cmath>
 
 namespace esphome {
-namespace rgbww {
-namespace yeelight_bs2 {
+namespace yeelight {
+namespace bs2 {
 
 struct RGB {
     float red;
@@ -239,7 +243,7 @@ static const RGBCircle rgb_circle_ {{
     }}
 }};
 
-class RGBLight
+class ColorRGBLight
 {
 public:
     float red = 0;
@@ -365,6 +369,6 @@ protected:
 };
 
 
-} // namespace yeelight_bs2
-} // namespace rgbww
+} // namespace bs2
+} // namespace yeelight
 } // namespace esphome

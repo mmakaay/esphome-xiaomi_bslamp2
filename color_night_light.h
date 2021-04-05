@@ -4,10 +4,10 @@
 #include <stdexcept>
 
 namespace esphome {
-namespace rgbww {
-namespace yeelight_bs2 {
+namespace yeelight {
+namespace bs2 {
 
-class NightLight
+class ColorNightLight
 {
 public:
     // Based on measurements using the original device firmware.
@@ -22,5 +22,5 @@ public:
 };
 
 } // namespace yeelight_bs2
-} // namespace rgbww
-} // namespace esphome
+} // namespace yeelight
+} // namespace bs2

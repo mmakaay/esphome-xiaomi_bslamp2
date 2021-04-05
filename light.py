@@ -7,22 +7,25 @@ from esphome.const import CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_OUTP
 CONF_MASTER1 = "master1"
 CONF_MASTER2 = "master2"
 
-rgbww_ns = cg.esphome_ns.namespace("rgbww")
-YeelightBS2LightOutput = rgbww_ns.class_("YeelightBS2LightOutput", light.LightOutput)
+CODEOWNERS = ["@mmakaay"]
 
-CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
-    {
-        cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(YeelightBS2LightOutput),
-        cv.Required(CONF_RED): cv.use_id(ledc),
-        cv.Required(CONF_GREEN): cv.use_id(ledc),
-        cv.Required(CONF_BLUE): cv.use_id(ledc),
-        cv.Required(CONF_WHITE): cv.use_id(ledc),
-        cv.Required(CONF_WHITE): cv.use_id(ledc),
-        cv.Required(CONF_MASTER1): cv.use_id(gpio_output.GPIOBinaryOutput),
-        cv.Required(CONF_MASTER2): cv.use_id(gpio_output.GPIOBinaryOutput),
-    }
-)
+yeelight_ns = cg.esphome_ns.namespace("yeelight")
+bs2_ns = yeelight_ns.namespace("bs2")
+light_state = bs2_ns.class_("YeelightBS2LightState", cg.Nameable, cg.Component)
+light_output = bs2_ns.class_("YeelightBS2LightOutput", light.LightOutput)
 
+CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend({
+    cv.GenerateID(): cv.declare_id(light_state),
+    cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(light_output),
+    cv.Required(CONF_RED): cv.use_id(ledc),
+    cv.Required(CONF_GREEN): cv.use_id(ledc),
+    cv.Required(CONF_BLUE): cv.use_id(ledc),
+    cv.Required(CONF_WHITE): cv.use_id(ledc),
+    cv.Required(CONF_WHITE): cv.use_id(ledc),
+    cv.Required(CONF_MASTER1): cv.use_id(gpio_output.GPIOBinaryOutput),
+    cv.Required(CONF_MASTER2): cv.use_id(gpio_output.GPIOBinaryOutput),
+})
+import json;
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
     yield light.register_light(var, config)
