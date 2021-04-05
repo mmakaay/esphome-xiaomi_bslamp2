@@ -1,10 +1,6 @@
-#pragma once
+#pragma once 
 
-#include "esphome/core/component.h"
-#include "esphome/components/ledc/ledc_output.h"
-#include "esphome/components/light/light_output.h"
-#include "esphome/components/gpio/output/gpio_binary_output.h"
-
+#include "light_output.h"
 
 // What seems to be a bug in ESPHome transitioning: when turning on
 // the device, the brightness is scaled along with the state (which
@@ -31,9 +27,16 @@ namespace bs2 {
     // Same range as supported by the original Yeelight firmware.
     static const int HOME_ASSISTANT_MIRED_MIN = 153;
     static const int HOME_ASSISTANT_MIRED_MAX = 588;
-    
-    class YeelightBS2LightOutput : public Component, public light::LightOutput
-    {
+
+    class LightStateDataExposer {
+    public:
+        virtual bool has_active_transformer() = 0;
+        virtual light::LightColorValues get_transformer_values() = 0;
+        virtual light::LightColorValues get_transformer_end_values() = 0;
+        virtual float get_transformer_progress() = 0;
+    };
+
+    class YeelightBS2LightOutput : public Component, public light::LightOutput {
     public:
         light::LightTraits get_traits() override
         {
@@ -72,8 +75,25 @@ namespace bs2 {
             master2_ = master2;
         }
 
-        void write_state(light::LightState *state) override
+        void set_light_state_data_exposer(LightStateDataExposer *exposer) {
+            state_exposer_ = exposer;
+        }
+
+        void write_state(light::LightState *state)
         {
+            // Experimental access to protected LightState data.
+            if (state_exposer_->has_active_transformer()) {
+                auto progress = state_exposer_->get_transformer_progress();
+                auto s = state_exposer_->get_transformer_values();
+                auto t = state_exposer_->get_transformer_end_values();
+                //ESP_LOGD(TAG, "TRFRM %f vals [%f,%f,%f,%f,%f] new [%f,%f,%f,%f,%f]",
+                //    progress,
+                //    s.get_red(), s.get_green(), s.get_blue(),
+                //    s.get_brightness(), s.get_color_temperature(),
+                //    t.get_red(), t.get_green(), t.get_blue(),
+                //    t.get_brightness(), t.get_color_temperature());
+            }
+
             auto values = state->current_values;
 
             // Power down the light when its state is 'off'.
@@ -145,6 +165,7 @@ namespace bs2 {
         ledc::LEDCOutput *white_;
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
+        LightStateDataExposer *state_exposer_;
         ColorWhiteLight white_light_;
         ColorRGBLight rgb_light_;
         ColorNightLight night_light_;
@@ -217,6 +238,30 @@ namespace bs2 {
         }
     };
 
+    class YeelightBS2LightState : public light::LightState, public LightStateDataExposer
+    {
+    public:
+        YeelightBS2LightState(const std::string &name, YeelightBS2LightOutput *output) : light::LightState(name, output) {
+            output->set_light_state_data_exposer(this);
+        }
+
+        bool has_active_transformer() {
+            return this->transformer_ != nullptr;
+        }
+
+        light::LightColorValues get_transformer_values() {
+            return this->transformer_->get_values();
+        }
+
+        light::LightColorValues get_transformer_end_values() {
+            return this->transformer_->get_end_values();
+        }
+
+        float get_transformer_progress() {
+            return this->transformer_->get_progress();
+        }
+    };
+    
 } // namespace bs2
 } // namespace yeelight
 } // namespace esphome

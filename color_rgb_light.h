@@ -1,5 +1,5 @@
 /**
- * This code implements the RGB light mode (based on RGB + brigtness)
+ * This code implements the RGB light mode (based on RGB + brightness)
  * for the Yeelight Bedside Lamp 2.
  */
 #pragma once

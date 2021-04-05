@@ -1,6 +1,6 @@
 /**
  * This code implements the white light mode (based on temperature +
- * brigtness) for the Yeelight Bedside Lamp 2.
+ * brightness) for the Yeelight Bedside Lamp 2.
  */
 #pragma once
 
