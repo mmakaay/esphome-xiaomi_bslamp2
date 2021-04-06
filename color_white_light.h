@@ -84,9 +84,9 @@ public:
 protected:
     float clamp_temperature_(float temperature)
     {
-        if (temperature < MIRED_MAX)
+        if (temperature > MIRED_MAX)
             temperature = MIRED_MAX;
-        else if (temperature > MIRED_MIN) 
+        else if (temperature < MIRED_MIN) 
             temperature = MIRED_MIN;
         return temperature;
     }

@@ -251,7 +251,7 @@ public:
     float blue = 0;
     float white = 0;
 
-    void set_color(float red, float green, float blue, float brightness, float state) {
+    void set_color(float red, float green, float blue, float brightness) {
         // Determine the ring level for the color. This is a value between
         // 0 and 7, determining in what ring of the RGB circle the requested
         // color resides.
