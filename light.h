@@ -1,7 +1,5 @@
 #pragma once 
 
-#include "light_output.h"
-
 // What seems to be a bug in ESPHome transitioning: when turning on
 // the device, the brightness is scaled along with the state (which
 // runs from 0 to 1), but when turning off the device, the brightness
@@ -22,20 +20,84 @@ namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
-    static const char *TAG = "yeelight_bs2";
-
-    // Same range as supported by the original Yeelight firmware.
-    static const int HOME_ASSISTANT_MIRED_MIN = 153;
-    static const int HOME_ASSISTANT_MIRED_MAX = 588;
-
+    /// This is an interface definition that is used to extend the
+    /// YeelightBS2LightOutput class with methods to access properties
+    /// of an active LightTranformer from the YeelightBS2LightOutput
+    /// class.
+    /// The transformer is protected in the light output class, making
+    /// it impossible to access these properties directly from the
+    /// light output class.
     class LightStateDataExposer {
     public:
         virtual bool has_active_transformer() = 0;
+        virtual bool transformer_is_transition() = 0;
         virtual light::LightColorValues get_transformer_values() = 0;
         virtual light::LightColorValues get_transformer_end_values() = 0;
         virtual float get_transformer_progress() = 0;
     };
 
+    /// This class is used to handle color transition requirements.
+    ///
+    /// When using the default ESPHome logic, transitioning is done by
+    /// transitioning all light properties linearly from the original
+    /// values to the new values, and letting the light output object
+    /// translate these properties into light outputs on every step of the
+    /// way. While this does work, it does not work nicely.
+    ///
+    /// This class will take care of transitioning LEDC light outputs
+    /// instead, which is what the original firmware in the device does as
+    /// well. This makes transitions a lot cleaner.
+    class TransitionHandler {
+    public:
+        TransitionHandler(LightStateDataExposer *exposer) : exposer_(exposer) {}
+
+        bool handle() {
+            if (!do_handle_()) {
+                active_ = false;
+                return false;
+            }
+
+            if (is_fresh_transition_()) {
+               auto start = exposer_->get_transformer_values();
+               auto end = exposer_->get_transformer_end_values();
+               active_ = true;
+            }
+
+            return true;
+        }
+
+    protected:
+        LightStateDataExposer *exposer_;
+        bool active_ = false;
+        DutyCycles start_;
+        DutyCycles end_;
+
+        /// Checks if this class will handle the light output logic.
+        /// This is the case when a transformer is active and this
+        /// transformer does implement a transitioning effect.
+        bool do_handle_() {
+            if (!exposer_->has_active_transformer())
+                return false;
+            if (!exposer_->transformer_is_transition())
+                return false;
+            return true;
+        }
+
+        /// Checks if a fresh transitioning is started.
+        /// A transitioning is fresh when either no transition is known to
+        /// be in progress or when a new end state is found during an
+        /// ongoing transition.
+        bool is_fresh_transition_() {
+            bool is_fresh = false;
+            if (active_ == false) {
+                is_fresh = true;
+            }
+            return is_fresh;
+        }
+    };
+
+    /// An implementation of the LightOutput interface for the Yeelight
+    /// Bedside Lamp 2. 
     class YeelightBS2LightOutput : public Component, public light::LightOutput {
     public:
         light::LightTraits get_traits() override
@@ -46,52 +108,47 @@ namespace bs2 {
             traits.set_supports_brightness(true);
             traits.set_supports_rgb_white_value(false);
             traits.set_supports_color_interlock(true);
-            traits.set_min_mireds(HOME_ASSISTANT_MIRED_MIN);
-            traits.set_max_mireds(HOME_ASSISTANT_MIRED_MAX);
+            traits.set_min_mireds(MIRED_MIN);
+            traits.set_max_mireds(MIRED_MAX);
             return traits;
         }
 
+        /// Set the LEDC output for the red LED circuitry channel.
         void set_red_output(ledc::LEDCOutput *red) {
             red_ = red;
         }
 
+        /// Set the LEDC output for the green LED circuitry channel.
         void set_green_output(ledc::LEDCOutput *green) {
             green_ = green;
         }
 
+        /// Set the LEDC output for the blue LED circuitry channel.
         void set_blue_output(ledc::LEDCOutput *blue) {
             blue_ = blue;
         }
 
+        /// Set the LEDC output for the white LED circuitry channel.
         void set_white_output(ledc::LEDCOutput *white) {
             white_ = white;
         }
 
+        /// Set the first GPIO binary output, used as internal master
+        /// switch for the LED light circuitry.
         void set_master1_output(gpio::GPIOBinaryOutput *master1) {
             master1_ = master1;
         }
 
+        /// Set the second GPIO binary output, used as internal master
+        /// switch for the LED light circuitry.
         void set_master2_output(gpio::GPIOBinaryOutput *master2) {
             master2_ = master2;
         }
 
-        void set_light_state_data_exposer(LightStateDataExposer *exposer) {
-            state_exposer_ = exposer;
-        }
-
         void write_state(light::LightState *state)
         {
-            // Experimental access to protected LightState data.
-            if (state_exposer_->has_active_transformer()) {
-                auto progress = state_exposer_->get_transformer_progress();
-                auto s = state_exposer_->get_transformer_values();
-                auto t = state_exposer_->get_transformer_end_values();
-                //ESP_LOGD(TAG, "TRFRM %f vals [%f,%f,%f,%f,%f] new [%f,%f,%f,%f,%f]",
-                //    progress,
-                //    s.get_red(), s.get_green(), s.get_blue(),
-                //    s.get_brightness(), s.get_color_temperature(),
-                //    t.get_red(), t.get_green(), t.get_blue(),
-                //    t.get_brightness(), t.get_color_temperature());
+            if (transition_->handle()) {
+                ESP_LOGD(TAG, "HANDLE transition!");
             }
 
             auto values = state->current_values;
@@ -165,14 +222,22 @@ namespace bs2 {
         ledc::LEDCOutput *white_;
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
-        LightStateDataExposer *state_exposer_;
         ColorWhiteLight white_light_;
         ColorRGBLight rgb_light_;
         ColorNightLight night_light_;
+        TransitionHandler *transition_;
 #ifdef TRANSITION_TO_OFF_BUGFIX
         float previous_state_ = 1;
         float previous_brightness_ = -1;
 #endif
+
+        friend class YeelightBS2LightState;
+
+        /// Called by the YeelightBS2LightState class, to set the object that
+        /// can be used to access protected data from the light state object.
+        void set_light_state_data_exposer(LightStateDataExposer *exposer) {
+            transition_ = new TransitionHandler(exposer);
+        }
 
         void turn_off_()
         {
@@ -247,6 +312,10 @@ namespace bs2 {
 
         bool has_active_transformer() {
             return this->transformer_ != nullptr;
+        }
+
+        bool transformer_is_transition() {
+            return this->transformer_->is_transition();
         }
 
         light::LightColorValues get_transformer_values() {

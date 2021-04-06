@@ -7,13 +7,11 @@
 #include <array>
 #include <stdexcept>
 
+#include "common.h"
+
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
-
-// Same range as supported by the original Yeelight firmware.
-static const int MIRED_MAX = 153;
-static const int MIRED_MIN = 588;
 
 struct RGBWLevelsByTemperature {
     float from_temperature;
