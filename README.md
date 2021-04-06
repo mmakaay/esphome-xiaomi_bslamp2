@@ -1,5 +1,44 @@
 # esphome-yeelight_bs2
 
+## Warning: this code is still under heavy development
+
+This code is not yet production-ready. Most of the work goes into reverse
+engineering the original firmware and coming up with ways to re-implement
+a device firmware based on ESPHome.
+
+The main focus for now lies on driving the LED circuitry, to make sure that
+the light quality meets that of the original firmware. While I thought this
+would be the easy part, it turned out to be quite a beast, since driving the
+LEDs is quite different from a regular RGBWW-style light.
+
+The light functionality is getting close to completion. After this, I will
+work on implementing the front panel buttons. The hard work for this was
+already done: reverse engineering the protocol that is used to talk to the
+main board. Therefore, finishing up the firmware should not take much time
+once I get to this point.
+
+With those two out of the way, we can move towards a stable release of the
+firmware. I have some more ideas to work on, but those can and will be
+extensions to the stable release code.
+
+
+## Is it safe to install this firmware on my device?
+
+As long as you keep a backup of the original Yeelight firmware, this is
+quite safe :-)
+
+I have two lamps that both are running the latest development firmware and
+they are functioning very well as far as the light feature is concerned.
+I sometimes see API disconnection issues, but those can all be traced back
+to the underlying frameworks. For the most prevalent issue, I did some
+debugging and wrote a fix (it is mentioned below).
+
+For each commit of the code, I will do my best to commit it in a working
+state. Once a first completed stable release is cooked up, I will tag
+production releases of the code to make it easier to pick the safe version
+for production purposes.
+
+
 ## Installation
 
 Create a folder named `custom_components` in the folder where your
