@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <cmath>
 
+#include "common.h"
+
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
@@ -243,19 +245,15 @@ static const RGBCircle rgb_circle_ {{
     }}
 }};
 
-class ColorRGBLight
-{
+class ColorRGBLight : public GPIOOutputs {
 public:
-    float red = 0;
-    float green = 0;
-    float blue = 0;
-    float white = 0;
+    bool set_light_color_values(light::LightColorValues v) {
+        values = v;
 
-    void set_color(float red, float green, float blue, float brightness) {
         // Determine the ring level for the color. This is a value between
         // 0 and 7, determining in what ring of the RGB circle the requested
         // color resides.
-        auto rgb_min = min(min(red, green), blue);
+        auto rgb_min = min(min(v.get_red(), v.get_green()), v.get_blue());
         auto level = 7.0f * rgb_min;
 
         // While the default color circle in Home Assistant presents only a
@@ -266,19 +264,28 @@ public:
 
         // Determine duty cycle measurements for the outer ring.
         auto level_a = floor(level);
-        set_duty_cycles_(&rgbp_a_, level_a, red, green, blue, brightness, &rgb_a_);
+        set_duty_cycles_(
+            &rgbp_a_, level_a, v.get_red(), v.get_green(), v.get_blue(),
+            v.get_brightness(), &rgb_a_);
 
         // Determine duty cycle measurements for the inner ring.
         auto level_b = ceil(level);
-        set_duty_cycles_(&rgbp_b_, level_b, red, green, blue, brightness, &rgb_b_);
+        set_duty_cycles_(
+            &rgbp_b_, level_a, v.get_red(), v.get_green(), v.get_blue(),
+            v.get_brightness(), &rgb_b_);
 
         // Almost there! We now have the correct duty cycles for the
         // two rings that we were looking at. In this last step, the
         // two values are interpolated based on the ring level.
         auto d = level - level_a;
-        this->red = rgb_a_.red + d * (rgb_b_.red - rgb_a_.red);
-        this->green = rgb_a_.green + d * (rgb_b_.green - rgb_a_.green);
-        this->blue = rgb_a_.blue + d * (rgb_b_.blue - rgb_a_.blue);
+        red = rgb_a_.red + d * (rgb_b_.red - rgb_a_.red);
+        green = rgb_a_.green + d * (rgb_b_.green - rgb_a_.green);
+        blue = rgb_a_.blue + d * (rgb_b_.blue - rgb_a_.blue);
+
+        // The white output channel will always be 0 for RGB.
+        white = 0.0f;
+
+        return true;
     }
 
 protected:

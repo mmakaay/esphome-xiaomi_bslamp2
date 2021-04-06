@@ -59,18 +59,13 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
     { 153.0f, 1.000f, 0.000f, 0.187f, 0.335f }
 }};
 
-class ColorWhiteLight
-{
+class ColorWhiteLight : public GPIOOutputs {
 public:
-    float red = 0;
-    float green = 0;
-    float blue = 0;
-    float white = 0;
+    bool set_light_color_values(light::LightColorValues v) {
+        values = v;
 
-    void set_color(float temperature, float brightness)
-    {
-        temperature = clamp_temperature_(temperature);
-        brightness = clamp_brightness_(brightness);
+        auto temperature = clamp_temperature_(v.get_color_temperature());
+        auto brightness = clamp_brightness_(v.get_brightness());
 
         auto levels_1 = lookup_in_table_(rgbw_levels_1_, temperature);
         auto levels_100 = lookup_in_table_(rgbw_levels_100_, temperature);
@@ -79,6 +74,8 @@ public:
         green = interpolate_(levels_1.green, levels_100.green, brightness);
         blue = interpolate_(levels_1.blue, levels_100.blue, brightness);
         white = interpolate_(levels_1.white, levels_100.white, brightness);
+
+        return true;
     }
 
 protected:
@@ -108,6 +105,7 @@ protected:
         throw std::invalid_argument("received too low temperature");
     }
 
+    // TODO Use esphome::lerp?
     float interpolate_(float level_1, float level_100, float brightness)
     {
         auto coefficient = (level_100 - level_1) / 0.99f;

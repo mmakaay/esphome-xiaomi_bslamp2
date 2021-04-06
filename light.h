@@ -22,8 +22,8 @@ namespace bs2 {
 
     /// This is an interface definition that is used to extend the
     /// YeelightBS2LightOutput class with methods to access properties
-    /// of an active LightTranformer from the YeelightBS2LightOutput
-    /// class.
+    /// of an active LightTranformer from the TransitionHandler class.
+    ///
     /// The transformer is protected in the light output class, making
     /// it impossible to access these properties directly from the
     /// light output class.
@@ -34,65 +34,6 @@ namespace bs2 {
         virtual light::LightColorValues get_transformer_values() = 0;
         virtual light::LightColorValues get_transformer_end_values() = 0;
         virtual float get_transformer_progress() = 0;
-    };
-
-    /// This class translates LightColorValues into GPIO duty cycles
-    /// for representing a requested light color.
-    class ColorTranslator : public DutyCycles {
-    public:
-        void set_light_color_values(light::LightColorValues values) {
-            // The light is turned off.
-            if (values.get_state() == 0.0f || values.get_brightness() == 0.0f) {
-                red = 0.0f;
-                green = 0.0f;
-                blue = 0.0f;
-                white = 0.0f;
-                return;
-            }
-            
-            // At the lowest brightness setting, switch to night light mode.
-            // In the Yeelight integration in Home Assistant, this feature is
-            // exposed trough a separate switch. I have found that the switch
-            // is both confusing and made me run into issues when automating
-            // the lights.
-            // I don't simply check for a brightness at or below 0.01 (1%),
-            // because the lowest brightness setting from Home Assistant
-            // turns up as 0.011765 in here (which is 3/255).
-            if (values.get_brightness() < 0.012f) {
-                // TODO make the color implementations return a DutyCycles object?
-                // TODO Use polymorphic color classes?
-                red = night_light_.red;
-                green = night_light_.green;
-                blue = night_light_.blue;
-                white = night_light_.white;
-                return;
-            }
-
-            // White light mode: temperature + brightness.
-            if (values.get_white() > 0.0f) {
-                auto temperature = values.get_color_temperature();
-                white_light_.set_color(temperature, values.get_brightness());
-                red = white_light_.red;
-                green = white_light_.green;
-                blue = white_light_.blue;
-                white = white_light_.white;
-                return;
-            }
-
-            // RGB color mode: red, green, blue + brightness.
-            rgb_light_.set_color(
-                values.get_red(), values.get_green(), values.get_blue(),
-                values.get_brightness());
-            red = rgb_light_.red;
-            green = rgb_light_.green;
-            blue = rgb_light_.blue;
-            white = rgb_light_.white;
-        }
-
-    protected:
-        ColorWhiteLight white_light_;
-        ColorRGBLight rgb_light_;
-        ColorNightLight night_light_;
     };
 
     /// This class is used to handle color transition requirements.
@@ -113,35 +54,43 @@ namespace bs2 {
     /// This class handles transitions by not varying the light properties
     /// over time, but by transitioning the LEDC duty cycle output levels
     /// over time. This matches the behavior of the original firmware.
-    class TransitionHandler {
+    class TransitionHandler : public GPIOOutputs {
     public:
         TransitionHandler(LightStateDataExposer *exposer) : exposer_(exposer) {}
 
-        bool handle() {
-            if (!do_handle_()) {
+        bool set_light_color_values(light::LightColorValues values) {
+            if (!has_active_transition_()) {
+                start_values = values;
                 active_ = false;
                 return false;
             }
 
             if (is_fresh_transition_()) {
-               auto start = exposer_->get_transformer_values();
-               auto end = exposer_->get_transformer_end_values();
-               active_ = true;
+                start_->set_light_color_values(start_values);
+                end_->set_light_color_values(exposer_->get_transformer_end_values());
+                active_ = true;
             }
+
+            auto progress = exposer_->get_transformer_progress();
+            red = esphome::lerp(progress, start_->red, end_->red);
+            green = esphome::lerp(progress, start_->green, end_->green);
+            blue = esphome::lerp(progress, start_->blue, end_->blue);
+            white = esphome::lerp(progress, start_->white, end_->white);
 
             return true;
         }
 
     protected:
-        LightStateDataExposer *exposer_;
         bool active_ = false;
-        DutyCycles start_;
-        DutyCycles end_;
+        LightStateDataExposer *exposer_;
+        light::LightColorValues start_values;
+        GPIOOutputs *start_ = new ColorTranslator();
+        GPIOOutputs *end_ = new ColorTranslator();
 
         /// Checks if this class will handle the light output logic.
         /// This is the case when a transformer is active and this
         /// transformer does implement a transitioning effect.
-        bool do_handle_() {
+        bool has_active_transition_() {
             if (!exposer_->has_active_transformer())
                 return false;
             if (!exposer_->transformer_is_transition())
@@ -154,11 +103,14 @@ namespace bs2 {
         /// be in progress or when a new end state is found during an
         /// ongoing transition.
         bool is_fresh_transition_() {
-            bool is_fresh = false;
             if (active_ == false) {
-                is_fresh = true;
+                return true;
             }
-            return is_fresh;
+            auto new_end_values = exposer_->get_transformer_end_values();
+            if (new_end_values != end_->values) {
+                return true;
+            }
+            return false;
         }
     };
 
@@ -216,7 +168,7 @@ namespace bs2 {
             return traits;
         }
 
-        /// Tranlates a requested light state into physicial GPIO outputs.
+        /// Applies a requested light state to the physicial GPIO outputs.
         void write_state(light::LightState *state)
         {
             auto values = state->current_values;
@@ -237,8 +189,14 @@ namespace bs2 {
                 return;
             }
 
-            if (transition_->handle()) {
-                ESP_LOGD(TAG, "HANDLE transition!");
+            if (transition_handler_->set_light_color_values(values)) {
+                master2_->turn_on();
+                master1_->turn_on();
+                red_->set_level(transition_handler_->red);
+                green_->set_level(transition_handler_->green);
+                blue_->set_level(transition_handler_->blue);
+                white_->set_level(transition_handler_->white);
+                return;
             }
 
 #ifdef TRANSITION_TO_OFF_BUGFIX
@@ -259,13 +217,13 @@ namespace bs2 {
             previous_state_ = values.get_state();
 #endif
 
-            duty_cycles_.set_light_color_values(values);
+            instant_handler_->set_light_color_values(values);
             master2_->turn_on();
             master1_->turn_on();
-            red_->set_level(duty_cycles_.red);
-            green_->set_level(duty_cycles_.green);
-            blue_->set_level(duty_cycles_.blue);
-            white_->set_level(duty_cycles_.white);
+            red_->set_level(instant_handler_->red);
+            green_->set_level(instant_handler_->green);
+            blue_->set_level(instant_handler_->blue);
+            white_->set_level(instant_handler_->white);
         }
 
     protected:
@@ -275,8 +233,8 @@ namespace bs2 {
         ledc::LEDCOutput *white_;
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
-        TransitionHandler *transition_;
-        ColorTranslator duty_cycles_; // TODO move to own class DefaultHandler
+        TransitionHandler *transition_handler_;
+        ColorTranslator *instant_handler_ = new ColorTranslator();
 #ifdef TRANSITION_TO_OFF_BUGFIX
         float previous_state_ = 1;
         float previous_brightness_ = -1;
@@ -287,7 +245,7 @@ namespace bs2 {
         /// Called by the YeelightBS2LightState class, to set the object that
         /// can be used to access protected data from the light state object.
         void set_light_state_data_exposer(LightStateDataExposer *exposer) {
-            transition_ = new TransitionHandler(exposer);
+            transition_handler_ = new TransitionHandler(exposer);
         }
     };
 

@@ -9,14 +9,13 @@ namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
-class ColorNightLight : public GPIOOutputs {
+class ColorOff : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
         values = v;
-        // Based on measurements using the original device firmware.
-        red   = 0.968f;
-        green = 0.968f;
-        blue  = 0.972f;
+        red   = 0.0f;
+        green = 0.0f;
+        blue  = 0.0f;
         white = 0.0f;
 
         return true;
