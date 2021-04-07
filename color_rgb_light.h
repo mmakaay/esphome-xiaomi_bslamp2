@@ -278,11 +278,10 @@ protected:
         // Almost there! We now have the correct duty cycles for the
         // two rings that we were looking at. In this last step, the
         // two values are interpolated based on the ring level.
-        // TODO use esphome::lerp ?
         auto d = level - level_a;
-        red = rgb_a_.red + d * (rgb_b_.red - rgb_a_.red);
-        green = rgb_a_.green + d * (rgb_b_.green - rgb_a_.green);
-        blue = rgb_a_.blue + d * (rgb_b_.blue - rgb_a_.blue);
+        red = esphome::lerp(d, rgb_a_.red, rgb_b_.red);
+        green = esphome::lerp(d, rgb_a_.green, rgb_b_.green);
+        blue = esphome::lerp(d, rgb_a_.blue, rgb_b_.blue);
 
         // The white output channel will always be 0 for RGB.
         white = 0.0f;
@@ -330,12 +329,12 @@ protected:
 
         // Interpolate based on the ring position.
         auto d = pos - pos_x;
-        p->low.red = x.low.red + d * (y.low.red - x.low.red);
-        p->low.green = x.low.green + d * (y.low.green - x.low.green);
-        p->low.blue = x.low.blue + d * (y.low.blue - x.low.blue);
-        p->high.red = x.high.red + d * (y.high.red - x.high.red);
-        p->high.green = x.high.green + d * (y.high.green - x.high.green);
-        p->high.blue = x.high.blue + d * (y.high.blue - x.high.blue);
+        p->low.red = esphome::lerp(d, x.low.red, y.low.red);
+        p->low.green = esphome::lerp(d, x.low.green, y.low.green);
+        p->low.blue = esphome::lerp(d, x.low.blue, y.low.blue);
+        p->high.red = esphome::lerp(d, x.high.red, y.high.red);
+        p->high.green = esphome::lerp(d, x.high.green, y.high.green);
+        p->high.blue = esphome::lerp(d, x.high.blue, y.high.blue);
 
         // Interpolate based on brightness level.
         apply_brightness_(p, brightness, rgb);
@@ -369,9 +368,9 @@ protected:
      */
     void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
         auto d = brightness - 0.01f;
-        rgb->red = p->low.red + d * (p->high.red - p->low.red);
-        rgb->green = p->low.green + d * (p->high.green - p->low.green);
-        rgb->blue = p->low.blue + d * (p->high.blue - p->low.blue);
+        rgb->red = esphome::lerp(d, p->low.red, p->high.red);
+        rgb->green = esphome::lerp(d, p->low.green, p->high.green);
+        rgb->blue = esphome::lerp(d, p->low.blue, p->high.blue);
     }
 };
 

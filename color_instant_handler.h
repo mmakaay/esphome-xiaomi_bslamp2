@@ -15,8 +15,9 @@ namespace yeelight {
 namespace bs2 {
 
 /**    
- * This class translates LightColorValues into GPIO duty cycles for
- * representing a requested light color.
+ * This class translates LightColorValues into GPIO duty cycles that
+ * can be used for representing a requested light color on the
+ * physical device.
  *
  * The code handles all known light modes for the device:
  *
