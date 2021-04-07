@@ -27,7 +27,7 @@ public:
     bool set_light_color_values(light::LightColorValues v) {
         values = v;
 
-        GPIOOutputs *delegate = nullptr;
+        GPIOOutputs *delegate;
         
         // Well, not much light here! Use the off "color".
         if (v.get_state() == 0.0f || v.get_brightness() == 0.0f) {

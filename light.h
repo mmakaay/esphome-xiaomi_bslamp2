@@ -1,21 +1,5 @@
 #pragma once 
 
-// What seems to be a bug in ESPHome transitioning: when turning on
-// the device, the brightness is scaled along with the state (which
-// runs from 0 to 1), but when turning off the device, the brightness
-// is kept the same while the state goes down from 1 to 0. As a result
-// when turning off the lamp with a transition time of 1s, the light
-// stays on for 1s and then turn itself off abruptly.
-//
-// Reported the issue + fix at:
-// https://github.com/esphome/esphome/pull/1643
-//
-// A work-around for this issue can be enabled using the following
-// define. Note that the code provides a forward-compatible fix, so
-// having this define active with a fixed ESPHome version should
-// not be a problem.
-#define TRANSITION_TO_OFF_BUGFIX
-
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
@@ -31,7 +15,6 @@ namespace bs2 {
     public:
         virtual bool has_active_transformer() = 0;
         virtual bool transformer_is_transition() = 0;
-        virtual light::LightColorValues get_transformer_values() = 0;
         virtual light::LightColorValues get_transformer_end_values() = 0;
         virtual float get_transformer_progress() = 0;
     };
@@ -182,48 +165,26 @@ namespace bs2 {
                 white_->set_level(0.0f);
                 master2_->turn_off();
                 master1_->turn_off();
-#ifdef TRANSITION_TO_OFF_BUGFIX
-                previous_state_ = -1;
-                previous_brightness_ = 0;
-#endif
                 return;
             }
 
+            GPIOOutputs *delegate;
             if (transition_handler_->set_light_color_values(values)) {
-                master2_->turn_on();
-                master1_->turn_on();
-                red_->set_level(transition_handler_->red);
-                green_->set_level(transition_handler_->green);
-                blue_->set_level(transition_handler_->blue);
-                white_->set_level(transition_handler_->white);
-                return;
+                transition_handler_->log("TRANSITION");
+                delegate = transition_handler_;
+            } else {
+                instant_handler_->set_light_color_values(values);
+                instant_handler_->log("INSTANT");
+                delegate = instant_handler_;
             }
 
-#ifdef TRANSITION_TO_OFF_BUGFIX
-            // Remember the brightness that is used when the light is fully ON.
-            auto brightness = values.get_brightness();
-            if (values.get_state() == 1) {
-                previous_brightness_ = brightness;
-            }
-            // When transitioning towards zero brightness ...
-            else if (values.get_state() < previous_state_) {
-                // ... check if the prevous brightness is the same as the current
-                // brightness. If yes, then the brightness isn't being scaled ...
-                if (previous_brightness_ == brightness) {
-                    // ... and we need to do that ourselves.
-                    brightness = values.get_state() * brightness;
-                }
-            }
-            previous_state_ = values.get_state();
-#endif
-
-            instant_handler_->set_light_color_values(values);
+            delegate->set_light_color_values(values);
             master2_->turn_on();
             master1_->turn_on();
-            red_->set_level(instant_handler_->red);
-            green_->set_level(instant_handler_->green);
-            blue_->set_level(instant_handler_->blue);
-            white_->set_level(instant_handler_->white);
+            red_->set_level(delegate->red);
+            green_->set_level(delegate->green);
+            blue_->set_level(delegate->blue);
+            white_->set_level(delegate->white);
         }
 
     protected:
@@ -233,12 +194,8 @@ namespace bs2 {
         ledc::LEDCOutput *white_;
         esphome::gpio::GPIOBinaryOutput *master1_;
         esphome::gpio::GPIOBinaryOutput *master2_;
-        TransitionHandler *transition_handler_;
-        ColorTranslator *instant_handler_ = new ColorTranslator();
-#ifdef TRANSITION_TO_OFF_BUGFIX
-        float previous_state_ = 1;
-        float previous_brightness_ = -1;
-#endif
+        GPIOOutputs *transition_handler_;
+        GPIOOutputs *instant_handler_ = new ColorTranslator();
 
         friend class YeelightBS2LightState;
 
@@ -262,10 +219,6 @@ namespace bs2 {
 
         bool transformer_is_transition() {
             return this->transformer_->is_transition();
-        }
-
-        light::LightColorValues get_transformer_values() {
-            return this->transformer_->get_values();
         }
 
         light::LightColorValues get_transformer_end_values() {

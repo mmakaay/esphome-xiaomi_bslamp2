@@ -13,9 +13,9 @@ class ColorOff : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
         values = v;
-        red   = 0.0f;
-        green = 0.0f;
-        blue  = 0.0f;
+        red   = 1.0f;
+        green = 1.0f;
+        blue  = 1.0f;
         white = 0.0f;
 
         return true;
