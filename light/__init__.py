@@ -7,8 +7,6 @@ from esphome.const import CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_OUTP
 CONF_MASTER1 = "master1"
 CONF_MASTER2 = "master2"
 
-CODEOWNERS = ["@mmakaay"]
-
 yeelight_ns = cg.esphome_ns.namespace("yeelight")
 bs2_ns = yeelight_ns.namespace("bs2")
 light_state = bs2_ns.class_("YeelightBS2LightState", cg.Nameable, cg.Component)
@@ -25,7 +23,7 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend({
     cv.Required(CONF_MASTER1): cv.use_id(gpio_output.GPIOBinaryOutput),
     cv.Required(CONF_MASTER2): cv.use_id(gpio_output.GPIOBinaryOutput),
 })
-import json;
+
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
     yield light.register_light(var, config)
