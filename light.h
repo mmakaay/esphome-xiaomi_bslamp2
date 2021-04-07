@@ -11,12 +11,12 @@ namespace bs2 {
     /// The transformer is protected in the light output class, making
     /// it impossible to access these properties directly from the
     /// light output class.
-    class LightStateDataExposer {
+    class LightStateTransformerInspector {
     public:
-        virtual bool has_active_transformer() = 0;
-        virtual bool transformer_is_transition() = 0;
-        virtual light::LightColorValues get_transformer_end_values() = 0;
-        virtual float get_transformer_progress() = 0;
+        virtual bool is_active() = 0;
+        virtual bool is_transition() = 0;
+        virtual light::LightColorValues get_end_values() = 0;
+        virtual float get_progress() = 0;
     };
 
     /// This class is used to handle color transition requirements.
@@ -39,24 +39,31 @@ namespace bs2 {
     /// over time. This matches the behavior of the original firmware.
     class TransitionHandler : public GPIOOutputs {
     public:
-        TransitionHandler(LightStateDataExposer *exposer) : exposer_(exposer) {}
+        TransitionHandler(LightStateTransformerInspector *inspector) : transformer_(inspector) {}
 
         bool set_light_color_values(light::LightColorValues values) {
-            if (!has_active_transition_()) {
+            if (!light_state_has_active_transition_()) {
+                // Remember the last active light color values. When a transition
+                // is detected, use these as the starting point. It is not possible
+                // to use the current values at that point, because the transition
+                // is already in progress by the time the transition is detected.
                 start_values = values;
+
                 active_ = false;
                 return false;
             }
 
-            // TODO use new starting point when interrupting a transition
-            // halfway by switching to a new color.
             if (is_fresh_transition_()) {
                 start_->set_light_color_values(start_values);
-                end_->set_light_color_values(exposer_->get_transformer_end_values());
+                end_->set_light_color_values(transformer_->get_end_values());
                 active_ = true;
             }
+            else if (is_modified_transition_()) {
+                this->copy_to(start_);
+                end_->set_light_color_values(transformer_->get_end_values());
+            }
 
-            auto progress = exposer_->get_transformer_progress();
+            auto progress = transformer_->get_progress();
             auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress);
             red = esphome::lerp(smoothed, start_->red, end_->red);
             green = esphome::lerp(smoothed, start_->green, end_->green);
@@ -68,35 +75,31 @@ namespace bs2 {
 
     protected:
         bool active_ = false;
-        LightStateDataExposer *exposer_;
+        LightStateTransformerInspector *transformer_;
         light::LightColorValues start_values;
         GPIOOutputs *start_ = new ColorTranslator();
         GPIOOutputs *end_ = new ColorTranslator();
 
-        /// Checks if this class will handle the light output logic.
-        /// This is the case when a transformer is active and this
-        /// transformer does implement a transitioning effect.
-        bool has_active_transition_() {
-            if (!exposer_->has_active_transformer())
+        /// Checks if the LightState object currently has an active LightTransformer.
+        bool light_state_has_active_transition_() {
+            if (!transformer_->is_active())
                 return false;
-            if (!exposer_->transformer_is_transition())
+            if (!transformer_->is_transition())
                 return false;
             return true;
         }
 
         /// Checks if a fresh transitioning is started.
-        /// A transitioning is fresh when either no transition is known to
-        /// be in progress or when a new end state is found during an
-        /// ongoing transition.
+        /// A transitioning is fresh when no existing transition is active.
         bool is_fresh_transition_() {
-            if (active_ == false) {
-                return true;
-            }
-            auto new_end_values = exposer_->get_transformer_end_values();
-            if (new_end_values != end_->values) {
-                return true;
-            }
-            return false;
+            return active_ == false;
+        }
+
+        /// Checks if a new end state is set, while an existing transition
+        /// is active.
+        bool is_modified_transition_() {
+            auto new_end_values = transformer_->get_end_values();
+            return new_end_values != end_->values;
         }
     };
 
@@ -159,9 +162,10 @@ namespace bs2 {
         {
             auto values = state->current_values;
 
-            // Power down the light when its state is 'off'.
+            // Turn off the light when its state is 'off'.
             if (values.get_state() == 0)
             {
+                ESP_LOGD(TAG, "Turn off the light");
                 red_->set_level(1.0f);
                 green_->set_level(1.0f);
                 blue_->set_level(1.0f);
@@ -204,31 +208,31 @@ namespace bs2 {
 
         /// Called by the YeelightBS2LightState class, to set the object that
         /// can be used to access protected data from the light state object.
-        void set_light_state_data_exposer(LightStateDataExposer *exposer) {
+        void set_transformer_inspector(LightStateTransformerInspector *exposer) {
             transition_handler_ = new TransitionHandler(exposer);
         }
     };
 
-    class YeelightBS2LightState : public light::LightState, public LightStateDataExposer
+    class YeelightBS2LightState : public light::LightState, public LightStateTransformerInspector
     {
     public:
         YeelightBS2LightState(const std::string &name, YeelightBS2LightOutput *output) : light::LightState(name, output) {
-            output->set_light_state_data_exposer(this);
+            output->set_transformer_inspector(this);
         }
 
-        bool has_active_transformer() {
+        bool is_active() {
             return this->transformer_ != nullptr;
         }
 
-        bool transformer_is_transition() {
+        bool is_transition() {
             return this->transformer_->is_transition();
         }
 
-        light::LightColorValues get_transformer_end_values() {
+        light::LightColorValues get_end_values() {
             return this->transformer_->get_end_values();
         }
 
-        float get_transformer_progress() {
+        float get_progress() {
             return this->transformer_->get_progress();
         }
     };
