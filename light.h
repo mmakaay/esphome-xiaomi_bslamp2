@@ -48,6 +48,8 @@ namespace bs2 {
                 return false;
             }
 
+            // TODO use new starting point when interrupting a transition
+            // halfway by switching to a new color.
             if (is_fresh_transition_()) {
                 start_->set_light_color_values(start_values);
                 end_->set_light_color_values(exposer_->get_transformer_end_values());
@@ -55,10 +57,11 @@ namespace bs2 {
             }
 
             auto progress = exposer_->get_transformer_progress();
-            red = esphome::lerp(progress, start_->red, end_->red);
-            green = esphome::lerp(progress, start_->green, end_->green);
-            blue = esphome::lerp(progress, start_->blue, end_->blue);
-            white = esphome::lerp(progress, start_->white, end_->white);
+            auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress);
+            red = esphome::lerp(smoothed, start_->red, end_->red);
+            green = esphome::lerp(smoothed, start_->green, end_->green);
+            blue = esphome::lerp(smoothed, start_->blue, end_->blue);
+            white = esphome::lerp(smoothed, start_->white, end_->white);
 
             return true;
         }
