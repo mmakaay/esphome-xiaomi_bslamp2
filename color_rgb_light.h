@@ -5,7 +5,6 @@
 #pragma once
 
 #include <array>
-#include <stdexcept>
 #include <cmath>
 
 #include "common.h"
@@ -248,6 +247,12 @@ static const RGBCircle rgb_circle_ {{
 class ColorRGBLight : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
+        // This class can handle the GPIO outputs for RGB light, based
+        // on RGB color values + brightness.
+        if (v.get_white() > 0.0f) {
+            return false;
+        }
+
         values = v;
 
         // Determine the ring level for the color. This is a value between

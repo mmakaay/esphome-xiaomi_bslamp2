@@ -29,33 +29,21 @@ public:
 
         GPIOOutputs *delegate;
         
-        // Well, not much light here! Use the off "color".
-        if (v.get_state() == 0.0f || v.get_brightness() == 0.0f) {
-            delegate = off_light_;
-        }
-        // At the lowest brightness setting, switch to night light mode.
-        // In the Yeelight integration in Home Assistant, this feature is
-        // exposed trough a separate switch. I have found that the switch
-        // is both confusing and made me run into issues when automating
-        // the lights.
-        // I don't simply check for a brightness at or below 0.01 (1%),
-        // because the lowest brightness setting from Home Assistant
-        // turns up as 0.011765 in here (which is 3/255).
-        else if (v.get_brightness() < 0.012f) {
-            delegate = night_light_;
-        }
-        // When white light is requested, then use the color temperature
-        // white light mode: temperature + brightness.
-        else if (v.get_white() > 0.0f) {
-            delegate = white_light_;
-        }
-        // Otherwise, use RGB color mode: red, green, blue + brightness.
-        else {
-            delegate = rgb_light_;
-        }
-
-        delegate->set_light_color_values(v);
-        delegate->copy_to(this);
+        // The actual implementation of the various light modes is in
+        // separated targeted classes. These classes are called here
+        // in a chain of command-like pattern, to let the first one
+        // that can handle the light settings do the honours.
+        if (off_light_->set_light_color_values(v))
+            off_light_->copy_to(this);
+        else if (night_light_->set_light_color_values(v))
+            night_light_->copy_to(this);
+        else if (white_light_->set_light_color_values(v))
+            white_light_->copy_to(this);
+        else if (rgb_light_->set_light_color_values(v))
+            rgb_light_->copy_to(this);
+        else 
+            throw std::logic_error(
+                "None of the GPIOOutputs classes handles the requested light state");
 
         return true;
     }

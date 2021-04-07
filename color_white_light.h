@@ -62,6 +62,12 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
 class ColorWhiteLight : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
+        // This class can handle the light settings when white light is
+        // requested, based on color temperature + brightness.
+        if (v.get_white() == 0.0f) {
+            return false;
+        }
+
         values = v;
 
         auto temperature = clamp_temperature_(v.get_color_temperature());

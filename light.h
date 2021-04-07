@@ -172,36 +172,41 @@ namespace bs2 {
         {
             auto values = state->current_values;
 
-            // Turn off the light when its state is 'off'.
-            if (values.get_state() == 0)
-            {
-                ESP_LOGD(TAG, "Turn off the light");
-                red_->set_level(1.0f);
-                green_->set_level(1.0f);
-                blue_->set_level(1.0f);
-                white_->set_level(0.0f);
-                master2_->turn_off();
-                master1_->turn_off();
-                return;
-            }
-
+            // The color must either be set instantly, or the color is
+            // transitioning to an end color. The transition handler
+            // will do its own inspection to see if a transition is
+            // currently active or not. Based on the outcome, use either
+            // the instant or transition handler.
             GPIOOutputs *delegate;
             if (transition_handler_->set_light_color_values(values)) {
-                transition_handler_->log("TRANSITION");
                 delegate = transition_handler_;
             } else {
                 instant_handler_->set_light_color_values(values);
-                instant_handler_->log("INSTANT");
                 delegate = instant_handler_;
             }
 
-            delegate->set_light_color_values(values);
-            master2_->turn_on();
-            master1_->turn_on();
+            // Note: one might think that it is more logical to turn on
+            // the LED circuitry master switch after setting the individual
+            // channels, but this is the order that was used by the original
+            // firmware. I tried to stay as close as possible to the original
+            // behavior, so that's why these GPIOs are turned on at this point.
+            if (values.get_state() != 0)
+            {
+                master2_->turn_on();
+                master1_->turn_on();
+            }
+
+            // Apply the current GPIO output levels from the selected handler.
             red_->set_level(delegate->red);
             green_->set_level(delegate->green);
             blue_->set_level(delegate->blue);
             white_->set_level(delegate->white);
+
+            if (values.get_state() == 0)
+            {
+                master2_->turn_off();
+                master1_->turn_off();
+            }
         }
 
     protected:
@@ -223,6 +228,8 @@ namespace bs2 {
         }
     };
 
+    /// This custom LightState class is used to provide access to the
+    /// protected LightTranformer information in the LightState class.
     class YeelightBS2LightState : public light::LightState, public LightStateTransformerInspector
     {
     public:
