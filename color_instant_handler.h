@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "common.h"
+#include "gpio_outputs.h"
 #include "color_off.h"
 #include "color_night_light.h"
 #include "color_white_light.h"
@@ -13,20 +14,20 @@ namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
-/// This class translates LightColorValues into GPIO duty cycles
-/// for representing a requested light color.
-///
-/// The code handles all known light modes for the device:
-///
-/// - off: the light is off
-/// - night light: activated when brightness is at its lowest
-/// - white light: based on color temperature + brightness
-/// - RGB light: based on RGB values + brightness
-class ColorTranslator : public GPIOOutputs {
-public:
+/**    
+ * This class translates LightColorValues into GPIO duty cycles for
+ * representing a requested light color.
+ *
+ * The code handles all known light modes for the device:
+ *
+ * - off: the light is off
+ * - night light: based on RGB or white mode + lowest possible brightness
+ * - white light: based on color temperature + brightness
+ * - RGB light: based on RGB values + brightness
+ */
+class ColorInstantHandler : public GPIOOutputs {
+protected:
     bool set_light_color_values(light::LightColorValues v) {
-        values = v;
-
         GPIOOutputs *delegate;
         
         // The actual implementation of the various light modes is in
@@ -48,7 +49,6 @@ public:
         return true;
     }
 
-protected:
     GPIOOutputs *off_light_ = new ColorOff();
     GPIOOutputs *rgb_light_ = new ColorRGBLight();
     GPIOOutputs *white_light_ = new ColorWhiteLight();

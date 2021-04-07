@@ -1,30 +1,31 @@
 #pragma once
 
 #include "common.h"
+#include "gpio_outputs.h"
 
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
+/**
+ * This class can handle the GPIO outputs for the night light mode.
+ *
+ * At the lowest brightness setting, the light will switch to night light
+ * mode. In the Yeelight integration in Home Assistant, this feature is
+ * exposed trough a separate switch. I have found that the switch is both
+ * confusing and made me run into issues when automating the lights.
+ * Using the lowest brightness for triggering the night light feels a lot
+ * more natural.
+ */
 class ColorNightLight : public GPIOOutputs {
-public:
+protected:
     bool set_light_color_values(light::LightColorValues v) {
-        // This class can handle the GPIO outputs for the night light mode.
-        //
-        // At the lowest brightness setting, switch to night light mode.  In
-        // the Yeelight integration in Home Assistant, this feature is
-        // exposed trough a separate switch. I have found that the switch is
-        // both confusing and made me run into issues when automating the
-        // lights.
-        //
-        // I don't simply check for a brightness at or below 0.01 (1%),
+        // Note: I do not check for a brightness at or below 0.01 (1%) here,
         // because the lowest brightness setting from Home Assistant turns
-        // up as 0.011765 in here (which is 3/255).
+        // up as 0.011765 in here (which is 3/255 and not 1/100).
         if (v.get_brightness() >= 0.012f) {
             return false;
         }
-
-        values = v;
 
         // This night light mode is activated when white light is selected.
         // Based on measurements using the original device firmware, so it

@@ -1,13 +1,10 @@
-/**
- * This code implements the RGB light mode (based on RGB + brightness)
- * for the Yeelight Bedside Lamp 2.
- */
 #pragma once
 
 #include <array>
 #include <cmath>
 
 #include "common.h"
+#include "gpio_outputs.h"
 
 namespace esphome {
 namespace yeelight {
@@ -29,28 +26,27 @@ using RGBRing = std::array<RGBPoint, 24>;
 using RGBCircle = std::array<RGBRing, 7>;
 
 /**
- * The following table contains GPIO PWM duty cycles as used for driving
- * the LEDs in the device in RGB mode.
+ * The following table contains GPIO PWM duty cycles as used for driving the
+ * LEDs in the device in RGB mode.
  *
  * The base for this table are measurements against the original device
  * firmware, using the RGB color circle as used in Home Assistant as the
  * color space model.
  *
- * This circle has 7 colored rings around a white center point.
- * The outer ring, with the highest saturation, is numbered as 0.
- * The inner ring around the white center point is numbered as 6.
- * The white center point itself is numbered as 7, although this one
- * cannot really be called "a ring".
+ * This circle has 7 colored rings around a white center point. The outer
+ * ring, with the highest saturation, is numbered as 0. The inner ring
+ * around the white center point is numbered as 6. The white center point
+ * itself is numbered as 7, although this one cannot really be called "a
+ * ring".
  *
- * For each ring, there are 24 color positions, starting at the
- * color red (0°), going around the circle clockwise via
- * green (120°) and blue (240°).
+ * For each ring, there are 24 color positions, starting at the color red
+ * (0°), going around the circle clockwise via green (120°) and blue (240°).
  *
  * For each color position, two duty cycle measurements are registered:
  * - one defining the duty cycles at 1% brightness
- * - one defining the duty cycles at 100% brightness
- * Duty cycles for in-between brightnesses can be derived from these
- * values by means of linear interpolation.
+ * - one defining the duty cycles at 100% brightness Duty cycles for
+ *   in-between brightnesses can be derived from these values by means of
+ *   linear interpolation.
  */
 static const RGBCircle rgb_circle_ {{
     // Ring 0, min value RGB component value = 0
@@ -244,19 +240,19 @@ static const RGBCircle rgb_circle_ {{
     }}
 }};
 
+/**
+ * This class can handle the GPIO outputs for the RGB light mode,
+ * based on RGB color values + brightness.
+ */
 class ColorRGBLight : public GPIOOutputs {
-public:
+protected:
     bool set_light_color_values(light::LightColorValues v) {
-        // This class can handle the GPIO outputs for RGB light, based
-        // on RGB color values + brightness.
         if (v.get_white() > 0.0f) {
             return false;
         }
 
-        values = v;
-
-        // Determine the ring level for the color. This is a value between
-        // 0 and 7, determining in what ring of the RGB circle the requested
+        // Determine the ring level for the color. This is a value between 0
+        // and 7, determining in what ring of the RGB circle the requested
         // color resides.
         auto rgb_min = min(min(v.get_red(), v.get_green()), v.get_blue());
         auto level = 7.0f * rgb_min;
@@ -282,6 +278,7 @@ public:
         // Almost there! We now have the correct duty cycles for the
         // two rings that we were looking at. In this last step, the
         // two values are interpolated based on the ring level.
+        // TODO use esphome::lerp ?
         auto d = level - level_a;
         red = rgb_a_.red + d * (rgb_b_.red - rgb_a_.red);
         green = rgb_a_.green + d * (rgb_b_.green - rgb_a_.green);
@@ -293,7 +290,6 @@ public:
         return true;
     }
 
-protected:
     RGBPoint rgbp_a_;
     RGBPoint rgbp_b_;
     RGB rgb_a_;
@@ -311,8 +307,8 @@ protected:
             return;
         }
 
-        // Other ring levels are more complex. Start by retrieving the
-        // duty cycle measurement data for the ring at hand.
+        // Other ring levels are more complex. Start by retrieving the duty
+        // cycle measurement data for the ring at hand.
         auto ring = rgb_circle_[ring_level];
 
         // Because we only have a subset of all colors in the RGB ring
@@ -367,10 +363,9 @@ protected:
     }
 
     /**
-     * Apply brightness interpolation to the duty cycle measurements.
-     * We have the low (0.01) and high (1.00) brightness measurements
-     * in the data. Brightness can be applied by means of linear
-     * interpolation.
+     * Apply brightness interpolation to the duty cycle measurements. We
+     * have the low (0.01) and high (1.00) brightness measurements in the
+     * data. Brightness can be applied by means of linear interpolation.
      */
     void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
         auto d = brightness - 0.01f;

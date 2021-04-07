@@ -1,17 +1,26 @@
-/**
- * This code implements the white light mode (based on temperature +
- * brightness) for the Yeelight Bedside Lamp 2.
- */
 #pragma once
 
 #include <array>
 #include <stdexcept>
 
 #include "common.h"
+#include "gpio_outputs.h"
 
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
+
+/**
+ * The minimum color temperature in mired. Same as supported by
+ * the original Yeelight firmware.
+ */
+static const int MIRED_MIN = 153;
+
+/**
+ * The maximum color temperature in mired. Same as supported by
+ * the original Yeelight firmware.
+ */
+static const int MIRED_MAX = 588;
 
 struct RGBWLevelsByTemperature {
     float from_temperature;
@@ -59,16 +68,16 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
     { 153.0f, 1.000f, 0.000f, 0.187f, 0.335f }
 }};
 
+/**
+ * This class can handle the GPIO outputs for the white light mode,
+ * based on color temperature + brightness.
+ */
 class ColorWhiteLight : public GPIOOutputs {
-public:
+protected:
     bool set_light_color_values(light::LightColorValues v) {
-        // This class can handle the light settings when white light is
-        // requested, based on color temperature + brightness.
         if (v.get_white() == 0.0f) {
             return false;
         }
-
-        values = v;
 
         auto temperature = clamp_temperature_(v.get_color_temperature());
         auto brightness = clamp_brightness_(v.get_brightness());
@@ -76,15 +85,14 @@ public:
         auto levels_1 = lookup_in_table_(rgbw_levels_1_, temperature);
         auto levels_100 = lookup_in_table_(rgbw_levels_100_, temperature);
 
-        red = interpolate_(levels_1.red, levels_100.red, brightness);
-        green = interpolate_(levels_1.green, levels_100.green, brightness);
-        blue = interpolate_(levels_1.blue, levels_100.blue, brightness);
-        white = interpolate_(levels_1.white, levels_100.white, brightness);
+        red = esphome::lerp(brightness, levels_1.red, levels_100.red);
+        green = esphome::lerp(brightness, levels_1.green, levels_100.green);
+        blue = esphome::lerp(brightness, levels_1.blue, levels_100.blue);
+        white = esphome::lerp(brightness, levels_1.white, levels_100.white);
 
         return true;
     }
 
-protected:
     float clamp_temperature_(float temperature)
     {
         if (temperature > MIRED_MAX)
@@ -109,14 +117,6 @@ protected:
             if (temperature >= item.from_temperature) 
                 return item;
         throw std::invalid_argument("received too low temperature");
-    }
-
-    // TODO Use esphome::lerp?
-    float interpolate_(float level_1, float level_100, float brightness)
-    {
-        auto coefficient = (level_100 - level_1) / 0.99f;
-        auto level = level_1 + (brightness - 0.01f) * coefficient;
-        return level;
     }
 };
 

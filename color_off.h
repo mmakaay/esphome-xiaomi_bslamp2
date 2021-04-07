@@ -4,21 +4,21 @@
 #include <stdexcept>
 
 #include "common.h"
+#include "gpio_outputs.h"
 
 namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
+/**
+ * This class can handle the GPIO outputs in case the light of turned off.
+ */
 class ColorOff : public GPIOOutputs {
-public:
+protected:
     bool set_light_color_values(light::LightColorValues v) {
-        // This class can handle the light settings when the light is turned
-        // off or the brightness is set to zero.
         if (v.get_state() != 0.0f && v.get_brightness() != 0.0f) {
             return false;
         }
-
-        values = v;
 
         red   = 1.0f;
         green = 1.0f;
