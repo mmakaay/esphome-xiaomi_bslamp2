@@ -37,7 +37,7 @@ connect the wires of a device. Therefore, I find it most useful to take some
 dupont wires with a female end to them, and cut off the other end. Strip the
 wire on the other and, and then it can be used to solder it to the board.
 
-Solder the wires to the RX, TX and GND debug pads that are shown in this
+Solder the wires to the RX, TX, GND and GPIO0 debug pads that are shown in this
 photo. It is not required to solder a wire to the 3.3V debug pad. This pad
 is not directly connected to the 3.3V Vin of the ESP32 chip, making it a
 less than optimal candidate for powering the board during flashing. Instead,
