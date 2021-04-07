@@ -53,18 +53,24 @@ namespace bs2 {
                 return false;
             }
 
+            // When a fresh transition is started, then compute the GPIO outputs
+            // to use for both the start and end point. This transition handler
+            // will then transition linearly between these two.
             if (is_fresh_transition_()) {
                 start_->set_light_color_values(start_values);
                 end_->set_light_color_values(transformer_->get_end_values());
                 active_ = true;
             }
+            // When a transition is modified, then use the current GPIO outputs
+            // as the new starting point.
             else if (is_modified_transition_()) {
                 this->copy_to(start_);
                 end_->set_light_color_values(transformer_->get_end_values());
             }
 
-            auto progress = transformer_->get_progress();
-            auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress);
+            // Determine the required GPIO outputs for the current transition progress.
+            progress_ = transformer_->get_progress();
+            auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress_);
             red = esphome::lerp(smoothed, start_->red, end_->red);
             green = esphome::lerp(smoothed, start_->green, end_->green);
             blue = esphome::lerp(smoothed, start_->blue, end_->blue);
@@ -75,6 +81,7 @@ namespace bs2 {
 
     protected:
         bool active_ = false;
+        float progress_ = 0.0f;
         LightStateTransformerInspector *transformer_;
         light::LightColorValues start_values;
         GPIOOutputs *start_ = new ColorTranslator();
@@ -96,10 +103,13 @@ namespace bs2 {
         }
 
         /// Checks if a new end state is set, while an existing transition
-        /// is active.
+        /// is active. This might be detected in two ways:
+        /// - the end color has been updated
+        /// - the progress has been reverted
         bool is_modified_transition_() {
             auto new_end_values = transformer_->get_end_values();
-            return new_end_values != end_->values;
+            auto new_progress = transformer_->get_progress();
+            return new_end_values != end_->values || new_progress < progress_;
         }
     };
 
