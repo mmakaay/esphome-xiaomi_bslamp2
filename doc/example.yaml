@@ -1,7 +1,7 @@
 substitutions:
   name: bedside_lamp
   friendly_name: Bedside Lamp
-  transition_length: 750ms
+  transition_length: 1s
 
 # Use your own preferences for these components.
 
@@ -42,6 +42,7 @@ light:
     master1: master1
     master2: master2
     default_transition_length: ${transition_length}
+    # You can use any effects that you like. These are just examples.
     effects:
       - random:
           name: "Slow Random"
@@ -50,7 +51,7 @@ light:
       - random:
           name: "Fast Random"
           transition_length: 3s
-          update_interval: 4s
+          update_interval: 3s
 
 # The device uses two I2C busses.
 i2c:

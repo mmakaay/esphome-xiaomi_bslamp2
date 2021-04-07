@@ -6,20 +6,18 @@ This code is not yet production-ready. Most of the work goes into reverse
 engineering the original firmware and coming up with ways to re-implement
 a device firmware based on ESPHome.
 
-The main focus for now lies on driving the LED circuitry, to make sure that
-the light quality meets that of the original firmware. While I thought this
-would be the easy part, it turned out to be quite a beast, since driving the
-LEDs is quite different from a regular RGBWW-style light.
+Till now, the main focus was driving the LED circuitry, to make sure that the
+light quality meets that of the original firmware. This was a hard nut to
+crack, but I am happy to announce that this code has been completed.
+Therefore I will now continue on implementing the front panel buttons.
 
-The light functionality is getting close to completion. After this, I will
-work on implementing the front panel buttons. The hard work for this was
-already done: reverse engineering the protocol that is used to talk to the
-main board. Therefore, finishing up the firmware should not take much time
-once I get to this point.
+The hard work for this was already done: reverse engineering the protocol
+that is used to talk to the main board. Therefore, finishing up the
+firmware should not take much time from here on.
 
-With those two out of the way, we can move towards a stable release of the
+Once the front panel is working, we can move towards a stable release of the
 firmware. I have some more ideas to work on, but those can and will be
-extensions to the stable release code.
+extensions to a finalized first stable release.
 
 
 ## Is it safe to install this firmware on my device?
@@ -41,9 +39,9 @@ for production purposes.
 
 ## Installation
 
-Create a folder named `custom_components` in the folder where your
-device's yaml configuration file is stored. Then clone the the Github
-repo into a subfolder `yeelight_bs2`. For example on the command line:
+Create a folder named `custom_components` in the folder where your device's
+yaml configuration file is stored. Then clone the the Github repo into a
+subfolder `yeelight_bs2`. For example on the command line:
 
 ```
 # mkdir custom_components
@@ -63,9 +61,11 @@ config
 ```
 
 Then add the required configuration to your device's yaml configuration file.
-For an example file, take a look at `doc/example.yaml` in this repository.
+For an example file, take a look at [doc/example.yaml](doc/example.yaml) in
+this repository.
 
-On a Rapsbery Pi with HomeAssistant and ESPHome as a plugin, the directory should be:
+On a Rapsbery Pi with HomeAssistant and ESPHome as a plugin, the directory
+should be:
 
 
 /config/esphome/custom_components/yeelight_bs2/
@@ -81,7 +81,9 @@ config
 .   .   .    .
 ```
 
-See [doc/FLASHING.md](doc/FLASHING.md) for hints for opening and flashing the light.
+See [doc/FLASHING.md](doc/FLASHING.md) for hints for opening up the device and
+flashing its firmware.
+
 
 ## Issue: the device keeps losing its connection to Home Assistant
 
