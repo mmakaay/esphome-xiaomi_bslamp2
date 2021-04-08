@@ -59,6 +59,10 @@ public:
         return traits;
     }
 
+    void add_on_state_callback(std::function<void(light::LightColorValues)> &&callback) {
+          this->state_callback_.add(std::move(callback));
+    }
+
     /**
      * Applies a requested light state to the physicial GPIO outputs.
      */
@@ -100,6 +104,8 @@ public:
             master2_->turn_off();
             master1_->turn_off();
         }
+
+        this->state_callback_.call(values);
     }
 
 protected:
@@ -111,6 +117,7 @@ protected:
     esphome::gpio::GPIOBinaryOutput *master2_;
     GPIOOutputs *transition_handler_;
     GPIOOutputs *instant_handler_ = new ColorInstantHandler();
+    CallbackManager<void(light::LightColorValues)> state_callback_{};
 
     friend class YeelightBS2LightState;
 
