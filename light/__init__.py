@@ -11,7 +11,7 @@ CONF_ON_BRIGHTNESS = "on_brightness"
 
 yeelight_ns = cg.esphome_ns.namespace("yeelight")
 bs2_ns = yeelight_ns.namespace("bs2")
-light_state = bs2_ns.class_("YeelightBS2LightState", cg.Nameable, cg.Component)
+light_state = bs2_ns.class_("YeelightBS2LightState", light.LightState)
 light_output = bs2_ns.class_("YeelightBS2LightOutput", light.LightOutput)
 
 BrightnessTrigger = bs2_ns.class_("BrightnessTrigger", automation.Trigger.template())
