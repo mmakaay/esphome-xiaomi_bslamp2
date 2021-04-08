@@ -86,11 +86,21 @@ to find another way to attach GPIO0 to ground. Some options:
   power supply. After booting, the wire can be removed. This is very fiddly
   way of doing it, but I did it a few times and it can be done.
 
+- You could opt for temporarily soldering a lead between GND and GPIO0 on
+  the board, making GPIO0 pulled to ground permanently. It is a bit less
+  flexible than some other options, but if you only need to do the initial
+  backup and firmware flash of the device, then this can bee all that you 
+  need. Remove the lead after flashing is done, otherwise the device won't
+  boot in normal mode.
+
 ## Download and install esptool
 
 See: https://github.com/espressif/esptool/blob/master/README.md#installation--dependencies
 
 ## Make a backup of the current firmware
+
+Here's an example on how to backup the original firmware from Linux. First,
+unplug your device's power supply, then start the esptool read_flash command:
 
 ```
 python esptool.py -p /dev/ttyUSB0 read_flash 0x0 0x400000 original-yeelight-firmware.bin
@@ -100,30 +110,60 @@ python esptool.py -p /dev/ttyUSB0 read_flash 0x0 0x400000 original-yeelight-firm
 is used by the adapter by running `dmesg` after plugging in the USB device.
 On Windows this is often `COM1`, `COM2` or `COM3`.
 
-**Caution**: You will find the WLAN SSID and Password of the latest used WiFi in
-this file.
+Now plug in the power supply. The output of esptool should now show that it
+connects to the device and downloads the firmware from it.
 
-**After each step with esptool, you have to unplug you power line and connect it again.**
+**Caution**: You will find the WLAN SSID and Password of the latest used WiFi in
+this file. Therefore, keep this backup in a safe place.
+
+## Restore the backed up firmware
+
+In case you need to rollback to the device's original firmware at some point,
+here's an example of how to restore the original firmware from Windows, by fully
+flashing it back onto the device.
+
+First, unplug your device's power supply, then start the esptool write_flash command:
+
+```
+python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x00 original-yeelight-firmware.bin
+```
+Make sure that GPIO0 is connected to GND and plug in the power supply.
+The output of esptool should now show that it connects to the device and uploads
+the firmware to it. Be patient after the upload reaches 100%. The output is
+silent for a while, but esptool tool is verifying if the firmware was uploaded
+correctly.
+
+After the firmware was uploaded, unplug the power, disconnect GPIO0 from GND and
+reconnect the power to boot into the restored firmware.
 
 ## Flash new firmware
 
 Setup an ESPHome Project, see [README.md](../README.md)
+Compile the firmware for the device and download the `firmware.bin` file
+to the device to which the serial adapter is connected.
 
 You can flash the device using esphome or esptool.
 I normally use the [esphome-flasher](https://github.com/esphome/esphome-flasher) 
-tool, which is an easy to use utility app for flashing ESPHome devices.  
+tool, which is a very easy to use GUI utility app for flashing ESPHome devices:
 
-If you want to flash with esptool, compile with esphome and download the
-generated firmware.
+- In the app, select the COM port of your serial adapter
+- Also select the firmware.bin file to flash onto the device
+- Power up the device with GPIO0 connected to GND
+- Click the "Flash ESP" button to flash the firmware.
+
+If you want to flash with esptool, you can use:
 
 ```
-python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x1000 <yourfile.bin>
+python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x1000 <path\to\yourfirmware.bin>
 ```
 
-Once your firmware has been flashed, unplug the power and the serial USB Adapter.
-Then plug the power back in to boot the device using its new firmware.
-From here on, it is possible to flash the device OTA via ESPHOME. Tuck
-away those soldered wires in the bottom and add the bottom cover back on.
+After flashing, power down the device, disconnect GPIO0 from GND and reconnect
+the power to boot into the ESPHome firmware.
+
+From here on, it is possible to flash the device OTA (over the air, which
+means that the firmware is uploaded over WiFi) from ESPHome. Therefore, it
+is now time to tuck away or remove those soldered wires and add the bottom
+cover back on.
 
 ## Troubleshooting flash
 
@@ -143,7 +183,7 @@ python esptool.py --chip esp32  -p /dev/ttyUSB0 --baud 115200 --before default_r
 You will find the missing tasmota boot files here:
 https://github.com/arendst/Tasmota/tree/firmware/firmware/tasmota32/ESP32_needed_files
 
-User @tabacha was not able to use tasmota with the bedside lamp 2.
+*Note: user @tabacha was not able to use tasmota with the bedside lamp 2.*
 
 (remember that the [esphome-flasher](https://github.com/esphome/esphome-flasher)
 will give you a bit less of a hard-core experience during flashing)
