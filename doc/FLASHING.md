@@ -43,7 +43,7 @@ is not directly connected to the 3.3V Vin of the ESP32 chip, making it a
 less than optimal candidate for powering the board during flashing. Instead,
 powering the lamp using its own power supply works best.
 
-![Soldering points of a yeelight](https://community-assets.home-assistant.io/optimized/3X/1/3/1340a2367e5894281ac6d042f328d9db80ae7da4_2_790x750.jpeg)
+![Soldering points of a yeelight](Soldering_points.jpeg)
 
 You can use some sticky tape to fixate the cables before soldering.
 
@@ -70,7 +70,7 @@ to find another way to attach GPIO0 to ground. Some options:
 
 - Use a breadbord, so you can connect the USB Adapter GND pin to a row on
   the bread bord, and connect the GND and GPIO0 wires of the board to that
-  same row. 
+  same row.
 
 - Solder a button on the board that connects GPIO0 to GND when pressed. Then
   you can hold down this button while plugging in the device's power supply.
@@ -89,7 +89,7 @@ to find another way to attach GPIO0 to ground. Some options:
 - You could opt for temporarily soldering a lead between GND and GPIO0 on
   the board, making GPIO0 pulled to ground permanently. It is a bit less
   flexible than some other options, but if you only need to do the initial
-  backup and firmware flash of the device, then this can bee all that you 
+  backup and firmware flash of the device, then this can bee all that you
   need. Remove the lead after flashing is done, otherwise the device won't
   boot in normal mode.
 
@@ -143,7 +143,7 @@ Compile the firmware for the device and download the `firmware.bin` file
 to the device to which the serial adapter is connected.
 
 You can flash the device using esphome or esptool.
-I normally use the [esphome-flasher](https://github.com/esphome/esphome-flasher) 
+I normally use the [esphome-flasher](https://github.com/esphome/esphome-flasher)
 tool, which is a very easy to use GUI utility app for flashing ESPHome devices:
 
 - In the app, select the COM port of your serial adapter
