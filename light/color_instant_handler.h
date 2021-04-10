@@ -3,7 +3,7 @@
 #include <array>
 #include <stdexcept>
 
-#include "common.h"
+#include "../common.h"
 #include "gpio_outputs.h"
 #include "color_off.h"
 #include "color_night_light.h"

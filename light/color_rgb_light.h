@@ -3,7 +3,7 @@
 #include <array>
 #include <cmath>
 
-#include "common.h"
+#include "../common.h"
 #include "gpio_outputs.h"
 
 namespace esphome {

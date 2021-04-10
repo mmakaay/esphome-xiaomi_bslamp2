@@ -1,8 +1,10 @@
 #pragma once 
 
-#include "common.h"
+#include "../common.h"
+#include "../yeelight_bs2_hub.h"
 #include "color_instant_handler.h"
 #include "color_transition_handler.h"
+#include "esphome/components/ledc/ledc_output.h"
 
 namespace esphome {
 namespace yeelight {
@@ -18,17 +20,8 @@ namespace bs2 {
  */
 class YeelightBS2LightOutput : public Component, public light::LightOutput {
 public:
-    /** Sets the LEDC output for the red LED circuitry channel. */
-    void set_red_output(ledc::LEDCOutput *red) { red_ = red; }
-
-    /** Sets the LEDC output for the green LED circuitry channel. */
-    void set_green_output(ledc::LEDCOutput *green) { green_ = green; }
-
-    /** Sets the LEDC output for the blue LED circuitry channel. */
-    void set_blue_output(ledc::LEDCOutput *blue) { blue_ = blue; }
-
-    /** Sets the LEDC output for the white LED circuitry channel. */
-    void set_white_output(ledc::LEDCOutput *white) { white_ = white; }
+    /** Sets the Yeelight BS2 hub component. */ 
+    void set_hub(YeelightBS2Hub *hub) { hub_ = hub; }
 
     /**
      * Sets the first GPIO binary output, used as internal master switch for
@@ -94,10 +87,10 @@ public:
         }
 
         // Apply the current GPIO output levels from the selected handler.
-        red_->set_level(delegate->red);
-        green_->set_level(delegate->green);
-        blue_->set_level(delegate->blue);
-        white_->set_level(delegate->white);
+        hub_->red->set_level(delegate->red);
+        hub_->green->set_level(delegate->green);
+        hub_->blue->set_level(delegate->blue);
+        hub_->white->set_level(delegate->white);
 
         if (values.get_state() == 0)
         {
@@ -109,10 +102,7 @@ public:
     }
 
 protected:
-    ledc::LEDCOutput *red_;
-    ledc::LEDCOutput *green_;
-    ledc::LEDCOutput *blue_;
-    ledc::LEDCOutput *white_;
+    YeelightBS2Hub *hub_;
     esphome::gpio::GPIOBinaryOutput *master1_;
     esphome::gpio::GPIOBinaryOutput *master2_;
     GPIOOutputs *transition_handler_;

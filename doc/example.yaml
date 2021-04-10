@@ -35,10 +35,6 @@ esphome:
 light:
   - platform: yeelight_bs2
     name: ${friendly_name} RGBW Light
-    red: led_red
-    green: led_green
-    blue: led_blue
-    white: led_white
     master1: master1
     master2: master2
     default_transition_length: ${transition_length}
@@ -73,39 +69,10 @@ i2c:
     scl: GPIO19
     scan: True
 
-# The device uses six GPIO pins for driving the LED circuitry.
 output:
-    # master1 + master2 are used for turning on and off the
-    # LED circuitry in the lamp. So these are light the
-    # internal light switch.
   - platform: gpio
     id: master1
     pin: GPIO33
   - platform: gpio
     id: master2
     pin: GPIO4
-    # The following ledc outputs are used to drive the color of the light
-    # in two different modes: white light mode (using color temperature
-    # to set the type of white light) and RGB light (using an RGB mix).
-    # Note: it is important to include the channels and frequencies as-is.
-  - platform: ledc
-    id: led_red
-    pin: GPIO13
-    channel: 0
-    frequency: 3kHz
-  - platform: ledc
-    id: led_green
-    pin: GPIO14
-    channel: 1
-    frequency: 3kHz
-  - platform: ledc
-    id: led_blue
-    pin: GPIO5
-    channel: 2
-    frequency: 3kHz
-  - platform: ledc
-    id: led_white
-    pin: GPIO12
-    channel: 4
-    frequency: 10kHz
-

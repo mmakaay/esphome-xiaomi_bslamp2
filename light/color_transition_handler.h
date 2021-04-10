@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "../common.h"
 #include "gpio_outputs.h"
 #include "color_instant_handler.h"
 
