@@ -35,7 +35,7 @@ def to_code(config):
     yield light.register_light(var, config)
 
     hub_var = yield cg.get_variable(config[CONF_HUB_ID])
-    cg.add(var.set_hub(hub_var))
+    cg.add(var.set_hal(hub_var))
 
     for conf in config.get(CONF_ON_BRIGHTNESS, []):
         trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)

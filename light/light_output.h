@@ -20,8 +20,7 @@ namespace bs2 {
  */
 class YeelightBS2LightOutput : public Component, public light::LightOutput {
 public:
-    /** Sets the Yeelight BS2 hub component. */ 
-    void set_hub(YeelightBS2Hub *hub) { hub_ = hub; }
+    void set_hal(LightHAL *hal) { hal_ = hal; }
 
     /**
      * Returns a LightTraits object, which is used to explain to the outside
@@ -69,28 +68,24 @@ public:
         // tried to stay as close as possible to the original behavior, so
         // that's why these GPIOs are turned on at this point.
         if (values.get_state() != 0)
-        {
-            hub_->master2->turn_on();
-            hub_->master1->turn_on();
-        }
+            hal_->light_turn_on();
 
         // Apply the current GPIO output levels from the selected handler.
-        hub_->red->set_level(delegate->red);
-        hub_->green->set_level(delegate->green);
-        hub_->blue->set_level(delegate->blue);
-        hub_->white->set_level(delegate->white);
+        hal_->light_set_rgbw(
+            delegate->red,
+            delegate->green,
+            delegate->blue,
+            delegate->white
+        );
 
         if (values.get_state() == 0)
-        {
-            hub_->master2->turn_off();
-            hub_->master1->turn_off();
-        }
+            hal_->light_turn_off();
 
         this->state_callback_.call(values);
     }
 
 protected:
-    YeelightBS2Hub *hub_;
+    LightHAL *hal_;
     GPIOOutputs *transition_handler_;
     GPIOOutputs *instant_handler_ = new ColorInstantHandler();
     CallbackManager<void(light::LightColorValues)> state_callback_{};

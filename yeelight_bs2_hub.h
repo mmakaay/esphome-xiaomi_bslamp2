@@ -29,23 +29,22 @@ void ICACHE_RAM_ATTR HOT TriggerPinStore::isr(TriggerPinStore *store) {
     store->queue_length++;
 }
 
-class YeelightBS2Hub : public Component {
+class LightHAL {
 public:
-    // Pins that are used for the RGBWW light.
-    ledc::LEDCOutput *red;
-    ledc::LEDCOutput *green;
-    ledc::LEDCOutput *blue;
-    ledc::LEDCOutput *white;
-    gpio::GPIOBinaryOutput *master1;
-    gpio::GPIOBinaryOutput *master2;
+    virtual void light_turn_on() = 0;
+    virtual void light_turn_off() = 0;
+    virtual void light_set_rgbw(float r, float g, float b, float w) = 0;
+};
 
+class YeelightBS2Hub : public Component, public LightHAL {
+public:
     void set_trigger_pin(GPIOPin *pin) { i2c_trigger_pin_ = pin; }
-    void set_red_pin(ledc::LEDCOutput *pin) { red = pin; }
-    void set_green_pin(ledc::LEDCOutput *pin) { green = pin; }
-    void set_blue_pin(ledc::LEDCOutput *pin) { blue = pin; }
-    void set_white_pin(ledc::LEDCOutput *pin) { white = pin; }
-    void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1 = pin; }
-    void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2 = pin; }
+    void set_red_pin(ledc::LEDCOutput *pin) { red_ = pin; }
+    void set_green_pin(ledc::LEDCOutput *pin) { green_ = pin; }
+    void set_blue_pin(ledc::LEDCOutput *pin) { blue_ = pin; }
+    void set_white_pin(ledc::LEDCOutput *pin) { white_ = pin; }
+    void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1_ = pin; }
+    void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2_ = pin; }
     void set_front_panel_i2c(i2c::I2CComponent *fp_i2c) { fp_i2c_ = fp_i2c; }
 
     void setup() {
@@ -69,7 +68,32 @@ public:
         }
     }
 
+    void light_turn_on() {
+        master1_->turn_on();
+        master2_->turn_on();
+    }
+
+    void light_turn_off() {
+        master1_->turn_off();
+        master2_->turn_off();
+    }
+
+    void light_set_rgbw(float r, float g, float b, float w) {
+        red_->set_level(r);
+        green_->set_level(g);
+        blue_->set_level(b);
+        white_->set_level(w);
+    }
+
 protected:
+    // Pins that are used for the RGBWW LEDs.
+    ledc::LEDCOutput *red_;
+    ledc::LEDCOutput *green_;
+    ledc::LEDCOutput *blue_;
+    ledc::LEDCOutput *white_;
+    gpio::GPIOBinaryOutput *master1_;
+    gpio::GPIOBinaryOutput *master2_;
+
     // Pin that is used by the front panel to notify the ESP that
     // a touch/release event can be read using I2C.
     GPIOPin *i2c_trigger_pin_;
@@ -80,8 +104,10 @@ protected:
     // Fields that are used for trigger pin interrupt handling.
     int counter_ = 0;
     TriggerPinStore trigger_pin_store_{};
+
+    friend class LightHAL;
 };
-    
+
 } // namespace bs2
 } // namespace yeelight
 } // namespace esphome
