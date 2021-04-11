@@ -3,6 +3,7 @@ import esphome.config_validation as cv
 from esphome import pins
 from esphome.components.ledc.output import LEDCOutput, validate_frequency
 from esphome.components.gpio.output import GPIOBinaryOutput
+from esphome.components.i2c import I2CComponent
 from esphome.core import coroutine
 from esphome.core import CORE
 from esphome.const import (
@@ -12,6 +13,8 @@ from esphome.const import (
     CONF_BLUE,
     CONF_WHITE,
     CONF_TRIGGER_PIN,
+    CONF_SDA,
+    CONF_SCL,
     CONF_OUTPUT_ID,
     CONF_TRIGGER_ID,
     CONF_PIN,
@@ -29,15 +32,12 @@ CONF_MASTER1 = "master1"
 CONF_MASTER1_ID = "master1_id"
 CONF_MASTER2 = "master2"
 CONF_MASTER2_ID = "master2_id"
+CONF_FP_I2C_ID = "front_panel_i2c_id"
 CONF_ON_BRIGHTNESS = "on_brightness"
 
 CODEOWNERS = ["@mmakaay"]
 
-AUTO_LOAD = ["ledc", "output"]
-
-yeelight_ns = cg.esphome_ns.namespace("yeelight")
-bs2_ns = yeelight_ns.namespace("bs2")
-YeelightBS2Hub = bs2_ns.class_("YeelightBS2Hub", cg.Component)
+AUTO_LOAD = ["ledc", "output", "i2c"]
 
 PINS = {
     # Config key     TYPE,             ID               GPIO,     PARAMS
@@ -46,13 +46,27 @@ PINS = {
     CONF_BLUE    : ( LEDCOutput,       CONF_BLUE_ID,    "GPIO5",  3000,  2 ),
     CONF_WHITE   : ( LEDCOutput,       CONF_WHITE_ID,   "GPIO12", 10000, 4 ),
     CONF_MASTER1 : ( GPIOBinaryOutput, CONF_MASTER1_ID, "GPIO33" ),
-    CONF_MASTER2 : ( GPIOBinaryOutput, CONF_MASTER2_ID, "GPIO4" ),
+    CONF_MASTER2 : ( GPIOBinaryOutput, CONF_MASTER2_ID, "GPIO4" )
 }
+
+FRONT_PANEL = {
+    CONF_SDA: "GPIO21",
+    CONF_SCL: "GPIO19",
+    CONF_TRIGGER_PIN: "GPIO16"
+}
+
+
+yeelight_ns = cg.esphome_ns.namespace("yeelight")
+bs2_ns = yeelight_ns.namespace("bs2")
+YeelightBS2Hub = bs2_ns.class_("YeelightBS2Hub", cg.Component)
 
 def make_config_schema():
     schema = cv.COMPONENT_SCHEMA.extend({
         cv.GenerateID(): cv.declare_id(YeelightBS2Hub),
-        cv.Optional(CONF_TRIGGER_PIN, default="GPIO16"): cv.All(
+        cv.GenerateID(CONF_FP_I2C_ID): cv.use_id(I2CComponent),
+        cv.Optional(CONF_SDA, default=FRONT_PANEL[CONF_SDA]): pins.validate_gpio_pin,
+        cv.Optional(CONF_SCL, default=FRONT_PANEL[CONF_SCL]): pins.validate_gpio_pin,
+        cv.Optional(CONF_TRIGGER_PIN, default=FRONT_PANEL[CONF_TRIGGER_PIN]): cv.All(
             pins.validate_gpio_pin,
             pins.validate_has_interrupt
         ),
@@ -66,7 +80,6 @@ def make_config_schema():
         })
 
     return schema;
-
 
 CONFIG_SCHEMA = make_config_schema()
 
@@ -120,6 +133,16 @@ def to_code(config):
     })
     cg.add(hub_var.set_trigger_pin(trigger_pin))   
 
+    # The i2c component automatically sets up one I2C bus.
+    # Take that bus and update is to make it work for the
+    # front panel I2C communication.
+    fp_i2c_var = yield cg.get_variable(config[CONF_FP_I2C_ID])
+    cg.add(fp_i2c_var.set_sda_pin(config[CONF_SDA]))
+    cg.add(fp_i2c_var.set_scl_pin(config[CONF_SCL]))
+    cg.add(fp_i2c_var.set_scan(True))
+    cg.add(hub_var.set_front_panel_i2c(fp_i2c_var))
+
     for conf in config.get(CONF_ON_BRIGHTNESS, []):
         trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)
         yield automation.build_automation(trigger, [(float, "x")], conf)
+

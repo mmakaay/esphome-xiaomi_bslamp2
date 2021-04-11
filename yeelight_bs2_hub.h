@@ -5,6 +5,7 @@
 #include "esphome/core/esphal.h"
 #include "esphome/components/ledc/ledc_output.h"
 #include "esphome/components/gpio/output/gpio_binary_output.h"
+#include "esphome/components/i2c/i2c.h"
 
 namespace esphome {
 namespace yeelight {
@@ -45,6 +46,7 @@ public:
     void set_white_pin(ledc::LEDCOutput *pin) { white = pin; }
     void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1 = pin; }
     void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2 = pin; }
+    void set_front_panel_i2c(i2c::I2CComponent *fp_i2c) { fp_i2c_ = fp_i2c; }
 
     void setup() {
         ESP_LOGCONFIG(TAG, "Setting up I2C trigger pin interrupt...");
@@ -71,6 +73,9 @@ protected:
     // Pin that is used by the front panel to notify the ESP that
     // a touch/release event can be read using I2C.
     GPIOPin *i2c_trigger_pin_;
+
+    // The I2C bus that is connected to the front panel.
+    i2c::I2CComponent *fp_i2c_;
 
     // Fields that are used for trigger pin interrupt handling.
     int counter_ = 0;

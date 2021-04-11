@@ -32,6 +32,7 @@ esphome:
     platform_packages: |-4
           framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.4
 
+# This component controls the light of the device.
 light:
   - platform: yeelight_bs2
     name: ${friendly_name} RGBW Light
@@ -47,22 +48,3 @@ light:
           transition_length: 3s
           update_interval: 3s
 
-# The device uses two I2C busses.
-i2c:
-    # This bus is very likely connected to an EEPROM that can be found
-    # on the lamp's board, right next to the GND, TX, RX and GPIO0 debug
-    # pads. The exact use of this component has not yet been reverse
-    # engineered.
-  - id: eeprom_i2c
-    sda: GPIO17
-    scl: GPIO18
-    scan: True
-    # This bus is connected to the front panel with the touch buttons.
-    # The touch panel is fully separated form the main board and ESP32,
-    # and communication is done strictly through I2C. The exact protocol
-    # has been reverse engineered and can be found in the file
-    # "doc/reverse_engineering/I2C protocol/i2c_commands.txt".
-  - id: front_panel_i2c
-    sda: GPIO21
-    scl: GPIO19
-    scan: True
