@@ -13,10 +13,13 @@ class BrightnessTrigger : public Trigger<float> {
 public:
     explicit BrightnessTrigger(YeelightBS2LightOutput *parent) {
         parent->add_on_state_callback([this](light::LightColorValues values) {
-            auto new_brightness = values.get_state() == 0 ? 0.0f : values.get_brightness();
+            auto new_brightness = values.get_brightness();
+            if (values.get_state() == 0) {
+                new_brightness = 0.0f;
+            }
             new_brightness = roundf(new_brightness * 100.0f) / 100.0f;
             if (last_brightness_ != new_brightness) {
-                this->trigger(new_brightness);
+                trigger(new_brightness);
                 last_brightness_ = new_brightness;
             }
         });

@@ -40,7 +40,7 @@ public:
     }
 
     void add_on_state_callback(std::function<void(light::LightColorValues)> &&callback) {
-          this->state_callback_.add(std::move(callback));
+          state_callback_.add(std::move(callback));
     }
 
     /**
@@ -81,7 +81,7 @@ public:
         if (values.get_state() == 0)
             light_->turn_off();
 
-        this->state_callback_.call(values);
+        state_callback_.call(values);
     }
 
 protected:
@@ -116,10 +116,10 @@ public:
         output->set_transformer_inspector(this);
     }
 
-    bool is_active() { return this->transformer_ != nullptr; }
-    bool is_transition() { return this->transformer_->is_transition(); }
-    light::LightColorValues get_end_values() { return this->transformer_->get_end_values(); }
-    float get_progress() { return this->transformer_->get_progress(); }
+    bool is_active() { return transformer_ != nullptr; }
+    bool is_transition() { return transformer_->is_transition(); }
+    light::LightColorValues get_end_values() { return transformer_->get_end_values(); }
+    float get_progress() { return transformer_->get_progress(); }
 };
     
 } // namespace bs2

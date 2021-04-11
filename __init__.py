@@ -7,9 +7,8 @@ from esphome.components.i2c import I2CComponent, I2CDevice
 from esphome.core import coroutine
 from esphome.core import CORE
 from esphome.const import (
-    CONF_ID, CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_TRIGGER_PIN,
-    CONF_SDA, CONF_SCL, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_PIN,
-    CONF_FREQUENCY, CONF_CHANNEL, CONF_PLATFORM,
+    CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_TRIGGER_PIN,
+    CONF_SDA, CONF_SCL, CONF_ADDRESS, CONF_PLATFORM
 )
 
 CODEOWNERS = ["@mmakaay"]
@@ -58,6 +57,7 @@ def make_config_schema():
         cv.GenerateID(CONF_FP_I2C_ID): cv.use_id(I2CComponent),
         cv.Optional(CONF_SDA, default="GPIO21"): pins.validate_gpio_pin,
         cv.Optional(CONF_SCL, default="GPIO19"): pins.validate_gpio_pin,
+        cv.Optional(CONF_ADDRESS, default="0x2C"): cv.i2c_address,
         cv.Optional(CONF_TRIGGER_PIN, default="GPIO16"): cv.All(
             pins.validate_gpio_pin,
             pins.validate_has_interrupt
@@ -119,6 +119,7 @@ def make_front_panel_hal(config):
     cg.add(fp_i2c_var.set_scl_pin(config[CONF_SCL]))
     cg.add(fp_i2c_var.set_scan(True))
     cg.add(fp_hal.set_i2c_parent(fp_i2c_var))
+    cg.add(fp_hal.set_i2c_address(config[CONF_ADDRESS]))
 
 def to_code(config):
     # Dirty little hack to make the ESPHome component loader inlcude
