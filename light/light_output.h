@@ -24,18 +24,6 @@ public:
     void set_hub(YeelightBS2Hub *hub) { hub_ = hub; }
 
     /**
-     * Sets the first GPIO binary output, used as internal master switch for
-     * the LED light circuitry.
-     */
-    void set_master1_output(gpio::GPIOBinaryOutput *master1) { master1_ = master1; }
-
-    /**
-     * Set the second GPIO binary output, used as internal master switch for
-     * the LED light circuitry.
-     */
-    void set_master2_output(gpio::GPIOBinaryOutput *master2) { master2_ = master2; }
-
-    /**
      * Returns a LightTraits object, which is used to explain to the outside
      * world (e.g. Home Assistant) what features are supported by this device.
      */
@@ -82,8 +70,8 @@ public:
         // that's why these GPIOs are turned on at this point.
         if (values.get_state() != 0)
         {
-            master2_->turn_on();
-            master1_->turn_on();
+            hub_->master2->turn_on();
+            hub_->master1->turn_on();
         }
 
         // Apply the current GPIO output levels from the selected handler.
@@ -94,8 +82,8 @@ public:
 
         if (values.get_state() == 0)
         {
-            master2_->turn_off();
-            master1_->turn_off();
+            hub_->master2->turn_off();
+            hub_->master1->turn_off();
         }
 
         this->state_callback_.call(values);
@@ -103,8 +91,6 @@ public:
 
 protected:
     YeelightBS2Hub *hub_;
-    esphome::gpio::GPIOBinaryOutput *master1_;
-    esphome::gpio::GPIOBinaryOutput *master2_;
     GPIOOutputs *transition_handler_;
     GPIOOutputs *instant_handler_ = new ColorInstantHandler();
     CallbackManager<void(light::LightColorValues)> state_callback_{};

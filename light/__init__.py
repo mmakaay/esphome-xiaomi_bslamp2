@@ -22,8 +22,6 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
         cv.GenerateID(): cv.declare_id(light_state),
         cv.GenerateID(CONF_HUB_ID): cv.use_id(YeelightBS2Hub),
         cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(light_output),
-        cv.Required(CONF_MASTER1): cv.use_id(gpio_output.GPIOBinaryOutput),
-        cv.Required(CONF_MASTER2): cv.use_id(gpio_output.GPIOBinaryOutput),
         cv.Optional(CONF_ON_BRIGHTNESS): automation.validate_automation(
             {
                 cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(BrightnessTrigger),
@@ -38,12 +36,6 @@ def to_code(config):
 
     hub_var = yield cg.get_variable(config[CONF_HUB_ID])
     cg.add(var.set_hub(hub_var))
-
-    master1 = yield cg.get_variable(config[CONF_MASTER1])
-    cg.add(var.set_master1_output(master1))
-
-    master2 = yield cg.get_variable(config[CONF_MASTER2])
-    cg.add(var.set_master2_output(master2))
 
     for conf in config.get(CONF_ON_BRIGHTNESS, []):
         trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)

@@ -4,6 +4,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/esphal.h"
 #include "esphome/components/ledc/ledc_output.h"
+#include "esphome/components/gpio/output/gpio_binary_output.h"
 
 namespace esphome {
 namespace yeelight {
@@ -34,12 +35,16 @@ public:
     ledc::LEDCOutput *green;
     ledc::LEDCOutput *blue;
     ledc::LEDCOutput *white;
+    gpio::GPIOBinaryOutput *master1;
+    gpio::GPIOBinaryOutput *master2;
 
     void set_trigger_pin(GPIOPin *pin) { i2c_trigger_pin_ = pin; }
     void set_red_pin(ledc::LEDCOutput *pin) { red = pin; }
     void set_green_pin(ledc::LEDCOutput *pin) { green = pin; }
     void set_blue_pin(ledc::LEDCOutput *pin) { blue = pin; }
     void set_white_pin(ledc::LEDCOutput *pin) { white = pin; }
+    void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1 = pin; }
+    void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2 = pin; }
 
     void setup() {
         ESP_LOGCONFIG(TAG, "Setting up I2C trigger pin interrupt...");

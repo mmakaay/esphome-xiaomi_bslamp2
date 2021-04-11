@@ -1,11 +1,10 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import pins
-from esphome.components import output
 from esphome.components.ledc.output import LEDCOutput, validate_frequency
+from esphome.components.gpio.output import GPIOBinaryOutput
 from esphome.core import coroutine
 from esphome.core import CORE
-from esphome.config import get_platform
 from esphome.const import (
     CONF_ID,
     CONF_RED,
@@ -17,7 +16,8 @@ from esphome.const import (
     CONF_TRIGGER_ID,
     CONF_PIN,
     CONF_FREQUENCY,
-    CONF_CHANNEL
+    CONF_CHANNEL,
+    CONF_PLATFORM,
 )
 
 CONF_HUB_ID = "yeelight_bs2_hub_id"
@@ -33,18 +33,20 @@ CONF_ON_BRIGHTNESS = "on_brightness"
 
 CODEOWNERS = ["@mmakaay"]
 
-AUTO_LOAD = ["ledc"]
+AUTO_LOAD = ["ledc", "output"]
 
 yeelight_ns = cg.esphome_ns.namespace("yeelight")
 bs2_ns = yeelight_ns.namespace("bs2")
 YeelightBS2Hub = bs2_ns.class_("YeelightBS2Hub", cg.Component)
 
-LEDC_PINS = {
-    # Config key     ID             PIN       FREQ   CH
-    CONF_RED     : ( CONF_RED_ID,   "GPIO13", 3000,  0 ),
-    CONF_GREEN   : ( CONF_GREEN_ID, "GPIO14", 3000,  1 ),
-    CONF_BLUE    : ( CONF_BLUE_ID,  "GPIO5",  3000,  2 ),
-    CONF_WHITE   : ( CONF_WHITE_ID, "GPIO12", 10000, 4 ),
+PINS = {
+    # Config key     TYPE,             ID               GPIO,     PARAMS
+    CONF_RED     : ( LEDCOutput,       CONF_RED_ID,     "GPIO13", 3000,  0 ),
+    CONF_GREEN   : ( LEDCOutput,       CONF_GREEN_ID,   "GPIO14", 3000,  1 ),
+    CONF_BLUE    : ( LEDCOutput,       CONF_BLUE_ID,    "GPIO5",  3000,  2 ),
+    CONF_WHITE   : ( LEDCOutput,       CONF_WHITE_ID,   "GPIO12", 10000, 4 ),
+    CONF_MASTER1 : ( GPIOBinaryOutput, CONF_MASTER1_ID, "GPIO33" ),
+    CONF_MASTER2 : ( GPIOBinaryOutput, CONF_MASTER2_ID, "GPIO4" ),
 }
 
 def make_config_schema():
@@ -56,10 +58,10 @@ def make_config_schema():
         ),
     })
 
-    for key, pin_config in LEDC_PINS.items():
-        id_, pin, *_ = pin_config
+    for key, pin_config in PINS.items():
+        type_, id_, pin, *_ = pin_config
         schema = schema.extend({
-            cv.GenerateID(id_): cv.declare_id(LEDCOutput),
+            cv.GenerateID(id_): cv.declare_id(type_),
             cv.Optional(key, default=pin): pins.validate_gpio_pin
         })
 
@@ -69,25 +71,47 @@ def make_config_schema():
 CONFIG_SCHEMA = make_config_schema()
 
 @coroutine
-def make_ledc_pin(key, config):
-    id_, _, frequency, channel = LEDC_PINS[key]
-    gpio_var = yield cg.gpio_pin_expression({
+def make_gpio_pin(key, config):
+    type_, id_, *_ = PINS[key]
+    yield from cg.gpio_pin_expression({
         "number": config[key],
         "mode": "OUTPUT"
     });
+
+@coroutine
+def make_gpio_binary_output(key, config, gpio_var):
+    type_, id_, *_ = PINS[key]
+    output_var = cg.new_Pvariable(config[id_])
+    cg.add(output_var.set_pin(gpio_var))   
+    yield from cg.register_component(output_var, {})
+
+@coroutine
+def make_ledc_output(key, config, gpio_var):
+    type_, id_, _, frequency, channel  = PINS[key]
     ledc_var = cg.new_Pvariable(config[id_], gpio_var)
     cg.add(ledc_var.set_frequency(frequency));
     cg.add(ledc_var.set_channel(channel));
-    yield from cg.register_component(ledc_var, {}) # TODO last arg?
+    yield from cg.register_component(ledc_var, {})
 
 def to_code(config):
+    # Dirty little hack to make the ESPHome component loader inlcude
+    # the code for the "gpio" platform for the "output" domain.
+    # Loading specific platform components is not possible using
+    # the AUTO_LOAD feature unfortunately.
+    CORE.config["output"].append({ CONF_PLATFORM: "gpio" })
+
     hub_var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(hub_var, config)
 
-    for key in LEDC_PINS:
-        ledc_pin = yield make_ledc_pin(key, config)
+    for key in PINS:
+        type_ = PINS[key][0]
+        gpio_var = yield make_gpio_pin(key, config)
+        if type_ == LEDCOutput:
+            pin_var = yield make_ledc_output(key, config, gpio_var)
+        if type_ == GPIOBinaryOutput:
+            pin_var = yield make_gpio_binary_output(key, config, gpio_var)
         setter = getattr(hub_var, "set_%s_pin" % key)
-        cg.add(setter(ledc_pin))   
+        cg.add(setter(pin_var))   
 
     trigger_pin = yield cg.gpio_pin_expression({
         "number": config[CONF_TRIGGER_PIN],
@@ -95,25 +119,7 @@ def to_code(config):
         "inverted": False
     })
     cg.add(hub_var.set_trigger_pin(trigger_pin))   
-# 
-#     led_white = yield cg.get_variable(config[CONF_WHITE])
-#     cg.add(var.set_white_output(led_white))
-# 
-#     led_red = yield cg.get_variable(config[CONF_RED])
-#     cg.add(var.set_red_output(led_red))
-# 
-#     led_green = yield cg.get_variable(config[CONF_GREEN])
-#     cg.add(var.set_green_output(led_green))
-# 
-#     led_blue = yield cg.get_variable(config[CONF_BLUE])
-#     cg.add(var.set_blue_output(led_blue))
-# 
-#     master1 = yield cg.get_variable(config[CONF_MASTER1])
-#     cg.add(var.set_master1_output(master1))
-# 
-#     master2 = yield cg.get_variable(config[CONF_MASTER2])
-#     cg.add(var.set_master2_output(master2))
-# 
-#     for conf in config.get(CONF_ON_BRIGHTNESS, []):
-#         trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)
-#         yield automation.build_automation(trigger, [(float, "x")], conf)
+
+    for conf in config.get(CONF_ON_BRIGHTNESS, []):
+        trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], var)
+        yield automation.build_automation(trigger, [(float, "x")], conf)
