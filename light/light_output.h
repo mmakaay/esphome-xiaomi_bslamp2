@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "../common.h"
-#include "../yeelight_bs2_hub.h"
+#include "../light_hal.h"
 #include "color_instant_handler.h"
 #include "color_transition_handler.h"
 #include "esphome/components/ledc/ledc_output.h"
@@ -20,7 +20,7 @@ namespace bs2 {
  */
 class YeelightBS2LightOutput : public Component, public light::LightOutput {
 public:
-    void set_hal(LightHAL *hal) { hal_ = hal; }
+    void set_light_hal(LightHAL *light) { light_ = light; }
 
     /**
      * Returns a LightTraits object, which is used to explain to the outside
@@ -68,10 +68,10 @@ public:
         // tried to stay as close as possible to the original behavior, so
         // that's why these GPIOs are turned on at this point.
         if (values.get_state() != 0)
-            hal_->light_turn_on();
+            light_->turn_on();
 
         // Apply the current GPIO output levels from the selected handler.
-        hal_->light_set_rgbw(
+        light_->set_rgbw(
             delegate->red,
             delegate->green,
             delegate->blue,
@@ -79,13 +79,13 @@ public:
         );
 
         if (values.get_state() == 0)
-            hal_->light_turn_off();
+            light_->turn_off();
 
         this->state_callback_.call(values);
     }
 
 protected:
-    LightHAL *hal_;
+    LightHAL *light_;
     GPIOOutputs *transition_handler_;
     GPIOOutputs *instant_handler_ = new ColorInstantHandler();
     CallbackManager<void(light::LightColorValues)> state_callback_{};
