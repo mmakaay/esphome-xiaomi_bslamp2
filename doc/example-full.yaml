@@ -36,22 +36,24 @@ esphome:
 # components talk to the hardware via this component. Normally, you
 # wouldn't need to change anything in the default implementation. You
 # can even fully omit this element from the configuration.
+# Only define this when you need different pin numbers or want to
+# assign specific ID's to the pin components.
 yeelight_bs2:
-  - red_id: TheRedOne
-  - red: GPIO13
-  - green_id: TheGreenOne
-  - green: GPIO14
-  - blue_id: TheBlueOne
-  - blue: GPIO5
-  - white_id: TheWhiteOne
-  - white: GPIO12
-  - master1_id: TheFirstMaster
-  - master1: GPIO33
-  - master2_id: TheSecondMaster
-  - master2: GPIO4
-  - sda: GPIO21
-  - scl: GPIO19
-  - trigger_pin: GPIO16
+  red_id: TheRedOne
+  red: GPIO13
+  green_id: TheGreenOne
+  green: GPIO14
+  blue_id: TheBlueOne
+  blue: GPIO5
+  white_id: TheWhiteOne
+  white: GPIO12
+  master1_id: TheFirstMaster
+  master1: GPIO33
+  master2_id: TheSecondMaster
+  master2: GPIO4
+  sda: GPIO21
+  scl: GPIO19
+  trigger_pin: GPIO16
 
 # This component controls the light of the device.
 light:
