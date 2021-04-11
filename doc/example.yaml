@@ -35,8 +35,6 @@ esphome:
 light:
   - platform: yeelight_bs2
     name: ${friendly_name} RGBW Light
-    master1: master1
-    master2: master2
     default_transition_length: ${transition_length}
     # You can use any effects that you like. These are just examples.
     effects:
@@ -68,11 +66,3 @@ i2c:
     sda: GPIO21
     scl: GPIO19
     scan: True
-
-output:
-  - platform: gpio
-    id: master1
-    pin: GPIO33
-  - platform: gpio
-    id: master2
-    pin: GPIO4
