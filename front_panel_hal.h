@@ -12,6 +12,8 @@ namespace bs2 {
 
 static const uint8_t MSG_LEN = 7;
 using MSG = uint8_t[7];
+
+// The commands that are supported by the 
 static const MSG READY_FOR_EV = { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
 static const MSG TURN_ON      = { 0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00 };
 static const MSG TURN_OFF     = { 0x02, 0x03, 0x0C, 0x00, 0x64, 0x00, 0x00 };
@@ -26,118 +28,151 @@ static const MSG SET_LEVEL_8  = { 0x02, 0x03, 0x5F, 0xFC, 0x64, 0x00, 0x00 };
 static const MSG SET_LEVEL_9  = { 0x02, 0x03, 0x5F, 0xFE, 0x64, 0x00, 0x00 };
 static const MSG SET_LEVEL_10 = { 0x02, 0x03, 0x5F, 0xFF, 0x64, 0x00, 0x00 };
 
-enum FrontPanelButton {
-    ButtonUnknown,
-    ButtonPower,
-    ButtonColor,
-    ButtonSlider
-};
+using EVENT = uint16_t;
 
-enum FrontPanelEventType {
-    TypeUnknown,
-    TypeTouch,
-    TypeRelease
-};
+// Bit flags that are used for specifying an event.
+// Events are registered using the following bit pattern
+// (bit 1 being the least significant bit):
+//
+// BITS  INDICATE  PATTERN  RESULT
+// 1     status    0        parsing event failed
+//                 1        parsing event successful
+// 2-3   part      00       part unknown
+//                 01       power button
+//                 10       color button
+//                 11       slider 
+// 4-5   type      00       type unknown
+//                 01       touch
+//                 10       release
+// 6-10  slider    00000    level known (or part is not "slider")
+//       level     00001    level 1
+//                  ...     up to
+//                 10101    level 21
+//
+static const EVENT FLAG_INIT          = 0b0000000000;
 
-class FrontPanelEvent {
+static const EVENT FLAG_ERR           = 0b0000000000;
+static const EVENT FLAG_OK            = 0b0000000001;
+
+static const EVENT FLAG_PART_MASK     = 0b0000000110;
+static const EVENT FLAG_PART_UNKNOWN  = 0b0000000000;
+static const EVENT FLAG_PART_POWER    = 0b0000000010;
+static const EVENT FLAG_PART_COLOR    = 0b0000000100;
+static const EVENT FLAG_PART_SLIDER   = 0b0000000110;
+
+static const EVENT FLAG_TYPE_MASK     = 0b0000011000;
+static const EVENT FLAG_TYPE_UNKNOWN  = 0b0000000000;
+static const EVENT FLAG_TYPE_TOUCH    = 0b0000001000;
+static const EVENT FLAG_TYPE_RELEASE  = 0b0000010000;
+
+static const EVENT FLAG_LEVEL_MASK    = 0b1111100000;
+static const EVENT FLAG_LEVEL_UNKNOWN = 0b0000000000;
+
+/**
+ * This class implements a parser that translates event byte codes from the
+ * Yeelight Bedside Lamp 2 into usable events.
+ */
+class FrontPanelEventParser {
 public:
-    bool valid;
-    FrontPanelEventType type;
-    FrontPanelButton button;
-    uint8_t level;
-    MSG message;
+    /**
+     * Parse the provided event byte code (7 bytes long).
+     * Returns a unique integer event code that describes the parsed event.
+     */
+    EVENT parse(uint8_t *m) {
+        EVENT ev = FLAG_INIT;
 
-    void parse(uint8_t *m) {
-        memcpy(message, m, MSG_LEN);
-        type = TypeUnknown;
-        button = ButtonUnknown;
-        valid = true;
-        level = 0;
-        
-        // All events start with 04:04:01:00.
+        // All events use the prefix [04:04:01:00].
         if (m[0] != 0x04 || m[1] != 0x04 || m[2] != 0x01 || m[3] != 0x00) {
-            valid = false;
-            return;
+            return error_(ev, m, "prefix is not 04:04:01:00");
         }
 
-        // Next byte determines the button that is touched.
-        // All remaining bytes determine the event for that button.
+        // The next byte determines the part that is touched.
+        // All remaining bytes specify the event for that part.
         switch (m[4]) {
-            case 0x01:
-                button = ButtonPower;
-                if (m[5] == 0x01 && m[6] == 0x03) {
-                    type = TypeTouch;
-                } else if (m[5] == 0x02 && m[6] == 0x04) {
-                    type = TypeRelease;
+            case 0x01: // power button
+            case 0x02: // color button
+                ev |= (m[4] == 0x01 ? FLAG_PART_POWER : FLAG_PART_COLOR);
+                if (m[5] == 0x01 && m[6] == (0x02 + m[4])) {
+                    ev |= FLAG_TYPE_TOUCH;
+                } else if (m[5] == 0x02 && m[6] == (0x03 + m[4])) {
+                    ev |= FLAG_TYPE_RELEASE;
                 } else {
-                    valid = false;
+                    return error_(ev, m, "invalid event type for button");
                 }
                 break;
-            case 0x02:
-                button = ButtonColor;
-                if (m[5] == 0x01 && m[6] == 0x04) {
-                    type = TypeTouch;
-                } else if (m[5] == 0x02 && m[6] == 0x05) {
-                    type = TypeRelease;
-                } else {
-                    valid = false;
-                }
-                break;
-            case 0x03:
-            case 0x04:
-                button = ButtonSlider;
-                type = m[4] == 0x03 ? TypeTouch : TypeRelease;
+            case 0x03: // slider touch
+            case 0x04: // slider release
+                ev |= FLAG_PART_SLIDER;
+                ev |= (m[4] == 0x03 ? FLAG_TYPE_TOUCH : FLAG_TYPE_RELEASE);
                 if ((m[6] - m[5] - m[4] - 0x01) != 0) {
-                    valid = false;
+                    return error_(ev, m, "invalid slider level crc");
                 } else if (m[5] > 0x16 || m[5] < 0x01) {
-                    valid = false;
+                    return error_(ev, m, "out of bounds slider value");
                 } else {
-                    level = 0x17 - m[5];
+                    auto level = 0x17 - m[5];
+                    ev |= (level << 5);
                 }
                 break;
             default:
-                valid = false;
-                return;
+                return error_(ev, m, "invalid part id");
+                return ev;
         }
+        
+        // All parsing rules passed. This event is valid.
+        ESP_LOGD(TAG, "Front panel I2C event parsed: code=%d", ev);
+        ev |= FLAG_OK;
+
+        return ev;
     }
 
-    void log() {
-        if (button == ButtonSlider) {
-            ESP_LOGI(TAG, "Event %0x:%0x:%0x:%0x:%0x:%0x:%0x => ok=%s, button=%s, type=%s, level=%d",
-                message[0], message[1], message[2], message[3], message[4],
-                message[5], message[6],
-                (valid ? "Y" : "N"), button_str_(), type_str_(), level);
-        } else {
-            ESP_LOGI(TAG, "Event %0x:%0x:%0x:%0x:%0x:%0x:%0x => ok=%s, button=%s, type=%s",
-                message[0], message[1], message[2], message[3], message[4],
-                message[5], message[6],
-                (valid ? "Y" : "N"), button_str_(), type_str_());
-        }
-    }
 protected:
-    const char *button_str_() {
-        switch (button) {
-            case ButtonPower: return "POWER"; break;
-            case ButtonColor: return "COLOR"; break;
-            case ButtonSlider: return "SLIDER"; break; 
-            default: return "ERROR"; break;
-        }
+    bool has_(EVENT ev, EVENT mask, EVENT flag) {
+        return (ev & mask) == flag;
     }
 
-    const char *type_str_() {
-        switch (type) {
-            case TypeTouch: return "TOUCH"; break;
-            case TypeRelease: return "RELEASE"; break;
-            default: return "ERROR";
+    EVENT error_(EVENT ev, uint8_t *m, const char* msg) {
+        ESP_LOGE(TAG, "Front panel I2C event error:");
+        ESP_LOGE(TAG, "  Error: %s", msg);
+        ESP_LOGE(TAG, "  Event: [%02x:%02x:%02x:%02x:%02x:%02x:%02x]",
+           m[0], m[1], m[2], m[3], m[4], m[5], m[6]);
+        ESP_LOGE(TAG, "  Parsed part: %s",
+            (has_(ev, FLAG_PART_MASK, FLAG_PART_POWER) ? "power button" :
+             has_(ev, FLAG_PART_MASK, FLAG_PART_COLOR) ? "color button" : 
+             has_(ev, FLAG_PART_MASK, FLAG_PART_SLIDER) ? "slider" : "n/a"));
+        ESP_LOGE(TAG, "  Parsed event type: %s",
+            (has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_TOUCH) ? "touch" :
+             has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_RELEASE) ? "release" : "n/a"));
+        if (has_(ev, FLAG_PART_MASK, FLAG_PART_SLIDER)) {
+            auto level = (ev & FLAG_LEVEL_MASK) >> 5;
+            if (level > 0) {
+                ESP_LOGE(TAG, "  Parsed slider level: %d", level);
+            }
         }
+
+        return ev;
     }
 };
 
+/**
+ * This is a hardware abstraction layer that communicates with with front
+ * panel of the Yeelight Bedside Lamp 2.
+ *
+ * It serves as a hub component for other components that implement
+ * the actual buttons and slider components.
+ */
 class FrontPanelHAL : public Component, public i2c::I2CDevice {
 public:
-    FrontPanelEvent ev;
+    FrontPanelEventParser event;
 
+    /**
+     * Set the GPIO pin that is used by the front panel to notify the ESP
+     * that a touch/release event can be read using I2C.
+     */
     void set_trigger_pin(GPIOPin *pin) { trigger_pin_ = pin; }
+
+    void add_on_event_callback(std::function<void(EVENT)> &&callback) {
+        event_callback_.add(std::move(callback));
+    }
 
     void setup() {
         ESP_LOGCONFIG(TAG, "Setting up I2C trigger pin interrupt...");
@@ -147,54 +182,44 @@ public:
     }
 
     void dump_config() {
-        ESP_LOGCONFIG(TAG, "I2C");
+        ESP_LOGCONFIG(TAG, "I2C interrupt");
         LOG_PIN("  Interrupt pin: ", trigger_pin_);
     }
 
     void loop() {
-        if (queue_length_ > 0) {
-            queue_length_ = 0;
-            read_event_();
+        // Read and publish front panel events.
+        auto current_event_id = event_id_;
+        if (current_event_id != last_event_id_) {
+            last_event_id_ = current_event_id;
+            MSG message;
+            if (write_bytes_raw(READY_FOR_EV, MSG_LEN) &&
+                read_bytes_raw(message, MSG_LEN)) {
+                auto ev = event.parse(message);
+                if (ev & FLAG_OK) {
+                    event_callback_.call(ev);
+                }
+            }
         }
     }
 
 protected:
-    // The GPIO pin that is used by the front panel to notify the ESP that
-    // a touch/release event can be read using I2C.
     GPIOPin *trigger_pin_;
-
-    // The ISR that is used for handling event interrupts.
     static void isr(FrontPanelHAL *store);
-
-    // The number of unhandled event interrupts.
-    volatile int queue_length_ = 0;
-
-    uint8_t message[MSG_LEN];
-
-    void read_event_() {
-        if (!write_bytes_raw(READY_FOR_EV, MSG_LEN)) {
-            return;
-        }
-        if (!read_bytes_raw(message, MSG_LEN)) {
-            return;
-        }
-
-        ev.parse(message);
-        ev.log();
-    }
+    volatile int event_id_ = 0;
+    int last_event_id_ = 0;
+    CallbackManager<void(EVENT)> event_callback_{};
 };
 
 /**
  * This ISR is used to handle IRQ triggers from the front panel.
  *
- * The front panel pulls the trigger pin low when a new event
- * is available. All we do here to handle the interrupt, is
- * increment a simple queue length counter. Reading the event
- * from the I2C bus will be handled in the main loop, based
- * on this counter.
+ * The front panel pulls the trigger pin low for a short period of time
+ * when a new event is available. All we do here to handle the interrupt,
+ * is increment a simple event id counter. The main loop of the component
+ * will take care of actually reading and processing the event.
  */
 void ICACHE_RAM_ATTR HOT FrontPanelHAL::isr(FrontPanelHAL *store) {
-    store->queue_length_++;
+    store->event_id_++;
 }
 
 } // namespace bs2
