@@ -1,24 +1,14 @@
 # esphome-yeelight_bs2
 
-## Warning: this code is still under heavy development
+## Warning: this code is still under development
 
-This code is not yet production-ready. Most of the work goes into reverse
-engineering the original firmware and coming up with ways to re-implement
-a device firmware based on ESPHome.
+This code might not yet be production-ready.
 
-Till now, the main focus was driving the LED circuitry, to make sure that the
-light quality meets that of the original firmware. This was a hard nut to
-crack, but I am happy to announce that this code has been completed.
-Therefore I will now continue on implementing the front panel buttons.
-
-The hard work for this was already done: reverse engineering the protocol
-that is used to talk to the main board. Therefore, finishing up the
-firmware should not take much time from here on.
-
-Once the front panel is working, we can move towards a stable release of the
-firmware. I have some more ideas to work on, but those can and will be
-extensions to a finalized first stable release.
-
+At this point, I would call it alpha-quality. Mainly in the sense that the
+interfaces that have been implemented so far might still change.
+The new firmware is currently being tested and depending on the actual
+use cases and issues that we might run into, breaking changes could still
+be done at some point.
 
 ## Is it safe to install this firmware on my device?
 
@@ -26,7 +16,8 @@ As long as you keep a backup of the original Yeelight firmware, this is
 quite safe :-)
 
 I have two lamps that both are running the latest development firmware and
-they are functioning very well as far as the light feature is concerned.
+they are functioning very well.
+
 I sometimes see API disconnection issues, but those can all be traced back
 to the underlying frameworks. For the most prevalent issue, I did some
 debugging and wrote a fix (it is mentioned below).
@@ -88,16 +79,16 @@ flashing its firmware.
 ## Issue: the device keeps losing its connection to Home Assistant
 
 This is not a problem with the device or the custom firmware, but a problem
-in the upstream library "AsyncTCP". I did identify the issue and have a
-proposed fix for it. The issue was reported at:
+in the upstream library "AsyncTCP". I did identify an issue and my pull
+request for a fix was accepted and merged:
 
-https://github.com/me-no-dev/AsyncTCP/issues/116
+   https://github.com/OttoWinter/AsyncTCP/pull/4
 
-If you want to try out this change, then create a `libs` folder in the
-folder where your device's yaml configuration file is stored, and clone the
-following repository into that folder:
+If you want to try out this fix, straight from my repository, lhen create a 
+`libs` folder in the folder where your device's yaml configuration file is
+stored, and clone the following repository into that folder:
 
-  https://github.com/mmakaay/AsyncTCP
+   https://github.com/mmakaay/AsyncTCP
 
 For example on the command line:
 
