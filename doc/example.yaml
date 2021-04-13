@@ -48,3 +48,11 @@ light:
           transition_length: 3s
           update_interval: 3s
 
+binary_sensor:
+  - platform: yeelight_bs2
+    id: ${name}_power_button
+    part: POWER_BUTTON
+    on_press:
+      then:
+        - light.toggle: ${name}
+

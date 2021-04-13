@@ -32,6 +32,8 @@ esphome:
     platform_packages: |-4
           framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.6
 
+# NOTE: HIGHLY OPTIONAL BLOCK
+#
 # This yeelight_bs2 comopnent acts as the hub for the device. Other
 # components talk to the hardware via this component. Normally, you
 # wouldn't need to change anything in the default implementation. You
@@ -70,4 +72,13 @@ light:
           name: "Fast Random"
           transition_length: 3s
           update_interval: 3s
+
+# An implementation for the power button: touch to toggle the light.
+binary_sensor:
+  - platform: yeelight_bs2
+    id: ${name}_power_button
+    part: POWER_BUTTON
+    on_press:
+      then:
+        - light.toggle: ${name}
 
