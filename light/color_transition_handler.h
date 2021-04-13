@@ -49,7 +49,6 @@ class ColorTransitionHandler : public GPIOOutputs {
 public:
     ColorTransitionHandler(LightStateTransformerInspector *inspector) : transformer_(inspector) {}
 
-protected:
     bool set_light_color_values(light::LightColorValues values) {
         if (!light_state_has_active_transition_()) {
             // Remember the last active light color values. When a transition
@@ -91,6 +90,11 @@ protected:
         return true;
     }
 
+    light::LightColorValues get_end_values() {
+        return end_light_values_;
+    }
+
+protected:
     bool active_ = false;
     float progress_ = 0.0f;
     LightStateTransformerInspector *transformer_;

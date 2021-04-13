@@ -57,9 +57,11 @@ public:
         GPIOOutputs *delegate;
         if (transition_handler_->set_light_color_values(values)) {
             delegate = transition_handler_;
+            state_callback_.call(transition_handler_->get_end_values());
         } else {
             instant_handler_->set_light_color_values(values);
             delegate = instant_handler_;
+            state_callback_.call(values);
         }
 
         // Note: one might think that it is more logical to turn on the LED
@@ -80,14 +82,12 @@ public:
 
         if (values.get_state() == 0)
             light_->turn_off();
-
-        state_callback_.call(values);
     }
 
 protected:
     LightHAL *light_;
-    GPIOOutputs *transition_handler_;
-    GPIOOutputs *instant_handler_ = new ColorInstantHandler();
+    ColorTransitionHandler *transition_handler_;
+    ColorInstantHandler *instant_handler_ = new ColorInstantHandler();
     CallbackManager<void(light::LightColorValues)> state_callback_{};
 
     friend class YeelightBS2LightState;
