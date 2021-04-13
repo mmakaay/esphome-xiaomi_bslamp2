@@ -20,32 +20,31 @@ namespace bs2 {
  */
 class YeelightBS2SliderSensor : public sensor::Sensor, public Component {
 public:
-    void set_parent(FrontPanelHAL *front_panel) {
-        front_panel_ = front_panel;
-    }
+    void set_parent(FrontPanelHAL *front_panel) { front_panel_ = front_panel; }
+    void set_range_from(float from) { range_from_ = from; }
+    void set_range_to(float to) { range_to_ = to; }
 
     void setup() {
         ESP_LOGCONFIG(TAG, "Setting up slider sensor ...");
+        ESP_LOGCONFIG(TAG, "  Range from: %f", range_from_);
+        ESP_LOGCONFIG(TAG, "  Range to: %f", range_to_);
+
+        slope_ = (range_to_ - range_from_) / 19.0f;
 
         front_panel_->add_on_event_callback(
             [this](EVENT ev) {
                 if ((ev & FLAG_PART_MASK) == FLAG_PART_SLIDER) {
-                    auto level = (ev & FLAG_LEVEL_MASK) >> FLAG_LEVEL_SHIFT; 
+                    float level = (ev & FLAG_LEVEL_MASK) >> FLAG_LEVEL_SHIFT; 
 
                     // Slider level 1 is really hard to touch. It is between
                     // the power button and the slider space, so it doesn't
                     // look like this one was ever meant to be used, or that
                     // the design was faulty on this. Therefore, level 1 is
-                    // ignored here.
-                    level = max(1.0f, level - 1.0f);
+                    // ignored. The resulting range of levels is 0-19.
+                    float corrected_level = max(0.0f, level - 2.0f);
 
-                    // Convert the slider level to a float between 0.01 and
-                    // 1.00, which is useful as a representation for a
-                    // brightness value. The input level is now between
-                    // 1 and 20.
-                    auto publish_level = max(0.01f, (level-1.0f) * (1.00f / 19.0f));
-                    
-                    this->publish_state(publish_level); 
+                    float final_level = range_from_ + (slope_ * corrected_level);
+                    this->publish_state(final_level); 
                 }
             }
         );
@@ -53,6 +52,9 @@ public:
 
 protected:
     FrontPanelHAL *front_panel_;
+    float range_from_;
+    float range_to_;
+    float slope_;
 };
     
 } // namespace bs2
