@@ -27,7 +27,7 @@ namespace bs2 {
  * - RGB light: based on RGB values + brightness
  */
 class ColorInstantHandler : public GPIOOutputs {
-protected:
+public:
     bool set_light_color_values(light::LightColorValues v) {
         GPIOOutputs *delegate;
         

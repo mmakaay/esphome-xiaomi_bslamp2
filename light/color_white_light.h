@@ -73,7 +73,7 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
  * based on color temperature + brightness.
  */
 class ColorWhiteLight : public GPIOOutputs {
-protected:
+public:
     bool set_light_color_values(light::LightColorValues v) {
         if (v.get_white() == 0.0f) {
             return false;
@@ -93,6 +93,7 @@ protected:
         return true;
     }
 
+protected:
     float clamp_temperature_(float temperature)
     {
         if (temperature > MIRED_MAX)

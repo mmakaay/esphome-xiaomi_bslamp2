@@ -49,6 +49,10 @@ class ColorTransitionHandler : public GPIOOutputs {
 public:
     ColorTransitionHandler(LightStateTransformerInspector *inspector) : transformer_(inspector) {}
 
+    light::LightColorValues get_end_values() {
+        return end_light_values_;
+    }
+
     bool set_light_color_values(light::LightColorValues values) {
         if (!light_state_has_active_transition_()) {
             // Remember the last active light color values. When a transition
@@ -88,10 +92,6 @@ public:
         white = esphome::lerp(smoothed, start_->white, end_->white);
 
         return true;
-    }
-
-    light::LightColorValues get_end_values() {
-        return end_light_values_;
     }
 
 protected:

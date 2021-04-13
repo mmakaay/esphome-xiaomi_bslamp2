@@ -245,7 +245,7 @@ static const RGBCircle rgb_circle_ {{
  * based on RGB color values + brightness.
  */
 class ColorRGBLight : public GPIOOutputs {
-protected:
+public:
     bool set_light_color_values(light::LightColorValues v) {
         if (v.get_white() > 0.0f) {
             return false;
@@ -340,6 +340,7 @@ protected:
         apply_brightness_(p, brightness, rgb);
     }
 
+protected:
     /**
      * Returns the position on an RGB ring in degrees (0 - 359).
      */

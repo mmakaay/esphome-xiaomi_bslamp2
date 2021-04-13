@@ -14,7 +14,7 @@ namespace bs2 {
  * This class can handle the GPIO outputs in case the light of turned off.
  */
 class ColorOff : public GPIOOutputs {
-protected:
+public:
     bool set_light_color_values(light::LightColorValues v) {
         if (v.get_state() != 0.0f && v.get_brightness() != 0.0f) {
             return false;
