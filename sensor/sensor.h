@@ -25,10 +25,6 @@ public:
     void set_range_to(float to) { range_to_ = to; }
 
     void setup() {
-        ESP_LOGCONFIG(TAG, "Setting up slider sensor ...");
-        ESP_LOGCONFIG(TAG, "  Range from: %f", range_from_);
-        ESP_LOGCONFIG(TAG, "  Range to: %f", range_to_);
-
         slope_ = (range_to_ - range_from_) / 19.0f;
 
         front_panel_->add_on_event_callback(
@@ -48,6 +44,12 @@ public:
                 }
             }
         );
+    }
+
+    void dump_config() {
+        ESP_LOGCONFIG(TAG, "Front Panel slider sensor:");
+        ESP_LOGCONFIG(TAG, "  Range from: %f", range_from_);
+        ESP_LOGCONFIG(TAG, "  Range to: %f", range_to_);
     }
 
 protected:

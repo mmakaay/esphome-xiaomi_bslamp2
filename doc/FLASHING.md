@@ -19,7 +19,7 @@ Remove the rubber pads from the botton of the device.
 
 Unbolt the 4 screws which were hidden by the rubber pads.
 
-![Photo of the screws](Yeelight_screws.jpg "Use an allen key or torx screw driver to remove the screws.")
+![Photo of the screws](images/Yeelight_screws.jpg "Use an allen key or torx screw driver to remove the screws.")
 
 Remove the bottom from the device, exposing the PCB.
 This might take a bit of force. Just pull it up bit by bit until it pops loose.
@@ -43,7 +43,7 @@ is not directly connected to the 3.3V Vin of the ESP32 chip, making it a
 less than optimal candidate for powering the board during flashing. Instead,
 powering the lamp using its own power supply works best.
 
-![Soldering points of a yeelight](Soldering_points.jpeg)
+![Soldering points of a yeelight](images/Soldering_points.jpg)
 
 You can use some sticky tape to fixate the cables before soldering.
 

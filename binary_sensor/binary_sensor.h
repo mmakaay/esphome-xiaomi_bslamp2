@@ -23,13 +23,6 @@ public:
     }
 
     void setup() {
-        ESP_LOGCONFIG(TAG, "Setting up binary_sensor ...");
-        ESP_LOGCONFIG(TAG, "  Part: %s (id %d)", 
-            (part_ == 1 ? "power button" :
-             part_ == 2 ? "color button" :
-             part_ == 3 ? "slider" : "any"),
-            part_);
-
         front_panel_->add_on_event_callback(
             [this](EVENT ev) {
                 // Filter events by part, when requested.
@@ -43,6 +36,15 @@ public:
                 this->publish_state(on_or_off); 
             }
         );
+    }
+
+    void dump_config() {
+        ESP_LOGCONFIG(TAG, "Front panel binary_sensor:");
+        ESP_LOGCONFIG(TAG, "  Part: %s (id %d)", 
+            (part_ == 1 ? "power button" :
+             part_ == 2 ? "color button" :
+             part_ == 3 ? "slider" : "any"),
+            part_);
     }
 
 protected:

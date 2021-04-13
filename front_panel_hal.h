@@ -13,7 +13,7 @@ namespace bs2 {
 static const uint8_t MSG_LEN = 7;
 using MSG = uint8_t[7];
 
-// The commands that are supported by the 
+// The commands that are supported by the front panel component.
 static const MSG READY_FOR_EV = { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
 static const MSG TURN_ON      = { 0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00 };
 static const MSG TURN_OFF     = { 0x02, 0x03, 0x0C, 0x00, 0x64, 0x00, 0x00 };
@@ -203,6 +203,38 @@ public:
                 }
             }
         }
+    }
+
+    /**
+     * Sets the front panel light to the provided level (0.0 - 1.0).
+     *
+     * Level 0.0 means: turn off the front panel light.
+     * The other levels are translate to one of the avialable levels,
+     * represented by the backlight of the slider bar.
+     */
+    void set_light_level(float level) {
+        if (level == 0.0f)
+            write_bytes_raw(TURN_OFF, MSG_LEN);
+        else if (level < 0.10)
+            write_bytes_raw(SET_LEVEL_1, MSG_LEN);
+        else if (level < 0.20)
+            write_bytes_raw(SET_LEVEL_2, MSG_LEN);
+        else if (level < 0.30)
+            write_bytes_raw(SET_LEVEL_3, MSG_LEN);
+        else if (level < 0.40)
+            write_bytes_raw(SET_LEVEL_4, MSG_LEN);
+        else if (level < 0.50)
+            write_bytes_raw(SET_LEVEL_5, MSG_LEN);
+        else if (level < 0.60)
+            write_bytes_raw(SET_LEVEL_6, MSG_LEN);
+        else if (level < 0.70)
+            write_bytes_raw(SET_LEVEL_7, MSG_LEN);
+        else if (level < 0.80)
+            write_bytes_raw(SET_LEVEL_8, MSG_LEN);
+        else if (level < 0.90)
+            write_bytes_raw(SET_LEVEL_9, MSG_LEN);
+        else
+            write_bytes_raw(SET_LEVEL_10, MSG_LEN);
     }
 
 protected:

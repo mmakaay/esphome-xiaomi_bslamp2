@@ -1,28 +1,41 @@
+# --------------------------------------------------------------------------
+# A few practical configuration substitutions.
+# --------------------------------------------------------------------------
+
 substitutions:
   name: bedside_lamp
   friendly_name: Bedside Lamp
-  transition_length: 1s
+  transition_length: 800ms
 
+# --------------------------------------------------------------------------
 # Use your own preferences for these components.
+# --------------------------------------------------------------------------
 
 wifi:
-  #ssid: "Your-SSID"
-  #password: "Your-Password"
-  #use_address: 192.168.10.12
-  #
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  #ap:
-  #  ssid: "Bedside_lamp_$name"
-  #  password: "bedside2021"
+  ssid: "Your-SSID"
+  password: "Your-Password"
+  use_address: 192.168.10.12
+  
+  # Enable fallback hotspot (for captive portal) in case wifi connection fails
+  ap:
+    ssid: "ESPHome $friendly_name"
+    password: "bedside2021"
 
 captive_portal:
+
 api:
+
 ota:
+
 logger:
+
+# --------------------------------------------------------------------------
+# Configureation specific for the Yeelight Bedside Lamp 2.
+# --------------------------------------------------------------------------
 
 # Special platform + package are used for enabling unicore and disabling the
 # efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
-# that is used in the Yeelight bedside lamp 2.
+# chip that is used in the device.
 esphome:
   name: $name
   platform: ESP32
@@ -30,7 +43,7 @@ esphome:
   platformio_options:
     platform: espressif32@3.2.0
     platform_packages: |-4
-          framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.6
+        framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.6
 
 # This component controls the light of the device.
 light:
@@ -48,8 +61,18 @@ light:
           transition_length: 3s
           update_interval: 3s
 
-binary_sensor:
+# This output component controls the front panel light + level.
+# Value 0.0 turns off the front panel light.
+# Other values (up to 1.0) turn on the light + slider light level.
+output:
+  - platform: yeelight_bs2
+    id: ${name}_front_panel_light
 
+# Binary sensors can be created for handling front panel touch / release
+# events. To specify what part of the front panel to look at, the "part"
+# parameter can be set to: "any" (i.e. the default), "power button",
+# "color button" or "slider".
+binary_sensor:
   # When pressing the power button, turn on the light.
   - platform: yeelight_bs2
     id: ${name}_power_button
@@ -57,11 +80,33 @@ binary_sensor:
     on_press:
       then:
         - light.toggle: ${name}
+  # When holding the color button, turn on night light mode.
+  - platform: yeelight_bs2
+    id: ${name}_color_button
+    part: color button
+    on_multi_click:
+    - timing:
+        - ON for at least 0.8s
+      then:
+        - light.turn_on:
+            id: ${name}
+            brightness: 0.01
+            red: 0
+            green: 1
+            blue: 0
 
+# This sensor component publishes touch events for the front panel slider.
+# The published value represents the level at which the slider was touched.
+# By default, values range from 0.01 to 1.00 (in 20 steps). This range can
+# be modified using the "range_from" and "range_to" parameters.
 sensor:
-  # When touching the slider, update the brightness.
+  # When the slider is touched, update the brightness.
+  # Brightness 0.01 initiates the light night mode, which has already
+  # been handle above. Therefore, brightness starts from 0.02 here,
+  # so night mode is not triggered from the slider.
   - platform: yeelight_bs2
     id: ${name}_slider_level
+    range_from: 0.02
     on_value:
       then:
         - light.turn_on:
