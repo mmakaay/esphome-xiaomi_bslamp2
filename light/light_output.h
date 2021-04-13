@@ -20,7 +20,7 @@ namespace bs2 {
  */
 class YeelightBS2LightOutput : public Component, public light::LightOutput {
 public:
-    void set_light_hal(LightHAL *light) { light_ = light; }
+    void set_parent(LightHAL *light) { light_ = light; }
 
     /**
      * Returns a LightTraits object, which is used to explain to the outside

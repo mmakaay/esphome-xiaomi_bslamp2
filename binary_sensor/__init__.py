@@ -1,8 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import binary_sensor
-#from esphome import automation
-from esphome.const import CONF_DEVICE_CLASS, CONF_ID
+from esphome.const import CONF_ID
 from .. import (
     bs2_ns, CODEOWNERS,
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
@@ -21,7 +20,7 @@ PARTS = {
 
 def validate_part(value):
     value = cv.string(value)
-    return cv.enum(PARTS, upper=True)(value)
+    return cv.enum(PARTS, upper=True, space='_')(value)
 
 YeelightBS2Button = bs2_ns.class_("YeelightBS2Button", binary_sensor.BinarySensor, cg.Component)
 
@@ -39,5 +38,5 @@ def to_code(config):
     yield binary_sensor.register_binary_sensor(var, config)
 
     front_panel_hal_var = yield cg.get_variable(config[CONF_FRONT_PANEL_HAL_ID])
-    cg.add(var.set_front_panel_hal(front_panel_hal_var))
+    cg.add(var.set_parent(front_panel_hal_var))
     cg.add(var.set_part(config[CONF_PART]))

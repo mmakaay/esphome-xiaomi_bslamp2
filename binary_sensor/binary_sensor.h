@@ -14,7 +14,7 @@ namespace bs2 {
  */
 class YeelightBS2Button : public binary_sensor::BinarySensor, public Component {
 public:
-    void set_front_panel_hal(FrontPanelHAL *front_panel) {
+    void set_parent(FrontPanelHAL *front_panel) {
         front_panel_ = front_panel;
     }
 
@@ -24,12 +24,15 @@ public:
 
     void setup() {
         ESP_LOGCONFIG(TAG, "Setting up binary_sensor ...");
-        ESP_LOGCONFIG(TAG, "  Part id: %d", part_);
+        ESP_LOGCONFIG(TAG, "  Part: %s (id %d)", 
+            (part_ == 1 ? "power button" :
+             part_ == 2 ? "color button" :
+             part_ == 3 ? "slider" : "any"),
+            part_);
 
         front_panel_->add_on_event_callback(
             [this](EVENT ev) {
                 // Filter events by part, when requested.
-                ESP_LOGI(TAG, "FILTER event=%d, part=%d", ev, part_);
                 if (part_ > 0) {
                     if ((ev & FLAG_PART_MASK) != (part_ << FLAG_PART_SHIFT)) {
                         return;

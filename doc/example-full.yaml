@@ -73,12 +73,22 @@ light:
           transition_length: 3s
           update_interval: 3s
 
-# An implementation for the power button: touch to toggle the light.
+# The binary sensor is used to handle front panel touch events.
 binary_sensor:
   - platform: yeelight_bs2
     id: ${name}_power_button
-    part: POWER_BUTTON
+    part: power button
     on_press:
       then:
         - light.toggle: ${name}
+
+# The sensor is used to publish a slider level when the slider is touched.
+sensor:
+  - platform: yeelight_bs2
+    id: ${name}_slider_level
+    on_value:
+      then:
+        - light.turn_on:
+            id: ${name}
+            brightness: !lambda return x;
 
