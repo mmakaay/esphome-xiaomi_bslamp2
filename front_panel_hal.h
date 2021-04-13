@@ -54,17 +54,20 @@ static const EVENT FLAG_INIT          = 0b0000000000;
 static const EVENT FLAG_ERR           = 0b0000000000;
 static const EVENT FLAG_OK            = 0b0000000001;
 
+static const EVENT FLAG_PART_SHIFT    = 1;
 static const EVENT FLAG_PART_MASK     = 0b0000000110;
 static const EVENT FLAG_PART_UNKNOWN  = 0b0000000000;
 static const EVENT FLAG_PART_POWER    = 0b0000000010;
 static const EVENT FLAG_PART_COLOR    = 0b0000000100;
 static const EVENT FLAG_PART_SLIDER   = 0b0000000110;
 
+static const EVENT FLAG_TYPE_SHIFT    = 3;
 static const EVENT FLAG_TYPE_MASK     = 0b0000011000;
 static const EVENT FLAG_TYPE_UNKNOWN  = 0b0000000000;
 static const EVENT FLAG_TYPE_TOUCH    = 0b0000001000;
 static const EVENT FLAG_TYPE_RELEASE  = 0b0000010000;
 
+static const EVENT FLAG_LEVEL_SHIFT   = 5;
 static const EVENT FLAG_LEVEL_MASK    = 0b1111100000;
 static const EVENT FLAG_LEVEL_UNKNOWN = 0b0000000000;
 
@@ -110,7 +113,7 @@ public:
                     return error_(ev, m, "out of bounds slider value");
                 } else {
                     auto level = 0x17 - m[5];
-                    ev |= (level << 5);
+                    ev |= (level << FLAG_LEVEL_SHIFT);
                 }
                 break;
             default:
@@ -143,7 +146,7 @@ protected:
             (has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_TOUCH) ? "touch" :
              has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_RELEASE) ? "release" : "n/a"));
         if (has_(ev, FLAG_PART_MASK, FLAG_PART_SLIDER)) {
-            auto level = (ev & FLAG_LEVEL_MASK) >> 5;
+            auto level = (ev & FLAG_LEVEL_MASK) >> FLAG_LEVEL_SHIFT;
             if (level > 0) {
                 ESP_LOGE(TAG, "  Parsed slider level: %d", level);
             }
