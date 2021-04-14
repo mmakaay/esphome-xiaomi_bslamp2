@@ -5,7 +5,15 @@
 substitutions:
   name: bedside_lamp
   friendly_name: Bedside Lamp
-  transition_length: 700ms
+  transition_length: 500ms
+
+  # Some derived identifiers for the device components.
+  id_light: ${name}
+  id_front_panel_light: ${name}_front_panel_light
+  id_front_panel_output: ${name}_front_panel_output
+  id_power_button: ${name}_power_button
+  id_color_button: ${name}_color_button
+  id_slider_level: ${name}_slider_level
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
@@ -37,7 +45,7 @@ logger:
 # efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
 # chip that is used in the device.
 esphome:
-  name: $name
+  name: ${name}
   platform: ESP32
   board: esp32doit-devkit-v1
   platformio_options:
@@ -48,7 +56,7 @@ esphome:
 light:
   # This component controls the LED lights of the device.
   - platform: yeelight_bs2
-    id: ${name}
+    id: ${id_light}
     name: ${friendly_name} RGBW Light
     default_transition_length: ${transition_length}
     # When the brightness is changed, then update the level indication
@@ -57,7 +65,7 @@ light:
     on_brightness:
       then:
         - output.set_level:
-            id: ${name}_front_panel_light
+            id: ${id_front_panel_output}
             level: !lambda if (x < 0.012f) return 0; else return x;
     # You can use any effects that you like. These are just examples.
     effects:
@@ -74,11 +82,23 @@ light:
   # (as defined below): wrap it in a light component, so you can
   # treat the front panel illumination as a monochromatic light
   # from within Home Assitant.
+  # This is primarily a demo. It's barely useful for a device that
+  # one has running in production.
   - platform: monochromatic
     name: $friendly_name Front Panel Light
-    output: ${name}_front_panel_light
+    id: ${id_front_panel_light}
+    output: ${id_front_panel_output}
     default_transition_length: 0s
     gamma_correct: 1
+    effects:
+      - lambda:
+          name: Random Level
+          update_interval: 150ms
+          lambda: |-
+            auto call = id(${id_front_panel_light}).turn_on();
+            call.set_transition_length(150);
+            call.set_brightness(random_float());
+            call.perform();
 
 # This output controls the front panel illumination + level indication.
 # Value 0.0 turns off the illumination.
@@ -86,44 +106,46 @@ light:
 # indication to the requested level.
 output:
   - platform: yeelight_bs2
-    id: ${name}_front_panel_light
+    id: ${id_front_panel_output}
 
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "part"
 # parameter can be set to: "any" (i.e. the default), "power button",
 # "color button" or "slider".
 binary_sensor:
-  # When pressing the power button, turn on the light.
+  # When touching the power button, toggle the light.
+  # When holding the power button, turn on night light mode.
   - platform: yeelight_bs2
-    id: ${name}_power_button
+    id: ${id_power_button}
     part: power button
-    on_press:
+    on_multi_click:
+    - timing:
+        - ON for at most 0.8s
       then:
-        - light.toggle: ${name}
+        - light.toggle: ${id_light}
+    - timing:
+        - ON for at least 0.8s
+      then:
+        - light.turn_on:
+            id: ${id_light}
+            red: 1
+            green: 1
+            blue: 1
+            brightness: 0.01
+
   # When touching the color button, set a random color.
-  # When holding the color button, turn on night light mode.
   - platform: yeelight_bs2
-    id: ${name}_color_button
+    id: ${id_color_button}
     part: color button
     on_multi_click:
     - timing:
         - ON for at most 0.8s
       then:
         - light.turn_on:
-            id: ${name}
+            id: ${id_light}
             red: !lambda return random_float();
             green: !lambda return random_float();
             blue: !lambda return random_float();
-            white: 0
-    - timing:
-        - ON for at least 0.8s
-      then:
-        - light.turn_on:
-            id: ${name}
-            red: 1
-            green: 1
-            blue: 1
-            brightness: 0.01
 
 # This sensor component publishes touch events for the front panel slider.
 # The published value represents the level at which the slider was touched.
@@ -135,11 +157,11 @@ sensor:
   # been handled above. Therefore, brightness starts from 0.02 here,
   # so night mode is not triggered from the slider.
   - platform: yeelight_bs2
-    id: ${name}_slider_level
+    id: ${id_slider_level}
     range_from: 0.02
     on_value:
       then:
         - light.turn_on:
-            id: ${name}
+            id: ${id_light}
             brightness: !lambda return x;
 
