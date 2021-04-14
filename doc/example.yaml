@@ -48,6 +48,7 @@ esphome:
 # This component controls the light of the device.
 light:
   - platform: yeelight_bs2
+    id: ${name}
     name: ${friendly_name} RGBW Light
     default_transition_length: ${transition_length}
     # You can use any effects that you like. These are just examples.
