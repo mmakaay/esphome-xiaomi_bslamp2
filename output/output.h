@@ -10,8 +10,8 @@ namespace yeelight {
 namespace bs2 {
 
 /**
- * An output, used for controlling the front panel light on the 
- * Yeelight Bedside Lamp 2 front panel.
+ * An output, used for controlling the front panel illumination and
+ * brightness level indicator on the Yeelight Bedside Lamp 2 front panel.
  */
 class YeelightBS2FrontPanelLight : public output::FloatOutput, public Component {
 public:

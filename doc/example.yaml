@@ -5,7 +5,7 @@
 substitutions:
   name: bedside_lamp
   friendly_name: Bedside Lamp
-  transition_length: 800ms
+  transition_length: 700ms
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
@@ -30,7 +30,7 @@ ota:
 logger:
 
 # --------------------------------------------------------------------------
-# Configureation specific for the Yeelight Bedside Lamp 2.
+# Configuration specific for the Yeelight Bedside Lamp 2.
 # --------------------------------------------------------------------------
 
 # Special platform + package are used for enabling unicore and disabling the
@@ -45,12 +45,20 @@ esphome:
     platform_packages: |-4
         framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.6
 
-# This component controls the light of the device.
 light:
+  # This component controls the LED lights of the device.
   - platform: yeelight_bs2
     id: ${name}
     name: ${friendly_name} RGBW Light
     default_transition_length: ${transition_length}
+    # When the brightness is changed, then update the level indication
+    # on the front panel accordingly. In night light mode, turn off
+    # the front panel illumination.
+    on_brightness:
+      then:
+        - output.set_level:
+            id: ${name}_front_panel_light
+            level: !lambda if (x < 0.012f) return 0; else return x;
     # You can use any effects that you like. These are just examples.
     effects:
       - random:
@@ -62,9 +70,20 @@ light:
           transition_length: 3s
           update_interval: 3s
 
-# This output component controls the front panel light + level.
-# Value 0.0 turns off the front panel light.
-# Other values (up to 1.0) turn on the light + slider light level.
+  # A fun thing you could do with the front panel output component
+  # (as defined below): wrap it in a light component, so you can
+  # treat the front panel illumination as a monochromatic light
+  # from within Home Assitant.
+  - platform: monochromatic
+    name: $friendly_name Front Panel Light
+    output: ${name}_front_panel_light
+    default_transition_length: 0s
+    gamma_correct: 1
+
+# This output controls the front panel illumination + level indication.
+# Value 0.0 turns off the illumination.
+# Other values (up to 1.0) turn on the illumination and set the level
+# indication to the requested level.
 output:
   - platform: yeelight_bs2
     id: ${name}_front_panel_light
@@ -81,20 +100,30 @@ binary_sensor:
     on_press:
       then:
         - light.toggle: ${name}
+  # When touching the color button, set a random color.
   # When holding the color button, turn on night light mode.
   - platform: yeelight_bs2
     id: ${name}_color_button
     part: color button
     on_multi_click:
     - timing:
+        - ON for at most 0.8s
+      then:
+        - light.turn_on:
+            id: ${name}
+            red: !lambda return random_float();
+            green: !lambda return random_float();
+            blue: !lambda return random_float();
+            white: 0
+    - timing:
         - ON for at least 0.8s
       then:
         - light.turn_on:
             id: ${name}
-            brightness: 0.01
-            red: 0
+            red: 1
             green: 1
-            blue: 0
+            blue: 1
+            brightness: 0.01
 
 # This sensor component publishes touch events for the front panel slider.
 # The published value represents the level at which the slider was touched.
@@ -103,7 +132,7 @@ binary_sensor:
 sensor:
   # When the slider is touched, update the brightness.
   # Brightness 0.01 initiates the light night mode, which has already
-  # been handle above. Therefore, brightness starts from 0.02 here,
+  # been handled above. Therefore, brightness starts from 0.02 here,
   # so night mode is not triggered from the slider.
   - platform: yeelight_bs2
     id: ${name}_slider_level

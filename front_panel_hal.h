@@ -215,23 +215,23 @@ public:
     void set_light_level(float level) {
         if (level == 0.0f)
             write_bytes_raw(TURN_OFF, MSG_LEN);
-        else if (level < 0.10)
+        else if (level < 0.15)
             write_bytes_raw(SET_LEVEL_1, MSG_LEN);
-        else if (level < 0.20)
+        else if (level < 0.25)
             write_bytes_raw(SET_LEVEL_2, MSG_LEN);
-        else if (level < 0.30)
+        else if (level < 0.35)
             write_bytes_raw(SET_LEVEL_3, MSG_LEN);
-        else if (level < 0.40)
+        else if (level < 0.45)
             write_bytes_raw(SET_LEVEL_4, MSG_LEN);
-        else if (level < 0.50)
+        else if (level < 0.55)
             write_bytes_raw(SET_LEVEL_5, MSG_LEN);
-        else if (level < 0.60)
+        else if (level < 0.65)
             write_bytes_raw(SET_LEVEL_6, MSG_LEN);
-        else if (level < 0.70)
+        else if (level < 0.75)
             write_bytes_raw(SET_LEVEL_7, MSG_LEN);
-        else if (level < 0.80)
+        else if (level < 0.85)
             write_bytes_raw(SET_LEVEL_8, MSG_LEN);
-        else if (level < 0.90)
+        else if (level < 0.95)
             write_bytes_raw(SET_LEVEL_9, MSG_LEN);
         else
             write_bytes_raw(SET_LEVEL_10, MSG_LEN);
