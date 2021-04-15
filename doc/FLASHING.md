@@ -138,9 +138,9 @@ reconnect the power to boot into the restored firmware.
 
 ## Flash new firmware
 
-Setup an ESPHome Project, see [README.md](../README.md)
-Compile the firmware for the device and download the `firmware.bin` file
-to the device to which the serial adapter is connected.
+Setup an ESPHome Project (see [README.md](../README.md)),compile the firmware
+for the device and download the `firmware.bin` file to the device to which
+the serial adapter is connected.
 
 You can flash the device using esphome or esptool.
 I normally use the [esphome-flasher](https://github.com/esphome/esphome-flasher)
@@ -187,5 +187,3 @@ https://github.com/arendst/Tasmota/tree/firmware/firmware/tasmota32/ESP32_needed
 
 (remember that the [esphome-flasher](https://github.com/esphome/esphome-flasher)
 will give you a bit less of a hard-core experience during flashing)
-
-

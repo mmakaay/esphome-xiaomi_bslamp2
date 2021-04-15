@@ -94,6 +94,18 @@ light:
           name: "Fast Random"
           transition_length: 3s
           update_interval: 3s
+    presets:
+      - rgb:
+          - red_bright:  { red: 1 }
+          - green:       { green: 1 }
+          - blue_dimmed: { blue: 1 }
+          - yellow:      { red: 1, green: 1 }
+          - something:   { red: 0.2, green: 0.4, blue: 1 }
+      - white:
+          - warm:        { color_temperature: 588 }
+          - luke:        { color_temperature: 400 }
+          - chilly:      { color_temperature: 275 }
+          - cold:        { color_temperature: 153 }
 
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
