@@ -67,7 +67,11 @@ light:
       then:
         - output.set_level:
             id: ${id_front_panel_output}
-            level: !lambda if (x < 0.012f) return 0; else return x;
+            level: !lambda |-
+              if (id(${id_light_mode}).state == "night")
+                return 0;
+              else
+                return x;
     # You can use any effects that you like. These are just examples.
     effects:
       - random:

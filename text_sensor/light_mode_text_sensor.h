@@ -1,8 +1,5 @@
 #pragma once 
 
-#include <cmath>
-#include "../common.h"
-#include "../front_panel_hal.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 
 namespace esphome {
@@ -20,14 +17,12 @@ public:
     void set_parent(YeelightBS2LightOutput *light) { light_ = light; }
 
     void setup() {
-        light_->add_on_state_callback(
-            [this](light::LightColorValues values, std::string light_mode) {
-                if (last_light_mode_ != light_mode) {
-                    publish_state(light_mode);
-                    last_light_mode_ = light_mode;
-                }
+        light_->add_on_light_mode_callback([this](std::string light_mode) {
+            if (last_light_mode_ != light_mode) {
+                publish_state(light_mode);
+                last_light_mode_ = light_mode;
             }
-        );
+        });
     }
 
 protected:

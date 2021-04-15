@@ -17,7 +17,6 @@ CONF_ON_BRIGHTNESS = "on_brightness"
 YeelightBS2LightState = bs2_ns.class_("YeelightBS2LightState", light.LightState)
 YeelightBS2LightOutput = bs2_ns.class_("YeelightBS2LightOutput", light.LightOutput)
 BrightnessTrigger = bs2_ns.class_("BrightnessTrigger", automation.Trigger.template())
-LightModeTrigger = bs2_ns.class_("LightModeTrigger", automation.Trigger.template())
 
 CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
     {
