@@ -64,14 +64,19 @@ light:
     # on the front panel accordingly. In night light mode, turn off
     # the front panel illumination.
     on_brightness:
-      then:
-        - output.set_level:
-            id: ${id_front_panel_output}
-            level: !lambda |-
-              if (id(${id_light_mode}).state == "night")
-                return 0;
-              else
-                return x;
+      - if:
+          condition:
+            text_sensor.state:
+                id: ${id_light_mode}
+                state: night
+          then:
+            - output.set_level:
+                id: ${id_front_panel_output}
+                level: 0
+          else:
+            - output.set_level:
+                id: ${id_front_panel_output}
+                level: !lambda return x;
     # You can use any effects that you like. These are just examples.
     effects:
       - random:
@@ -82,29 +87,6 @@ light:
           name: "Fast Random"
           transition_length: 3s
           update_interval: 3s
-
-  # A fun thing you could do with the front panel output component
-  # (as defined below): wrap it in a light component, so you can
-  # treat the front panel illumination as a monochromatic light
-  # from within Home Assitant.
-  # This is primarily a demo. It's barely useful for a device that
-  # one has running in production.
-  - platform: monochromatic
-    name: $friendly_name Front Panel Light
-    id: ${id_front_panel_light}
-    output: ${id_front_panel_output}
-    default_transition_length: 0s
-    gamma_correct: 1
-    effects:
-      - lambda:
-          name: Random Level
-          update_interval: 150ms
-          lambda: |-
-            auto call = id(${id_front_panel_light}).turn_on();
-            call.set_transition_length(150);
-            call.set_brightness(random_float());
-            call.perform();
-
 
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
