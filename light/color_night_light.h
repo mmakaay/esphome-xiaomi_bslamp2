@@ -20,6 +20,8 @@ namespace bs2 {
 class ColorNightLight : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
+        light_mode = LIGHT_MODE_NIGHT;
+
         // Note: I do not check for a brightness at or below 0.01 (1%) here,
         // because the lowest brightness setting from Home Assistant turns
         // up as 0.011765 in here (which is 3/255 and not 1/100).

@@ -4,6 +4,13 @@ namespace esphome {
 namespace yeelight {
 namespace bs2 {
 
+// Light modes that can be reported by implementations of GPIOOutputs.
+static const std::string LIGHT_MODE_UNKNOWN { "unknown" };
+static const std::string LIGHT_MODE_OFF { "off" };
+static const std::string LIGHT_MODE_RGB { "rgb" };
+static const std::string LIGHT_MODE_WHITE { "white" };
+static const std::string LIGHT_MODE_NIGHT { "night" };
+
 /**
  * This abstract class is used for implementing classes that translate
  * LightColorValues into the required GPIO PWM duty cycle levels to represent
@@ -15,6 +22,7 @@ public:
     float green = 0.0f;
     float blue = 0.0f;
     float white = 0.0f;
+    std::string light_mode = LIGHT_MODE_OFF;
 
     /**
      * Sets the red, green, blue, white fields to the PWM duty cycles
@@ -33,6 +41,7 @@ public:
         other->green = green;
         other->blue = blue;
         other->white = white;
+        other->light_mode = light_mode;
     }
 
     void log(const char *prefix) {

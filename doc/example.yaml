@@ -14,6 +14,7 @@ substitutions:
   id_power_button: ${name}_power_button
   id_color_button: ${name}_color_button
   id_slider_level: ${name}_slider_level
+  id_light_mode: ${name}_light_mode
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
@@ -99,6 +100,14 @@ light:
             call.set_transition_length(150);
             call.set_brightness(random_float());
             call.perform();
+
+
+# This text sensor propagates the currently active light mode.
+# The possible light modes are: "off", "rgb", "white" and "night".
+text_sensor:
+  - platform: yeelight_bs2
+    name: ${name} Light Mode
+    id: ${id_light_mode}
 
 # This output controls the front panel illumination + level indication.
 # Value 0.0 turns off the illumination.

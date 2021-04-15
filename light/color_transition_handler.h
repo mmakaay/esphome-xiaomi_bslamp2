@@ -83,6 +83,8 @@ public:
             end_->set_light_color_values(end_light_values_);
         }
 
+        light_mode = end_->light_mode;
+
         // Determine required GPIO outputs for current transition progress.
         progress_ = transformer_->get_progress();
         auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress_);

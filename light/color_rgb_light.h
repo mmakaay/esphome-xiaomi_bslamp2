@@ -247,6 +247,8 @@ static const RGBCircle rgb_circle_ {{
 class ColorRGBLight : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
+        light_mode = LIGHT_MODE_RGB;
+
         if (v.get_white() > 0.0f) {
             return false;
         }

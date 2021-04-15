@@ -4,7 +4,7 @@ from esphome.components import light
 from esphome import automation
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE,
-    CONF_OUTPUT_ID, CONF_TRIGGER_ID
+    CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID
 )
 from .. import bs2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
@@ -17,6 +17,7 @@ CONF_ON_BRIGHTNESS = "on_brightness"
 YeelightBS2LightState = bs2_ns.class_("YeelightBS2LightState", light.LightState)
 YeelightBS2LightOutput = bs2_ns.class_("YeelightBS2LightOutput", light.LightOutput)
 BrightnessTrigger = bs2_ns.class_("BrightnessTrigger", automation.Trigger.template())
+LightModeTrigger = bs2_ns.class_("LightModeTrigger", automation.Trigger.template())
 
 CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
     {

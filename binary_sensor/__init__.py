@@ -22,11 +22,12 @@ def validate_part(value):
     value = cv.string(value)
     return cv.enum(PARTS, upper=True, space='_')(value)
 
-YeelightBS2Button = bs2_ns.class_("YeelightBS2Button", binary_sensor.BinarySensor, cg.Component)
+YeelightBS2TouchBinarySensor = bs2_ns.class_(
+    "YeelightBS2TouchBinarySensor", binary_sensor.BinarySensor, cg.Component)
 
 CONFIG_SCHEMA = binary_sensor.BINARY_SENSOR_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2Button),
+        cv.GenerateID(): cv.declare_id(YeelightBS2TouchBinarySensor),
         cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
         cv.Optional(CONF_PART, default="ANY"): validate_part,
     }

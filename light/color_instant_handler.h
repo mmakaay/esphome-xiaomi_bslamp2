@@ -50,6 +50,7 @@ public:
         return true;
     }
 
+protected:
     GPIOOutputs *off_light_ = new ColorOff();
     GPIOOutputs *rgb_light_ = new ColorRGBLight();
     GPIOOutputs *white_light_ = new ColorWhiteLight();

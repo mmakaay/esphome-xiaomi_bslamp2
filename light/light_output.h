@@ -39,7 +39,7 @@ public:
         return traits;
     }
 
-    void add_on_state_callback(std::function<void(light::LightColorValues)> &&callback) {
+    void add_on_state_callback(std::function<void(light::LightColorValues, std::string)> &&callback) {
           state_callback_.add(std::move(callback));
     }
 
@@ -57,12 +57,16 @@ public:
         GPIOOutputs *delegate;
         if (transition_handler_->set_light_color_values(values)) {
             delegate = transition_handler_;
-            state_callback_.call(transition_handler_->get_end_values());
+            state_callback_.call(
+                transition_handler_->get_end_values(),
+                delegate->light_mode);
         } else {
             instant_handler_->set_light_color_values(values);
             delegate = instant_handler_;
-            state_callback_.call(values);
+            state_callback_.call(values, delegate->light_mode);
         }
+
+        light_mode_ = delegate->light_mode;
 
         // Note: one might think that it is more logical to turn on the LED
         // circuitry master switch after setting the individual channels,
@@ -84,11 +88,16 @@ public:
             light_->turn_off();
     }
 
+    std::string get_light_mode() {
+        return light_mode_;
+    }
+
 protected:
     LightHAL *light_;
     ColorTransitionHandler *transition_handler_;
     ColorInstantHandler *instant_handler_ = new ColorInstantHandler();
-    CallbackManager<void(light::LightColorValues)> state_callback_{};
+    CallbackManager<void(light::LightColorValues, std::string)> state_callback_{};
+    std::string light_mode_;
 
     friend class YeelightBS2LightState;
 

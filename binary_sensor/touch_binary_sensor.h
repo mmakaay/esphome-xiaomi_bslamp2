@@ -9,10 +9,10 @@ namespace yeelight {
 namespace bs2 {
 
 /**
- * This class implements a binary sensor for the buttons on the
- * Yeelight Bedside Lamp 2.
+ * This class implements a binary sensor for the touch buttons
+ * on the Yeelight Bedside Lamp 2.
  */
-class YeelightBS2Button : public binary_sensor::BinarySensor, public Component {
+class YeelightBS2TouchBinarySensor : public binary_sensor::BinarySensor, public Component {
 public:
     void set_parent(FrontPanelHAL *front_panel) {
         front_panel_ = front_panel;

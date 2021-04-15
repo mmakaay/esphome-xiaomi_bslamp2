@@ -75,6 +75,8 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
 class ColorWhiteLight : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
+        light_mode = LIGHT_MODE_WHITE;
+
         if (v.get_white() == 0.0f) {
             return false;
         }
