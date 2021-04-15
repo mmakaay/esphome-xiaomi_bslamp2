@@ -4,8 +4,8 @@
 #include "gpio_outputs.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
  * This class can handle the GPIO outputs for the night light mode.
@@ -16,6 +16,10 @@ namespace bs2 {
  * confusing and made me run into issues when automating the lights.
  * Using the lowest brightness for triggering the night light feels a lot
  * more natural.
+ *
+ * Note that if a switch is still the preferred way to handle the night
+ * light mode toggle, then this still could be implemented through the
+ * device's yaml configuration.
  */
 class ColorNightLight : public GPIOOutputs {
 public:
@@ -54,6 +58,6 @@ public:
     }
 };
 
-} // namespace yeelight_bs2
-} // namespace yeelight
-} // namespace bs2
+} // namespace bslamp2
+} // namespace xiaomi
+} // namespace esphome

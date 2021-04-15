@@ -6,23 +6,23 @@ from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE,
     CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID
 )
-from .. import bs2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
+from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
-AUTO_LOAD = ["yeelight_bs2"]
+AUTO_LOAD = ["xiaomi_bslamp2"]
 
 CONF_MASTER1 = "master1"
 CONF_MASTER2 = "master2"
 CONF_ON_BRIGHTNESS = "on_brightness"
 
-YeelightBS2LightState = bs2_ns.class_("YeelightBS2LightState", light.LightState)
-YeelightBS2LightOutput = bs2_ns.class_("YeelightBS2LightOutput", light.LightOutput)
-BrightnessTrigger = bs2_ns.class_("BrightnessTrigger", automation.Trigger.template())
+XiaomiBslamp2LightState = bslamp2_ns.class_("XiaomiBslamp2LightState", light.LightState)
+XiaomiBslamp2LightOutput = bslamp2_ns.class_("XiaomiBslamp2LightOutput", light.LightOutput)
+BrightnessTrigger = bslamp2_ns.class_("BrightnessTrigger", automation.Trigger.template())
 
 CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2LightState),
+        cv.GenerateID(): cv.declare_id(XiaomiBslamp2LightState),
         cv.GenerateID(CONF_LIGHT_HAL_ID): cv.use_id(LightHAL),
-        cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(YeelightBS2LightOutput),
+        cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(XiaomiBslamp2LightOutput),
         cv.Optional(CONF_ON_BRIGHTNESS): automation.validate_automation(
             {
                 cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(BrightnessTrigger),

@@ -7,8 +7,8 @@
 #include "esphome/components/i2c/i2c.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 static const uint8_t MSG_LEN = 7;
 using MSG = uint8_t[7];
@@ -73,7 +73,7 @@ static const EVENT FLAG_LEVEL_UNKNOWN = 0b0000000000;
 
 /**
  * This class implements a parser that translates event byte codes from the
- * Yeelight Bedside Lamp 2 into usable events.
+ * Xiaomi Mijia Bedside Lamp 2 into usable events.
  */
 class FrontPanelEventParser {
 public:
@@ -158,7 +158,7 @@ protected:
 
 /**
  * This is a hardware abstraction layer that communicates with with front
- * panel of the Yeelight Bedside Lamp 2.
+ * panel of the Xiaomi Mijia Bedside Lamp 2.
  *
  * It serves as a hub component for other components that implement
  * the actual buttons and slider components.
@@ -257,6 +257,6 @@ void ICACHE_RAM_ATTR HOT FrontPanelHAL::isr(FrontPanelHAL *store) {
     store->event_id_++;
 }
 
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

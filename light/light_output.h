@@ -7,18 +7,18 @@
 #include "esphome/components/ledc/ledc_output.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
- * A LightOutput class for the Yeelight Bedside Lamp 2.
+ * A LightOutput class for the Xiaomi Mijia Bedside Lamp 2.
  *
  * The function of this class is to translate a required light state
  * into actual physicial GPIO output signals to drive the device's LED
  * circuitry. It forms the glue between the physical device and the
  * logical light color input.
  */
-class YeelightBS2LightOutput : public Component, public light::LightOutput {
+class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 public:
     void set_parent(LightHAL *light) { light_ = light; }
 
@@ -97,10 +97,10 @@ protected:
     CallbackManager<void(std::string)> light_mode_callback_{};
     CallbackManager<void(light::LightColorValues)> state_callback_{};
 
-    friend class YeelightBS2LightState;
+    friend class XiaomiBslamp2LightState;
 
     /**
-     * Called by the YeelightBS2LightState class, to set the object that can be
+     * Called by the XiaomiBslamp2LightState class, to set the object that can be
      * used to access the protected LightTransformer data from the LightState
      * object.
      */
@@ -116,10 +116,10 @@ protected:
  * This class is used by the ColorTransitionHandler class to inspect if
  * an ongoing light color transition is active in a LightState object.
  */
-class YeelightBS2LightState : public light::LightState, public LightStateTransformerInspector
+class XiaomiBslamp2LightState : public light::LightState, public LightStateTransformerInspector
 {
 public:
-    YeelightBS2LightState(const std::string &name, YeelightBS2LightOutput *output) : light::LightState(name, output) {
+    XiaomiBslamp2LightState(const std::string &name, XiaomiBslamp2LightOutput *output) : light::LightState(name, output) {
         output->set_transformer_inspector(this);
     }
 
@@ -129,6 +129,6 @@ public:
     float get_progress() { return transformer_->get_progress(); }
 };
     
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

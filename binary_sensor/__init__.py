@@ -3,11 +3,11 @@ import esphome.config_validation as cv
 from esphome.components import binary_sensor
 from esphome.const import CONF_ID
 from .. import (
-    bs2_ns, CODEOWNERS,
+    bslamp2_ns, CODEOWNERS,
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
 )
 
-AUTO_LOAD = ["yeelight_bs2"]
+AUTO_LOAD = ["xiaomi_bslamp2"]
 
 CONF_PART = "part"
 
@@ -22,12 +22,12 @@ def validate_part(value):
     value = cv.string(value)
     return cv.enum(PARTS, upper=True, space='_')(value)
 
-YeelightBS2TouchBinarySensor = bs2_ns.class_(
-    "YeelightBS2TouchBinarySensor", binary_sensor.BinarySensor, cg.Component)
+XiaomiBslamp2TouchBinarySensor = bslamp2_ns.class_(
+    "XiaomiBslamp2TouchBinarySensor", binary_sensor.BinarySensor, cg.Component)
 
 CONFIG_SCHEMA = binary_sensor.BINARY_SENSOR_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2TouchBinarySensor),
+        cv.GenerateID(): cv.declare_id(XiaomiBslamp2TouchBinarySensor),
         cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
         cv.Optional(CONF_PART, default="ANY"): validate_part,
     }

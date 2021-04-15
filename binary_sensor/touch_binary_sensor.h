@@ -5,14 +5,14 @@
 #include "esphome/components/binary_sensor/binary_sensor.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
  * This class implements a binary sensor for the touch buttons
- * on the Yeelight Bedside Lamp 2.
+ * and touch slider on the front panel of the Xiaomi Mijia Bedside Lamp 2.
  */
-class YeelightBS2TouchBinarySensor : public binary_sensor::BinarySensor, public Component {
+class XiaomiBslamp2TouchBinarySensor : public binary_sensor::BinarySensor, public Component {
 public:
     void set_parent(FrontPanelHAL *front_panel) {
         front_panel_ = front_panel;
@@ -52,6 +52,6 @@ protected:
     EVENT part_;
 };
     
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

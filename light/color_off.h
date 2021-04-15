@@ -7,8 +7,8 @@
 #include "gpio_outputs.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
  * This class can handle the GPIO outputs in case the light of turned off.
@@ -31,6 +31,6 @@ public:
     }
 };
 
-} // namespace yeelight_bs2
-} // namespace yeelight
-} // namespace bs2
+} // namespace bslamp2
+} // namespace xiaomi
+} // namespace esphome

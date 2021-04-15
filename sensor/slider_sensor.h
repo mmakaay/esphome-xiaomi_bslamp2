@@ -6,11 +6,12 @@
 #include "esphome/components/sensor/sensor.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
- * A sensor for the slider on the Yeelight Bedside Lamp 2.
+ * A sensor for the touch slider on the front panel of the 
+ * Xiaomi Mijia Bedside Lamp 2.
  *
  * This sensor publishes the level at which the slider was touched, so it
  * can be used to implement automations.  Note that it does not represent
@@ -18,7 +19,7 @@ namespace bs2 {
  * component), nor the level as displayed by the slider using the front
  * panel light (this is implemented by the slider light component).
  */
-class YeelightBS2SliderSensor : public sensor::Sensor, public Component {
+class XiaomiBslamp2SliderSensor : public sensor::Sensor, public Component {
 public:
     void set_parent(FrontPanelHAL *front_panel) { front_panel_ = front_panel; }
     void set_range_from(float from) { range_from_ = from; }
@@ -59,6 +60,6 @@ protected:
     float slope_;
 };
     
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

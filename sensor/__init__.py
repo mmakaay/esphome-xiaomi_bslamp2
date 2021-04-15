@@ -3,18 +3,18 @@ import esphome.config_validation as cv
 from esphome.components import sensor
 from esphome.const import CONF_ID, CONF_FORCE_UPDATE, CONF_RANGE_FROM, CONF_RANGE_TO
 from .. import (
-    bs2_ns, CODEOWNERS,
+    bslamp2_ns, CODEOWNERS,
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
 )
 
-AUTO_LOAD = ["yeelight_bs2"]
+AUTO_LOAD = ["xiaomi_bslamp2"]
 
-YeelightBS2SliderSensor = bs2_ns.class_(
-    "YeelightBS2SliderSensor", sensor.Sensor, cg.Component)
+XiaomiBslamp2SliderSensor = bslamp2_ns.class_(
+    "XiaomiBslamp2SliderSensor", sensor.Sensor, cg.Component)
 
 CONFIG_SCHEMA = sensor.SENSOR_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2SliderSensor),
+        cv.GenerateID(): cv.declare_id(XiaomiBslamp2SliderSensor),
         cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
         cv.Optional(CONF_FORCE_UPDATE, default=True): cv.boolean,
         cv.Optional(CONF_RANGE_FROM, default=0.01): cv.float_,

@@ -7,8 +7,8 @@
 #include "gpio_outputs.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 struct RGB {
     float red;
@@ -378,6 +378,6 @@ protected:
 };
 
 
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

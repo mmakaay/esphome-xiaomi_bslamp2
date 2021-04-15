@@ -1,4 +1,4 @@
-# Flashing the Yeelight Bedside Lamp 2
+# Flashing the Xiaomi Mijia Bedside Lamp 2
 
 ## Tools needed
 
@@ -13,18 +13,18 @@
 We have writen these instructions with care, but we will give absolutely no
 warranty. Perhaps you will destroy your device and your computer.
 
-## Opening the Yeelight
+## Opening the lamp, to expose the PCB
 
-Remove the rubber pads from the botton of the device.
+Remove the rubber pads from the botton of the lamp.
 
 Unbolt the 4 screws which were hidden by the rubber pads.
 
-![Photo of the screws](images/Yeelight_screws.jpg "Use an allen key or torx screw driver to remove the screws.")
+![Photo of the screws](images/screws.jpg "Use an allen key or torx screw driver to remove the screws.")
 
 Remove the bottom from the device, exposing the PCB.
 This might take a bit of force. Just pull it up bit by bit until it pops loose.
 
-For some good picture of disassembling this device, take a look
+For some good pictures of disassembling this device, take a look
 [at this blog post](https://mysku.ru/blog/china-stores/78455.html)
 It is in Russian, but the translation by Google works well and moreover, the
 pictures are the most important thing here. If you scroll down, you will
@@ -43,7 +43,7 @@ is not directly connected to the 3.3V Vin of the ESP32 chip, making it a
 less than optimal candidate for powering the board during flashing. Instead,
 powering the lamp using its own power supply works best.
 
-![Soldering points of a yeelight](images/Soldering_points.jpg)
+![Soldering points](images/Soldering_points.jpg)
 
 You can use some sticky tape to fixate the cables before soldering.
 
@@ -103,7 +103,7 @@ Here's an example on how to backup the original firmware from Linux. First,
 unplug your device's power supply, then start the esptool read_flash command:
 
 ```
-python esptool.py -p /dev/ttyUSB0 read_flash 0x0 0x400000 original-yeelight-firmware.bin
+python esptool.py -p /dev/ttyUSB0 read_flash 0x0 0x400000 original-firmware.bin
 ```
 
 /dev/ttyUSB0 is the port of the usb adaper on Linux. You can find what port
@@ -125,7 +125,7 @@ flashing it back onto the device.
 First, unplug your device's power supply, then start the esptool write_flash command:
 
 ```
-python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x00 original-yeelight-firmware.bin
+python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x00 original-firmware.bin
 ```
 Make sure that GPIO0 is connected to GND and plug in the power supply.
 The output of esptool should now show that it connects to the device and uploads
@@ -183,7 +183,7 @@ python esptool.py --chip esp32  -p /dev/ttyUSB0 --baud 115200 --before default_r
 You will find the missing tasmota boot files here:
 https://github.com/arendst/Tasmota/tree/firmware/firmware/tasmota32/ESP32_needed_files
 
-*Note: user @tabacha was not able to use tasmota with the bedside lamp 2.*
+*Note: user @tabacha was not able to use tasmota with the Bedside Lamp 2.*
 
 (remember that the [esphome-flasher](https://github.com/esphome/esphome-flasher)
 will give you a bit less of a hard-core experience during flashing)

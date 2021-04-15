@@ -7,18 +7,18 @@
 #include "gpio_outputs.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
- * The minimum color temperature in mired. Same as supported by
- * the original Yeelight firmware.
+ * The minimum color temperature in mired.
+ * Same as supported by the original firmware.
  */
 static const int MIRED_MIN = 153;
 
 /**
- * The maximum color temperature in mired. Same as supported by
- * the original Yeelight firmware.
+ * The maximum color temperature in mired.
+ * Same as supported by the original firmware.
  */
 static const int MIRED_MAX = 588;
 
@@ -123,6 +123,6 @@ protected:
     }
 };
 
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

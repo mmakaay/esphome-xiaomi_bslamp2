@@ -7,9 +7,8 @@ substitutions:
   friendly_name: Bedside Lamp
   transition_length: 500ms
 
-  # Some derived identifiers for the device components.
+  # Derive component identifiers, based on the device name.
   id_light: ${name}
-  id_front_panel_light: ${name}_front_panel_light
   id_front_panel_output: ${name}_front_panel_output
   id_power_button: ${name}_power_button
   id_color_button: ${name}_color_button
@@ -22,24 +21,32 @@ substitutions:
 
 wifi:
   ssid: "Your-SSID"
-  password: "Your-Password"
-  use_address: 192.168.10.12
+  password: "Your-WiFi-Network-Password"
   
   # Enable fallback hotspot (for captive portal) in case wifi connection fails
   ap:
     ssid: "ESPHome $friendly_name"
-    password: "bedside2021"
+    password: "Password-For-Connecting-To-Captive-Portal"
 
 captive_portal:
 
 api:
+  password: "Password-To-Link-HomeAssistant-To-This-Device"
 
 ota:
+  password: "Password-For-Flashing-This-Device-Over-The-Air"
 
+# The log level can be raised when needed for debugging the device. For
+# production, a low log level is recommended. Mainly because high volume
+# log output might interfere with the API/WiFi connection stability.
+# So when raising the log level, beware that you might see dropped
+# connections from Home Assistant and the network log viewer.
 logger:
+    level: WARN
 
 # --------------------------------------------------------------------------
-# Configuration specific for the Yeelight Bedside Lamp 2.
+# Configuration specific for the Xiaomi Mijia Bedside Lamp 2.
+# This is just an example. You can of course modify it for your own needs.
 # --------------------------------------------------------------------------
 
 # Special platform + package are used for enabling unicore and disabling the
@@ -56,7 +63,7 @@ esphome:
 
 light:
   # This component controls the LED lights of the device.
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     id: ${id_light}
     name: ${friendly_name} RGBW Light
     default_transition_length: ${transition_length}
@@ -91,7 +98,7 @@ light:
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
 text_sensor:
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     name: ${name} Light Mode
     id: ${id_light_mode}
 
@@ -100,7 +107,7 @@ text_sensor:
 # Other values (up to 1.0) turn on the illumination and set the level
 # indication to the requested level.
 output:
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     id: ${id_front_panel_output}
 
 # Binary sensors can be created for handling front panel touch / release
@@ -110,7 +117,7 @@ output:
 binary_sensor:
   # When touching the power button, toggle the light.
   # When holding the power button, turn on night light mode.
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     id: ${id_power_button}
     part: power button
     on_multi_click:
@@ -129,12 +136,10 @@ binary_sensor:
             brightness: 0.01
 
   # When touching the color button, set a random color.
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     id: ${id_color_button}
     part: color button
-    on_multi_click:
-    - timing:
-        - ON for at most 0.8s
+    on_press:
       then:
         - light.turn_on:
             id: ${id_light}
@@ -151,7 +156,7 @@ sensor:
   # Brightness 0.01 initiates the light night mode, which has already
   # been handled above. Therefore, brightness starts from 0.02 here,
   # so night mode is not triggered from the slider.
-  - platform: yeelight_bs2
+  - platform: xiaomi_bslamp2
     id: ${id_slider_level}
     range_from: 0.02
     on_value:

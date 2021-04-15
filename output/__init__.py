@@ -3,18 +3,18 @@ import esphome.config_validation as cv
 from esphome.components import output
 from esphome.const import CONF_ID
 from .. import (
-    bs2_ns, CODEOWNERS,
+    bslamp2_ns, CODEOWNERS,
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
 )
 
-AUTO_LOAD = ["yeelight_bs2"]
+AUTO_LOAD = ["xiaomi_bslamp2"]
 
-YeelightBS2FrontPanelLight = bs2_ns.class_(
-    "YeelightBS2FrontPanelLight", output.FloatOutput, cg.Component)
+XiaomiBslamp2FrontPanelLight = bslamp2_ns.class_(
+    "XiaomiBslamp2FrontPanelLight", output.FloatOutput, cg.Component)
 
 CONFIG_SCHEMA = output.FLOAT_OUTPUT_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2FrontPanelLight),
+        cv.GenerateID(): cv.declare_id(XiaomiBslamp2FrontPanelLight),
         cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
     }
 ).extend(cv.COMPONENT_SCHEMA)

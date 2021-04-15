@@ -2,21 +2,21 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import text_sensor
 from esphome.const import CONF_ID, CONF_OUTPUT_ID
-from .. import bs2_ns, CODEOWNERS
-from ..light import YeelightBS2LightOutput
+from .. import bslamp2_ns, CODEOWNERS
+from ..light import XiaomiBslamp2LightOutput
 
-DEPENDENCIES = ["yeelight_bs2"]
+DEPENDENCIES = ["xiaomi_bslamp2"]
 
 CONF_LIGHT_ID = "light_id"
 
-YeelightBS2LightModeTextSensor = bs2_ns.class_(
-    "YeelightBS2LightModeTextSensor", text_sensor.TextSensor, cg.Component
+XiaomiBslamp2LightModeTextSensor = bslamp2_ns.class_(
+    "XiaomiBslamp2LightModeTextSensor", text_sensor.TextSensor, cg.Component
 )
 
 CONFIG_SCHEMA = text_sensor.TEXT_SENSOR_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(YeelightBS2LightModeTextSensor),
-        cv.GenerateID(CONF_OUTPUT_ID): cv.use_id(YeelightBS2LightOutput),
+        cv.GenerateID(): cv.declare_id(XiaomiBslamp2LightModeTextSensor),
+        cv.GenerateID(CONF_OUTPUT_ID): cv.use_id(XiaomiBslamp2LightOutput),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 

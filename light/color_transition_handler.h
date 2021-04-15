@@ -5,8 +5,8 @@
 #include "color_instant_handler.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**
  * This is an interface definition that is used to extend the LightState
@@ -140,6 +140,6 @@ protected:
     }
 };
 
-} // namespace yeelight_bs2
-} // namespace yeelight
-} // namespace bs2
+} // namespace bslamp2
+} // namespace xiaomi
+} // namespace esphome

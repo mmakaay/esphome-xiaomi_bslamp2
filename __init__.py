@@ -13,7 +13,7 @@ from esphome.const import (
 
 CODEOWNERS = ["@mmakaay"]
 
-CONF_HUB_ID = "yeelight_bs2_hub_id"
+CONF_HUB_ID = "xiaomi_bslamp2_hub_id"
 CONF_RED_ID = "red_id"
 CONF_GREEN_ID = "green_id"
 CONF_BLUE_ID = "blue_id"
@@ -30,10 +30,10 @@ CONF_ON_BRIGHTNESS = "on_brightness"
 
 AUTO_LOAD = ["ledc", "output", "i2c"]
 
-yeelight_ns = cg.esphome_ns.namespace("yeelight")
-bs2_ns = yeelight_ns.namespace("bs2")
-LightHAL = bs2_ns.class_("LightHAL", cg.Component)
-FrontPanelHAL = bs2_ns.class_("FrontPanelHAL", cg.Component, I2CDevice)
+xiaomi_ns = cg.esphome_ns.namespace("xiaomi")
+bslamp2_ns = xiaomi_ns.namespace("bslamp2")
+LightHAL = bslamp2_ns.class_("LightHAL", cg.Component)
+FrontPanelHAL = bslamp2_ns.class_("FrontPanelHAL", cg.Component, I2CDevice)
 
 def make_config_schema():
     schema = cv.COMPONENT_SCHEMA.extend({

@@ -1,8 +1,8 @@
 #pragma once 
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 // Light modes that can be reported by implementations of GPIOOutputs.
 static const std::string LIGHT_MODE_UNKNOWN { "unknown" };
@@ -50,6 +50,6 @@ public:
     }
 };
     
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

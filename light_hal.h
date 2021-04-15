@@ -5,8 +5,8 @@
 #include "esphome/components/gpio/output/gpio_binary_output.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 class LightHAL : Component {
 public:
@@ -43,6 +43,6 @@ protected:
     gpio::GPIOBinaryOutput *master2_;
 };
 
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome

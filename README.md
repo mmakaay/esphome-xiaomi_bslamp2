@@ -1,20 +1,18 @@
-# esphome-yeelight_bs2
+# esphome-xiaomi_bslamp2
 
 ## Warning: this code is still under development
 
 This code might not yet be production-ready.
+At this point, it is declared beta-quality.
 
-At this point, I would call it alpha-quality. Mainly in the sense that the
-interfaces that have been implemented so far might still change.
 The new firmware is currently being tested and depending on the actual
 use cases and issues that we might run into, breaking changes could still
-be done at some point.
+occur at some point.
 
-## Is it safe to install this firmware on my device?
 
-As long as you keep a backup of the original Yeelight firmware, this is
-quite safe :-)
+## Is it safe to already install this firmware on my device?
 
+As long as you keep a backup of the original firmware, this is quite safe :-)
 I have two lamps that both are running the latest development firmware and
 they are functioning very well.
 
@@ -30,14 +28,20 @@ for production purposes.
 
 ## Installation
 
+The code must be compiled using ESPHome. Therefore, a prerequisite is that
+you have ESPHome up and running in some form (command line, docker container,
+web dashboard, possibly from within Home Assistant).
+For information on this, please refer to the documentation on the
+[ESPHome website](https://esphome.io).
+
 Create a folder named `custom_components` in the folder where your device's
 yaml configuration file is stored. Then clone the the Github repo into a
-subfolder `yeelight_bs2`. For example on the command line:
+subfolder `xiaomi_bslamp2`. For example on the command line:
 
 ```
 # mkdir custom_components
 # cd custom_components
-# git clone https://github.com/mmakaay/esphome-yeelight_bs2 yeelight_bs2
+# git clone https://github.com/mmakaay/esphome-xiaomi_bslamp2 xiaomi_bslamp2
 ```
 
 Your folder structure should now look like:
@@ -45,35 +49,39 @@ Your folder structure should now look like:
 config
 ├── yourdevice.yaml
 ├── custom_components/
-│   ├── yeelight_bs2/
+│   ├── xiaomi_bslamp2/
 │   .   ├── README.md
-.   .   ├── yeelight_bs2_light_output.h
+.   .   ├── LICENSE.md
 .   .   .
 ```
 
-Then add the required configuration to your device's yaml configuration file.
-For an example file, take a look at [doc/example.yaml](doc/example.yaml) in
-this repository.
-
 On a Rapsbery Pi with HomeAssistant and ESPHome as a plugin, the directory
-should be:
-
-
-/config/esphome/custom_components/yeelight_bs2/
+should be: `/config/esphome/custom_components/xiaomi_bslamp2/`
 
 ```
 config
-├── epshome
+├── esphome
 │   ├── yourdevice.yaml
 │   ├── custom_components/
-|   .   ├── yeelight_bs2/
+|   .   ├── xiaomi_bslamp2/
 │   .   .    ├── README.md
-.   .   .    ├── yeelight_bs2_light_output.h
+.   .   .    ├── LICENSE.md
 .   .   .    .
 ```
 
-See [doc/FLASHING.md](doc/FLASHING.md) for hints for opening up the device and
-flashing its firmware.
+Then create the required configuration in your device's yaml configuration
+file. For an example file, take a look at the example file
+[doc/example.yaml](doc/example.yaml) in this repository.
+
+After these steps you can compile your firmware `firmware.bin` file.
+This firmware can then be flashed onto the device.
+
+Like normal with ESPHome, the first time you will have to flash the
+device using a serial interface. After this initial flashing operation, you
+can flash new versions of the firmware using the OTA (Over The Air) method.
+
+See [doc/FLASHING.md](doc/FLASHING.md) for hints on opening up the device and
+flashing its firmware using the serial interface.
 
 
 ## Issue: the device keeps losing its connection to Home Assistant
@@ -82,34 +90,37 @@ This is not a problem with the device or the custom firmware, but a problem
 in the upstream library "AsyncTCP". I did identify an issue and my pull
 request for a fix was accepted and merged:
 
-   https://github.com/OttoWinter/AsyncTCP/pull/4
+  https://github.com/OttoWinter/AsyncTCP/pull/4
 
-If you want to try out this fix, straight from my repository, lhen create a 
-`libs` folder in the folder where your device's yaml configuration file is
-stored, and clone the following repository into that folder:
+This fix will likely be available in the next release of ESPHome
+(the current version at the time of writing is 1.16.2).
+If you want to try out this fix on beforehand, then create a `libs` folder
+in the folder where your device's yaml configuration file is stored (e.g.
+when using the Home Assistant plugin: `/config/esphome/libs/`).
+Then clone the following repository into that folder:
 
-   https://github.com/mmakaay/AsyncTCP
+  https://github.com/OttoWinter/AsyncTCP
 
 For example on the command line:
 
 ```
+# cd /config/esphome
 # mkdir libs
 # cd libs
-# git clone://github.com/mmakaay/AsyncTCP
+# git clone https://github.com/OttoWinter/AsyncTCP
 ```
 
 Then add a pointer to this folder from within your device's yaml
 configuration file, using the `lib_extra_dirs` option. Provide it with the
 absolute path to your `libs` folder. The relevant part of the config change
-looks like this:
+looks like this (matching the example from above):
 
 ```yaml
 esphome:
   platformio_options:
-    lib_extra_dirs: /config/libs
+    lib_extra_dirs: /config/esphome/libs
 ```
 
 This way, the repository version of the library will override the version of
 the library that is bundled with ESPHome. Build the device firmware and
 flash the device like you would normally do.
-

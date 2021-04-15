@@ -11,8 +11,8 @@
 #include "color_rgb_light.h"
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
 /**    
  * This class translates LightColorValues into GPIO duty cycles that
@@ -57,6 +57,6 @@ protected:
     GPIOOutputs *night_light_ = new ColorNightLight();
 };
 
-} // namespace yeelight_bs2
-} // namespace yeelight
-} // namespace bs2
+} // namespace bslamp2
+} // namespace xiaomi
+} // namespace esphome

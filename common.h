@@ -1,11 +1,11 @@
 #pragma once 
 
 namespace esphome {
-namespace yeelight {
-namespace bs2 {
+namespace xiaomi {
+namespace bslamp2 {
 
-static const char *TAG = "yeelight_bs2";
+static const char *TAG = "xiaomi_bslamp2";
     
-} // namespace bs2
-} // namespace yeelight
+} // namespace bslamp2
+} // namespace xiaomi
 } // namespace esphome
