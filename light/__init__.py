@@ -16,24 +16,19 @@ CONF_MASTER2 = "master2"
 CONF_ON_BRIGHTNESS = "on_brightness"
 CONF_PRESETS_ID = "presets_id"
 CONF_PRESETS = "presets"
+CONF_NEXT = "next"
+CONF_GROUP = "group"
+CONF_PRESET = "preset"
 
-# Classes.
 XiaomiBslamp2LightState = bslamp2_ns.class_("XiaomiBslamp2LightState", light.LightState)
 XiaomiBslamp2LightOutput = bslamp2_ns.class_("XiaomiBslamp2LightOutput", light.LightOutput)
 PresetsContainer = bslamp2_ns.class_("PresetsContainer", cg.Component)
-
-# Trigger.
 BrightnessTrigger = bslamp2_ns.class_("BrightnessTrigger", automation.Trigger.template())
-
-# Actions.
-#ActivatePresetGroup = bslamp2_ns.class_("ActivatePresetGroup", automation.Action)
-#ActivatePreset = bslamp2_ns.class_("ActivatePreset", automation.Action)
-#NextPresetGroup = bslamp2_ns.class_("NextPresetAction", automation.Action)
-#NextPreset = bslamp2_ns.class_("NextPresetAction", automation.Action)
+ActivatePresetAction = bslamp2_ns.class_("ActivatePresetAction", automation.Action)
 
 PRESETS_SCHEMA = cv.Schema({
-    str: cv.Schema({
-        str: cv.Any(
+    str.lower: cv.Schema({
+        str.lower: cv.Any(
             cv.Schema({
                 cv.Optional(CONF_RED, default=0): cv.percentage,
                 cv.Optional(CONF_GREEN, default=0): cv.percentage,
@@ -61,10 +56,41 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
     }
 )
 
-#automation.register_action("preset.activate_group", ActivatePresetGroup, cv.string)
-#def activate_group_to_code(config, action_id, template_arg, args):
-#    presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
-#    cg.add(presets_var.activate_group(...));
+def is_preset_group(value):
+    return value
+
+def is_preset(value):
+    return value
+
+@automation.register_action(
+    "preset.activate",
+    ActivatePresetAction,
+    cv.Schema(cv.Any(
+        cv.Schema({
+            cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+            cv.Required(CONF_GROUP): is_preset_group,
+            cv.Optional(CONF_PRESET): is_preset
+        }),
+        cv.Schema({
+            cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+            cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True)
+        })
+         
+    ))
+)
+def preset_activate_to_code(config, action_id, template_arg, args):
+    presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
+    action_var = cg.new_Pvariable(action_id, template_arg, presets_var)
+    if CONF_NEXT in config:
+        cg.add(action_var.set_operation(f"next_{config[CONF_NEXT]}"))
+    elif CONF_PRESET in config:
+        cg.add(action_var.set_operation("activate_preset"))
+        cg.add(action_var.set_group(config[CONF_GROUP]))
+        cg.add(action_var.set_preset(config[CONF_PRESET]))
+    else:
+        cg.add(action_var.set_operation("activate_group"))
+        cg.add(action_var.set_group(config[CONF_GROUP]))
+    yield action_var
 
 @coroutine
 def light_output_to_code(config):
