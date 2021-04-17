@@ -185,8 +185,8 @@ public:
     }
 
     void dump_config() {
-        ESP_LOGCONFIG(TAG, "I2C interrupt");
-        LOG_PIN("  Interrupt pin: ", trigger_pin_);
+        ESP_LOGCONFIG(TAG, "FrontPanelHAL:");
+        LOG_PIN("  I2C interrupt pin: ", trigger_pin_);
     }
 
     void loop() {
