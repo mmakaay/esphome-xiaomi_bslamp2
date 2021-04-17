@@ -94,6 +94,26 @@ light:
           name: "Fast Random"
           transition_length: 3s
           update_interval: 3s
+    # You can define one or more groups of presets. These presets can
+    # be activated using various "preset.activate" action options.
+    # The presets can for example be used to mimic the behavior of the
+    # original firmware (tapping the color button = go to next preset,
+    # holding the color button = switch between RGB and white light mode).
+    # These bindings have been setup below, using the binary_sensor for
+    # the color button.
+    presets:
+      rgb:
+        red:         { red: 100%, green: 0%,   blue: 0%   }
+        green:       { red: 0%,   green: 100%, blue: 0%   }
+        blue:        { red: 0%,   green: 0%,   blue: 100% }
+        yellow:      { red: 100%, green: 100%, blue: 0%   }
+        purple:      { red: 100%, green: 0%,   blue: 100% }
+        randomize:   { effect: Fast Random                }
+      white:
+        cold:        { color_temperature: 153 mireds      }
+        chilly:      { color_temperature: 275 mireds      }
+        luke:        { color_temperature: 400 mireds      }
+        warm:        { color_temperature: 588 mireds      }
 
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
@@ -135,17 +155,22 @@ binary_sensor:
             blue: 1
             brightness: 0.01
 
-  # When touching the color button, set a random color.
+  # When touching the color button, acivate the next preset.
+  # When holding the color button, activate the next preset group.
   - platform: xiaomi_bslamp2
     id: ${id_color_button}
     part: color button
-    on_press:
-      then:
-        - light.turn_on:
-            id: ${id_light}
-            red: !lambda return random_float();
-            green: !lambda return random_float();
-            blue: !lambda return random_float();
+    on_multi_click:
+      - timing:
+          - ON for at most 0.6s
+        then:
+          - preset.activate:
+              next: preset
+      - timing:
+          - ON for at least 0.6s
+        then:
+          - preset.activate:
+              next: group
 
 # This sensor component publishes touch events for the front panel slider.
 # The published value represents the level at which the slider was touched.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../common.h"
+#include "light_modes.h" 
 #include "gpio_outputs.h"
 
 namespace esphome {

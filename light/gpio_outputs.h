@@ -1,15 +1,10 @@
 #pragma once 
 
+#include "light_modes.h"
+
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
-
-// Light modes that can be reported by implementations of GPIOOutputs.
-static const std::string LIGHT_MODE_UNKNOWN { "unknown" };
-static const std::string LIGHT_MODE_OFF { "off" };
-static const std::string LIGHT_MODE_RGB { "rgb" };
-static const std::string LIGHT_MODE_WHITE { "white" };
-static const std::string LIGHT_MODE_NIGHT { "night" };
 
 /**
  * This abstract class is used for implementing classes that translate

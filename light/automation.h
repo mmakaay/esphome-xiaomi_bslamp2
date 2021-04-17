@@ -4,6 +4,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/automation.h"
 #include "light_output.h"
+#include "presets.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -26,6 +27,35 @@ public:
     }
 protected:
     float last_brightness_ = -1.0f;
+};
+
+template<typename... Ts> class ActivatePresetAction : public Action<Ts...> {
+public:
+    explicit ActivatePresetAction(PresetsContainer *presets) : presets_(presets) {}
+
+    TEMPLATABLE_VALUE(std::string, operation);
+    TEMPLATABLE_VALUE(std::string, group);
+    TEMPLATABLE_VALUE(std::string, preset);
+
+    void play(Ts... x) override { 
+        auto operation = this->operation_.value(x...);
+
+        if (operation == "next_group") {
+            presets_->activate_next_group();
+        } else if (operation == "next_preset") {
+            presets_->activate_next_preset();
+        } else if (operation == "activate_group") {
+            auto group = this->group_.value(x...);
+            presets_->activate_group(group);
+        } else if (operation == "activate_preset") {
+            auto group = this->group_.value(x...);
+            auto preset = this->preset_.value(x...);
+            presets_->activate_preset(group, preset);
+        }
+    }
+
+protected:
+    PresetsContainer *presets_;
 };
 
 } // namespace bslamp2
