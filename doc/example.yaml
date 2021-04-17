@@ -96,16 +96,16 @@ light:
           update_interval: 3s
     presets:
       - rgb:
-          - red_bright:  { red: 1 }
-          - green:       { green: 1 }
-          - blue_dimmed: { blue: 1 }
-          - yellow:      { red: 1, green: 1 }
-          - something:   { red: 0.2, green: 0.4, blue: 1 }
+          - red_bright:  { red: 100% }
+          - green:       { green: 100% }
+          - blue_dimmed: { blue: 100% }
+          - yellow:      { red: 100%, green: 100% }
+          - purple:      { red: 100%, blue: 100% }
       - white:
-          - warm:        { color_temperature: 588 }
-          - luke:        { color_temperature: 400 }
-          - chilly:      { color_temperature: 275 }
           - cold:        { color_temperature: 153 }
+          - chilly:      { color_temperature: 275 }
+          - luke:        { color_temperature: 400 }
+          - warm:        { color_temperature: 587 }
 
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
@@ -151,13 +151,17 @@ binary_sensor:
   - platform: xiaomi_bslamp2
     id: ${id_color_button}
     part: color button
-    on_press:
-      then:
-        - light.turn_on:
-            id: ${id_light}
-            red: !lambda return random_float();
-            green: !lambda return random_float();
-            blue: !lambda return random_float();
+    on_multi_click:
+      - timing:
+          - ON for at most 0.6s
+        then:
+          - preset.activate:
+              next: preset
+      - timing:
+          - ON for at least 0.6s
+        then:
+          - preset.activate:
+              next: group
 
 # This sensor component publishes touch events for the front panel slider.
 # The published value represents the level at which the slider was touched.

@@ -39,8 +39,19 @@ public:
 
     void play(Ts... x) override { 
         auto operation = this->operation_.value(x...);
-        auto group = this->group_.optional_value(x...);
-        auto preset = this->preset_.optional_value(x...);
+
+        if (operation == "next_group") {
+            presets_->activate_next_group();
+        } else if (operation == "next_preset") {
+            presets_->activate_next_preset();
+        } else if (operation == "activate_group") {
+            auto group = this->group_.value(x...);
+            presets_->activate_group(group);
+        } else if (operation == "activate_preset") {
+            auto group = this->group_.value(x...);
+            auto preset = this->preset_.value(x...);
+            presets_->activate_preset(group, preset);
+        }
     }
 
 protected:
