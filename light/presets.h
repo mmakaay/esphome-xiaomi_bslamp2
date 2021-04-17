@@ -94,7 +94,8 @@ public:
         active_group_ = active_group_->next_group == nullptr
             ? first_group_ : active_group_->next_group;
         if (active_group_->active_preset == nullptr) {
-            ESP_LOGW(TAG, "activate_next_group(): no presets defined for group %s", active_group_->name.c_str());
+            ESP_LOGW(TAG, "activate_next_group(): no presets defined for group %s",
+                active_group_->name.c_str());
             return;
         }
         ESP_LOGW(TAG, "activate_next_group(): activating %s/%s",
@@ -110,7 +111,8 @@ public:
         }
         auto p = active_group_->active_preset;
         if (p == nullptr) {
-            ESP_LOGW(TAG, "activate_next_preset(): no presets defined for group %s", active_group_->name.c_str());
+            ESP_LOGW(TAG, "activate_next_preset(): no presets defined for group %s",
+                active_group_->name.c_str());
             return;
         }
         active_group_->active_preset = p->next_preset == nullptr 

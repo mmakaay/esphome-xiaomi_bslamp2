@@ -62,21 +62,42 @@ def is_preset_group(value):
 def is_preset(value):
     return value
 
+def maybe_simple_preset_action(schema):
+    def validator(value):
+        if isinstance(value, dict):
+            return schema(value)
+        value = value.lower()
+        conf = {}
+        if value == "next_group":
+            conf[CONF_NEXT] = CONF_GROUP
+        elif value == "next_preset":
+            conf[CONF_NEXT] = CONF_PRESET
+        elif "." not in value:
+            conf[CONF_GROUP] = value
+        else:
+            group, preset = value.split(".", 2)
+            conf[CONF_GROUP] = group
+            conf[CONF_PRESET] = preset
+        return schema(conf)
+
+    return validator
+
 @automation.register_action(
     "preset.activate",
     ActivatePresetAction,
-    cv.Schema(cv.Any(
-        cv.Schema({
-            cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
-            cv.Required(CONF_GROUP): is_preset_group,
-            cv.Optional(CONF_PRESET): is_preset
-        }),
-        cv.Schema({
-            cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
-            cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True)
-        })
-         
-    ))
+    cv.Schema(
+        maybe_simple_preset_action(cv.Any(
+            cv.Schema({
+                cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+                cv.Required(CONF_GROUP): is_preset_group,
+                cv.Optional(CONF_PRESET): is_preset
+            }),
+            cv.Schema({
+                cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+                cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True)
+            })
+        ))
+    )
 )
 def preset_activate_to_code(config, action_id, template_arg, args):
     presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
