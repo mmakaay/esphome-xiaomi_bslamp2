@@ -2,8 +2,6 @@
 
 #include "../common.h"
 #include "esphome/core/optional.h"
-#include <functional>
-#include <vector>
 
 namespace esphome {
 namespace xiaomi {
@@ -87,7 +85,6 @@ public:
 
     Preset *get_preset(std::string p_name) {
         for (auto p = first_preset; p != nullptr; p = p->next_preset) {
-            ESP_LOGE(TAG, "CHECK '%s' vs '%s'", p_name.c_str(), p->name.c_str());
             if (p->name == p_name) {
                 return p;
             }
