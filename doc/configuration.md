@@ -98,7 +98,7 @@ light:
 * **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
   you can reference the light from automation rules (e.g. to turn on the light when the power
   button is tapped)
-* **default_transition_length** (*Optional*, Time): The default transition length to use when
+* **default_transition_length** (*Optional*, Time): The transition length to use when
   no transition length is set in a light call. Defaults to 1s.
 * **effects** (*Optional*, list): A list of [light effects](https://esphome.io/components/light/index.html#light-effects)
   to use for this light.
@@ -128,11 +128,12 @@ parts:
 **Defining presets**
 
 Presets can be configured in the `presets` option of the `light` configuration.
-Presets are arranged in groups. You can define as many groups as you like.
-The example configuration uses two groups, but that is only to mimic the original behavior.
-I you only need one group, then create one group. If you need ten, go ahead and knock yourself out.
 
-The general structure of presets is:
+Presets are arranged in groups. You can define as little or as many groups as you like.
+The example configuration uses two groups, but that is only to mimic the original behavior.
+If you only need one group, then create one group. If you need ten, go ahead and knock yourself out.
+
+The general structure of the presets configuration is:
 
 ```yaml
 light:
@@ -148,13 +149,73 @@ light:
     ..
 ```
 
-*Note: it is allowed to use duplicate template names, as long as the templates are in their own group.
+*Note: duplicate template names are ok, as long as they are within their own group.
 If you use duplicate preset names within a single group, then the last preset will override the
 earlier one(s).*
 
-TODO
+A preset can define one of the following light types:
 
+* **RGB light**
+  * **red** (**Required**, percentage): the red component of the RGB value.
+  * **green** (**Required**, percentage): the green component of the RGB value.
+  * **blue** (**Required**, percentage): the blue component of the RGB value.
+  * **brightness** (*Optional*, percentage): the brightness to use (default = current brightness).
+  * **transition_length** (*Optional*, time): the transition length to use.
+* **White light**
+  * **color_temperature** (**Required**, mireds): the color temperature in mireds (range: "153 mireds" - "588 mireds")
+  * **brightness** (*Optional*, percentage): the brightness to use (default = current brightness).
+  * **transition_length** (*Optional*, time): the transition length to use.
+* **Light effect**
+  * **effect** (**Required**, string): the name of a light effect to activate.
 
+**Activating presets from automations**
+
+Once presets have been configured, they can be activated using the `preset.activate` action.
+The following options are available for this action:
+
+* Switch to next preset group (and after the last, switch to the first):
+```yaml
+preset.activate:
+  next: group
+```
+
+* Switch to next preset within currentl preset group (and after the last, switch to the first):
+```yaml
+preset.activate:
+  next: preset
+---
+
+* Activate a specific preset group by specifying the group's name:
+```yaml
+preset.activate:
+  group: rgb
+```
+
+* Activate a specific preset by specifying both the preset's name and group name:
+```yaml
+preset.activate:
+  group: white
+  preset: warm
+```
+
+Shorthand definitions are available for all these actions:
+
+```yaml
+preset.activate: next_group
+preset.activate: next_preset
+preset.activate: rgb
+preset.activate: white.warm
+```
+
+**Handling of invalid input**
+
+When a group or template is specified that does not exist, or if next group/preset
+is used while no presets have been defined at all, then the action will be ignored
+and an error will be logged.
+
+This is of course validation at run time. It would be better to validate the
+names at compile time more strictly, so the firmware won't compile when invalid
+names are in use. [Issue #15 was created for implementing this](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/15).
 
 ## Component: binary_sensor
 
