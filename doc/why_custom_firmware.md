@@ -1,3 +1,5 @@
+[Index](../README.md) | [Installation guide](installation.md) >
+
 # Why custom ESPHome firmware?
 
 This lamp could always be added to Home Assistant using the Yeelight
@@ -35,3 +37,4 @@ separate GitHub repository:
 
   https://github.com/mmakaay/esphome-yeelight_bs2-revengineering
 
+[Index](../README.md) | [Installation guide](installation.md) >
