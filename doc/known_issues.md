@@ -1,3 +1,5 @@
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
+
 # Known issues
 
 ## The device keeps losing its connection to Home Assistant
@@ -81,3 +83,4 @@ the ESP32.
 For this reason, I advise to completely omit logging or use a very low log
 level for production purposes.
 
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >

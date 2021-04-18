@@ -11,16 +11,16 @@ fill in the blanks.
 The `xiaomi_bslamp2` platform provides various components that expose the core functionalities of the lamp.
 In the following table, you can find what components are used for exposing what parts of the lamp.
 
-  | Part                       | Component(s)                                           |
-  | -------------------------- |--------------------------------------------------------|
-  | ESP32 pinouts              |  [platform xiaomi_bslamp2](#platform-xiaomi_bslamp2)   |
-  | RGBWW LEDs                 |  [light](#light)                                       |
-  | Front Panel Power button   |  [binary_sensor](#binary_sensor)                       |
-  | Front Panel Color button   |  [binary_sensor](#binary_sensor)                       |
-  | Front Panel Slider         |  [binary_sensor](#binary_sensor) (touch/release)       |
-  |                            |  [sensor](#sensor) (touched slider level)              |
-  | Front Panel Illumination   |  [output](#output) (on/off + indicator level)          |
-  | Light mode propagation     |  [text_sensor](#text_sensor)                           |
+  | Part                       | Component(s)                                                     |
+  | -------------------------- |------------------------------------------------------------------|
+  | ESP32 pinouts              |  [platform xiaomi_bslamp2](#platform-xiaomi_bslamp2)             |
+  | RGBWW LEDs                 |  [light](#light)                                                 |
+  | Front Panel Power button   |  [binary_sensor](#component-binary_sensor)                       |
+  | Front Panel Color button   |  [binary_sensor](#component-binary_sensor)                       |
+  | Front Panel Slider         |  [binary_sensor](#component-binary_sensor) (touch/release)       |
+  |                            |  [sensor](#component-sensor) (touched slider level)              |
+  | Front Panel Illumination   |  [output](#component-output) (on/off + indicator level)          |
+  | Light mode propagation     |  [text_sensor](#component-text_sensor)                           |
 
 ## Platform: xiaomi_bslamp2
 
@@ -109,6 +109,23 @@ light:
   except for options that handle color correction options like `gamma_correct` and `color_correct`.
   These options are superceded by the fact that the light component has a fully customized
   light model, that closely follows the light model of the original lamp's firmware.
+
+### Light modes
+
+The lamp supports multiple light modes. These are:
+
+* **RGB light** (input: RGB + brightness)
+* **White light** (input: Color Temperature + brightness)
+* **Night light** (input: either RGB or Color Temperature + brightness at 1%)
+
+In the original firmware + Yeelight Home Assistant integration, the night light feature is
+implemented through a switch component. The switch can be turned on to activate the night
+light mode. In this ESPHome firmware, setting the brightness to its lowest value triggers
+the night light mode. This makes things a lot easier to control.
+
+It is possible to control the night light mode separately. An example of this can be
+found in the [example.yaml](example.yaml), in which holding the power button is bound
+to activating the night light.
 
 ### Light presets
 
@@ -227,6 +244,7 @@ or parts of the front panel are involved in the touch events.
 ```yaml
 binary_sensor:
   - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_power_button
     part: POWER_BUTTON
     on_press:
       then:
@@ -245,7 +263,7 @@ the following identifiers are available:
 * **name** (*Optional*, string): The name of the binary sensor. Setting a name will expose the
   binary sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
 * **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
-  you can reference the binary_sensor from automation rules (e.g. to retrieve the current state
+  you can reference the binary_sensor from automation rules (to retrieve the current state
   of the binary_sensor).
 * **part** (*Optional*, part identifier): This specifies what part of the front panel the binary sensor must
   look at. Valid options are: "any" (the default) or one of the abovementioned part identifiers.
@@ -253,9 +271,68 @@ the following identifiers are available:
 
 ## Component: sensor
 
+The sensor component publishes touch events for the front panel slider. The published value
+represents the level at which the slider was touched.
+
+*Note: This sensor only reports the touched slider level. It cannot be used for detecting release
+events. If you want to handle touch/release events for the slider, then you can make use of
+the [binary_sensor](#component-binary_sensor) instead.*
+
+```yaml
+sensor:
+  - platform: xiaomi_bslamp2
+  - id: my_bedside_lamp_slider_level
+    range_from: 0.2
+    range_to: 0.9
+    on_value:
+      then:
+        - light.turn_on:
+            id: my_bedside_lamp
+            brightness: !lambda return x;    
+```
+
+### Configuration variables:
+
+* **name** (*Optional*, string): The name of the sensor. Setting a name will expose the
+  sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
+* **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
+  you can reference the sensor from automation rules (e.g. to retrieve the current state
+  of the binary_sensor).
+* **range_from** (*Optional*, float): By default, published values vary from the range 0.01 to 1.00,
+  in 20 steps. This option modifies the lower bound of the range.
+* **range_to** (*Optional*, float): This option modifies the upper bound of the range.
+* All other options from [Sensor](https://esphome.io/components/sensor/index.html#config-sensor).
+
 ## Component: output
 
-## Component: text_output
+The (float) output component is linked to the front panel illumination + level indicator.
+Setting this output to value 0.0 will turn off the frontpanel illumination. Other values,
+up to 1.0, will turn on the illumination and will set the level indicator to the requested
+level (in 10 steps).
 
+```yaml
+output:
+  - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_front_panel_illumination
+```
+
+### Configuration variables:
+
+* **id** (**Required**, ID): The id to use for this output component.
+* All other options from [Output](https://esphome.io/components/output/index.html)
+
+## Component: text_sensor
+
+The text sensor component publishes changes in the active [light mode](#light-modes).
+Possible output values for this sensor are: "off", "rgb", "white" and "night".
+
+### Configuration variables:
+
+* **name** (*Optional*, string): The name of the text sensor. Setting a name will expose the
+  text sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
+* **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
+  you can reference the text sensor from automation rules (to retrieve the current state
+  of the text_sensor).
+* All other options from [Text Sensor](https://esphome.io/components/text_sensor/index.html)
 
 < [Installation guide](installation.md) | [Index](../README.md) | [Flashing guide](flashing.md) >
