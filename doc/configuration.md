@@ -284,8 +284,25 @@ sensor:
 * **range_from** (*Optional*, float): By default, published values vary from the range 0.01 to 1.00,
   in 20 steps. This option modifies the lower bound of the range.
 * **range_to** (*Optional*, float): This option modifies the upper bound of the range.
+* All other options from [Sensor](https://esphome.io/components/sensor/index.html#config-sensor).
 
 ## Component: output
+
+The (float) output component is linked to the front panel illumination + level indicator.
+Setting this output to value 0.0 will turn off the frontpanel illumination. Other values,
+up to 1.0, will turn on the illumination and will set the level indicator to the requested
+level (in 10 steps).
+
+```yaml
+output:
+  - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_front_panel_illumination
+```
+
+### Configuration variables:
+
+* **id** (**Required**, ID): The id to use for this output component.
+* All other options from [Output](https://esphome.io/components/output/index.html)
 
 ## Component: text_output
 
