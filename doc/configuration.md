@@ -219,6 +219,38 @@ names are in use. [Issue #15 was created for implementing this](https://github.c
 
 ## Component: binary_sensor
 
+Binary sensors can be added to the configuration for handling touch/release events
+for the front panel. On touch, a binary_sensor will publish `True`, on release it
+will publish `False`. The configuration of a binary_sensor determines what part
+or parts of the front panel are involved in the touch events.
+
+```yaml
+binary_sensor:
+  - platform: xiaomi_bslamp2
+    part: POWER_BUTTON
+    on_press:
+      then:
+        - light.toggle: my_bedside_lamp
+```
+
+For specifying specific parts of the front panel in the upcoming configuration variables,
+the following identifiers are available:
+
+* POWER_BUTTON (or its alias: POWER)
+* COLOR_BUTTON (or its alias: COLOR)
+* SLIDER
+
+### Configuration variables:
+
+* **name** (*Optional*, string): The name of the binary sensor. Setting a name will expose the
+  binary sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
+* **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
+  you can reference the binary_sensor from automation rules (e.g. to retrieve the current state
+  of the binary_sensor).
+* **part** (*Optional*, part identifier): This specifies what part of the front panel the binary sensor must
+  look at. Valid options are: "any" (the default) or one of the abovementioned part identifiers.
+* All other options from [Binary Sensor](https://esphome.io/components/binary_sensor/index.html#config-binary-sensor).
+
 ## Component: sensor
 
 ## Component: output
