@@ -1,3 +1,5 @@
+< [Known issues](known_issues.md) | [Index](../README.md)
+
 # Sponsoring the project
 
 All development on this firmware is done for the greater good of mankind.
@@ -15,3 +17,5 @@ this project were:
 * a simple 8 port logic analyzer that helped me with reverse engineering
   the I2C protocol of the front panel.
 * Various wires and buttons.
+
+< [Known issues](known_issues.md) | [Index](../README.md)
