@@ -2,6 +2,12 @@
 
 # Configuration guide
 
+I think, the best starting point for creating your own yaml configuration, is to
+look at the [example.yaml](example.yaml) file from the project documentation.
+This configuration was written with the functionality of the original firmware in mind
+and it makes use of all available options. This configuration guide can be used to
+fill in the blanks.
+
 The `xiaomi_bslamp2` platform provides various components that expose the core functionalities of the lamp.
 In the following table, you can find what components are used for exposing what parts of the lamp.
 
@@ -106,7 +112,49 @@ light:
 
 ### Light presets
 
+The presets functionality was written with the original lamp firemware functionality in mind:
+the user has two groups of presets available: one for RGB light presets and one for white light
+presets (based on color temperature). The color button (the top one on the front panel) can be
+tapped to switch to the next preset within the active preset group. The same button can be
+held for a little while, to switch to the other preset group.
+
+In your light configuration, you can mimic this behavior (in fact: it is done so in the
+[example.yaml](example.yaml)) by means of the presets system. This system consists of two
+parts:
+
+* Defining presets
+* Activating presets from automations
+
+**Defining presets**
+
+Presets can be configured in the `presets` option of the `light` configuration.
+Presets are arranged in groups. You can define as many groups as you like.
+The example configuration uses two groups, but that is only to mimic the original behavior.
+I you only need one group, then create one group. If you need ten, go ahead and knock yourself out.
+
+The general structure of presets is:
+
+```yaml
+light:
+  presets:
+    group_1:
+      preset_1: ...
+      preset_2: ...
+      ..
+    group_2:
+      preset_1: ...
+      preset_2: ...
+      ..
+    ..
+```
+
+*Note: it is allowed to use duplicate template names, as long as the templates are in their own group.
+If you use duplicate preset names within a single group, then the last preset will override the
+earlier one(s).*
+
 TODO
+
+
 
 ## Component: binary_sensor
 
