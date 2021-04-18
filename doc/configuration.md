@@ -110,6 +110,23 @@ light:
   These options are superceded by the fact that the light component has a fully customized
   light model, that closely follows the light model of the original lamp's firmware.
 
+### Light modes
+
+The lamp supports multiple light modes. These are:
+
+* **RGB light** (input: RGB + brightness)
+* **White light** (input: Color Temperature + brightness)
+* **Night light** (input: either RGB or Color Temperature + brightness at 1%)
+
+In the original firmware + Yeelight Home Assistant integration, the night light feature is
+implemented through a switch component. The switch can be turned on to activate the night
+light mode. In this ESPHome firmware, setting the brightness to its lowest value triggers
+the night light mode. This makes things a lot easier to control.
+
+It is possible to control the night light mode separately. An example of this can be
+found in the [example.yaml](example.yaml), in which holding the power button is bound
+to activating the night light.
+
 ### Light presets
 
 The presets functionality was written with the original lamp firemware functionality in mind:
@@ -246,7 +263,7 @@ the following identifiers are available:
 * **name** (*Optional*, string): The name of the binary sensor. Setting a name will expose the
   binary sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
 * **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
-  you can reference the binary_sensor from automation rules (e.g. to retrieve the current state
+  you can reference the binary_sensor from automation rules (to retrieve the current state
   of the binary_sensor).
 * **part** (*Optional*, part identifier): This specifies what part of the front panel the binary sensor must
   look at. Valid options are: "any" (the default) or one of the abovementioned part identifiers.
@@ -304,7 +321,18 @@ output:
 * **id** (**Required**, ID): The id to use for this output component.
 * All other options from [Output](https://esphome.io/components/output/index.html)
 
-## Component: text_output
+## Component: text_sensor
 
+The text sensor component publishes changes in the active [light mode](#light-modes).
+Possible output values for this sensor are: "off", "rgb", "white" and "night".
+
+### Configuration variables:
+
+* **name** (*Optional*, string): The name of the text sensor. Setting a name will expose the
+  text sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
+* **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
+  you can reference the text sensor from automation rules (to retrieve the current state
+  of the text_sensor).
+* All other options from [Text Sensor](https://esphome.io/components/text_sensor/index.html)
 
 < [Installation guide](installation.md) | [Index](../README.md) | [Flashing guide](flashing.md) >
