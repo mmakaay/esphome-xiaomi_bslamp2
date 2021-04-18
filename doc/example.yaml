@@ -9,11 +9,11 @@ substitutions:
 
   # Derive component identifiers, based on the name.
   id_light: ${name}
-  id_front_panel_illumination: ${name}_front_panel_output
+  id_light_mode: ${name}_light_mode
   id_power_button: ${name}_power_button
   id_color_button: ${name}_color_button
   id_slider_level: ${name}_slider_level
-  id_light_mode: ${name}_light_mode
+  id_front_panel_illumination: ${name}_front_panel_illumination
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
@@ -32,11 +32,11 @@ captive_portal:
 
 api:
   password: "Password-To-Link-HomeAssistant-To-This-Device"
-  # Disable the reboot timeout. By default, the lamp reboots
-  # after 15 minutes without any client connections (e.g. when
-  # home assistant is off line, or when the WiFi is broken).
-  # Reboots are annoying though, because the RGBWW LEDs will turn
-  # off during the reboot, causing the light to flicker.
+  # Disable the reboot timeout. By default, the lamp reboots after 15
+  # minutes without any client connections (e.g. when home assistant is off
+  # line, or when the WiFi is broken). Reboots are annoying though, because
+  # the RGBWW LEDs will turn off during the reboot, causing the light to
+  # flicker.
   reboot_timeout: 0s
 
 ota:
@@ -131,9 +131,8 @@ text_sensor:
     id: ${id_light_mode}
 
 # This float output controls the front panel illumination + level indicator.
-# Value 0.0 turns off the illumination.
-# Other values (up to 1.0) turn on the illumination and set the level
-# indicator to the requested level.
+# Value 0.0 turns off the illumination. Other values (up to 1.0) turn on
+# the illumination and set the level indicator to the requested level.
 output:
   - platform: xiaomi_bslamp2
     id: ${id_front_panel_illumination}
