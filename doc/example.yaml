@@ -32,6 +32,12 @@ captive_portal:
 
 api:
   password: "Password-To-Link-HomeAssistant-To-This-Device"
+  # Disable the reboot timeout. By default, the lamp reboots
+  # after 15 minutes without any client connections (e.g. when
+  # home assistant is off line, or when the WiFi is broken).
+  # Reboots are annoying though, because the RGBWW LEDs will turn
+  # off during the reboot, causing the light to flicker.
+  reboot_timeout: 0s
 
 ota:
   password: "Password-For-Flashing-This-Device-Over-The-Air"
@@ -134,14 +140,14 @@ output:
 
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "part"
-# parameter can be set to: "any" (i.e. the default), "power button",
-# "color button" or "slider".
+# parameter can be set to: "any" (i.e. the default), "POWER_BUTTON",
+# "COLOR_BUTTON" or "SLIDER".
 binary_sensor:
   # When tapping the power button, toggle the light.
   # When holding the power button, turn on night light mode.
   - platform: xiaomi_bslamp2
     id: ${id_power_button}
-    part: power button
+    part: POWER_BUTTON
     on_multi_click:
     - timing:
         - ON for at most 0.8s
@@ -161,7 +167,7 @@ binary_sensor:
   # When holding the color button, activate the next preset group.
   - platform: xiaomi_bslamp2
     id: ${id_color_button}
-    part: color button
+    part: COLOR_BUTTON
     on_multi_click:
       - timing:
           - ON for at most 0.6s

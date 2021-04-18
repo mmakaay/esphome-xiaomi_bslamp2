@@ -14,8 +14,10 @@ CONF_PART = "part"
 PARTS = {
     "ANY"          : 0,
     "POWER_BUTTON" : 1,
+    "POWER"        : 1,
     "COLOR_BUTTON" : 2,
-    "SLIDER"       : 3.
+    "COLOR"        : 2,
+    "SLIDER"       : 3,
 }
 
 def validate_part(value):

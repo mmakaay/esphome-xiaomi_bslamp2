@@ -23,7 +23,7 @@ CONF_MASTER1_ID = "master1_id"
 CONF_MASTER2 = "master2"
 CONF_MASTER2_ID = "master2_id"
 CONF_FP_I2C_ID = "front_panel_i2c_id"
-CONF_LIGHT_HAL_ID = "light_hal"
+CONF_LIGHT_HAL_ID = "light_hal_id"
 CONF_FRONT_PANEL_HAL_ID = "front_panel_hal_id"
 
 CONF_ON_BRIGHTNESS = "on_brightness"
