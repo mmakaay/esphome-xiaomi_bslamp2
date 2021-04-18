@@ -1,4 +1,4 @@
-# ESPHome component for Xiaomi Mijia Bedside Lamp 2
+# ESPHome components for Xiaomi Mijia Bedside Lamp 2
 
 The Bedside Lamp 2 is a smart RGBWW LED lamp, produced by Yeelight. It can
 be controlled via the WiFi network and using a touch panel on the front of
@@ -6,7 +6,7 @@ the device. The touch panel contains a power button, a button that changes
 the color of the light and a slider that can be used to change the
 brightness of the light.
 
-This project provides a custom component for ESPHome, which makes it
+This project provides custom components for ESPHome, which make it
 possible to fully control every aspect of the lamp and to integrate the
 lamp in your Home Assistant setup.
 
