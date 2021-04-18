@@ -1,3 +1,5 @@
+< [Configuration guide](configuration.md) | [Index](../README.md) | [Known issues](known_issues.md) >
+
 # Flashing guide
 
 ## Tools needed
@@ -195,3 +197,5 @@ https://github.com/arendst/Tasmota/tree/firmware/firmware/tasmota32/ESP32_needed
 
 (remember that the [esphome-flasher](https://github.com/esphome/esphome-flasher)
 will give you a bit less of a hard-core experience during flashing)
+
+< [Configuration guide](configuration.md) | [Index](../README.md) | [Known issues](known_issues.md) >
