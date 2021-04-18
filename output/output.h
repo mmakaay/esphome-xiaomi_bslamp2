@@ -11,7 +11,7 @@ namespace bslamp2 {
 
 /**
  * An output, used for controlling the front panel illumination and
- * brightness level indicator on the Xiaomi Mijia Bedside Lamp 2 front panel.
+ * level indicator on the Xiaomi Mijia Bedside Lamp 2 front panel.
  */
 class XiaomiBslamp2FrontPanelLight : public output::FloatOutput, public Component {
 public:

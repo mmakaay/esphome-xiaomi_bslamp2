@@ -14,10 +14,10 @@ namespace bslamp2 {
  * Xiaomi Mijia Bedside Lamp 2.
  *
  * This sensor publishes the level at which the slider was touched, so it
- * can be used to implement automations.  Note that it does not represent
+ * can be used to implement automations. Note that it does not represent
  * the brightness of the LED lights (this is implemented by the light output
  * component), nor the level as displayed by the slider using the front
- * panel light (this is implemented by the slider light component).
+ * panel illumination (this is implemented by the slider output component).
  */
 class XiaomiBslamp2SliderSensor : public sensor::Sensor, public Component {
 public:

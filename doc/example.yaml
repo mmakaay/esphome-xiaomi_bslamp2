@@ -7,9 +7,9 @@ substitutions:
   friendly_name: Bedside Lamp
   transition_length: 500ms
 
-  # Derive component identifiers, based on the device name.
+  # Derive component identifiers, based on the name.
   id_light: ${name}
-  id_front_panel_output: ${name}_front_panel_output
+  id_front_panel_illumination: ${name}_front_panel_output
   id_power_button: ${name}_power_button
   id_color_button: ${name}_color_button
   id_slider_level: ${name}_slider_level
@@ -36,11 +36,11 @@ api:
 ota:
   password: "Password-For-Flashing-This-Device-Over-The-Air"
 
-# The log level can be raised when needed for debugging the device. For
-# production, a low log level is recommended. Mainly because high volume
-# log output might interfere with the API/WiFi connection stability.
-# So when raising the log level, beware that you might see dropped
-# connections from Home Assistant and the network log viewer.
+# The log level can be raised when needed for debugging the firmware. For
+# production, a low log level is recommended. Mainly because high volume log
+# output might interfere with the API/WiFi connection stability. So when
+# raising the log level, beware that you might see dropped connections from
+# Home Assistant and the network log viewer.
 logger:
     level: WARN
 
@@ -51,7 +51,7 @@ logger:
 
 # Special platform + package are used for enabling unicore and disabling the
 # efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
-# chip that is used in the device.
+# chip that is used in the lamp.
 esphome:
   name: ${name}
   platform: ESP32
@@ -61,13 +61,13 @@ esphome:
     platform_packages: |-4
         framework-arduinoespressif32 @ https://github.com/pauln/arduino-esp32.git#solo-no-mac-crc/1.0.6
 
+# This component controls the LED lights of the lamp.
 light:
-  # This component controls the LED lights of the device.
   - platform: xiaomi_bslamp2
     id: ${id_light}
     name: ${friendly_name} RGBW Light
     default_transition_length: ${transition_length}
-    # When the brightness is changed, then update the level indication
+    # When the brightness is changed, then update the level indicator
     # on the front panel accordingly. In night light mode, turn off
     # the front panel illumination.
     on_brightness:
@@ -78,11 +78,11 @@ light:
                 state: night
           then:
             - output.set_level:
-                id: ${id_front_panel_output}
+                id: ${id_front_panel_illumination}
                 level: 0
           else:
             - output.set_level:
-                id: ${id_front_panel_output}
+                id: ${id_front_panel_illumination}
                 level: !lambda return x;
     # You can use any effects that you like. These are just examples.
     effects:
@@ -117,25 +117,27 @@ light:
 
 # This text sensor propagates the currently active light mode.
 # The possible light modes are: "off", "rgb", "white" and "night".
+# By setting the name, the text_sensor will show up as an entity
+# for the lamp in Home Assistant.
 text_sensor:
   - platform: xiaomi_bslamp2
     name: ${name} Light Mode
     id: ${id_light_mode}
 
-# This output controls the front panel illumination + level indication.
+# This float output controls the front panel illumination + level indicator.
 # Value 0.0 turns off the illumination.
 # Other values (up to 1.0) turn on the illumination and set the level
-# indication to the requested level.
+# indicator to the requested level.
 output:
   - platform: xiaomi_bslamp2
-    id: ${id_front_panel_output}
+    id: ${id_front_panel_illumination}
 
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "part"
 # parameter can be set to: "any" (i.e. the default), "power button",
 # "color button" or "slider".
 binary_sensor:
-  # When touching the power button, toggle the light.
+  # When tapping the power button, toggle the light.
   # When holding the power button, turn on night light mode.
   - platform: xiaomi_bslamp2
     id: ${id_power_button}
@@ -155,7 +157,7 @@ binary_sensor:
             blue: 1
             brightness: 0.01
 
-  # When touching the color button, acivate the next preset.
+  # When tapping the color button, acivate the next preset.
   # When holding the color button, activate the next preset group.
   - platform: xiaomi_bslamp2
     id: ${id_color_button}
@@ -179,8 +181,8 @@ binary_sensor:
 sensor:
   # When the slider is touched, update the brightness.
   # Brightness 0.01 initiates the light night mode, which has already
-  # been handled above. Therefore, brightness starts from 0.02 here,
-  # so night mode is not triggered from the slider.
+  # been handled above (by holding the power button). Therefore, brightness
+  # starts from 0.02 here, to not trigger night mode using the slider.
   - platform: xiaomi_bslamp2
     id: ${id_slider_level}
     range_from: 0.02

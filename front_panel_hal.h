@@ -206,11 +206,12 @@ public:
     }
 
     /**
-     * Sets the front panel light to the provided level (0.0 - 1.0).
+     * Sets the front panel illumination to the provided level (0.0 - 1.0).
      *
-     * Level 0.0 means: turn off the front panel light.
-     * The other levels are translate to one of the avialable levels,
-     * represented by the backlight of the slider bar.
+     * Level 0.0 means: turn off the front panel illumination.
+     * The other levels are translated to one of the available levels,
+     * represented by the level indicator (i.e. the illumination of the
+     * slider bar.)
      */
     void set_light_level(float level) {
         if (level == 0.0f)
