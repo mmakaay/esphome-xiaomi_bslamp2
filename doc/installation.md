@@ -1,3 +1,5 @@
+< [Why custom firmware?](why_custom_firmware.md) | [Index](../README.md) | [Configuration guide](configuration.md) >
+
 # Installation guide
 
 The code must be compiled using ESPHome. Therefore, a prerequisite is that
@@ -57,3 +59,5 @@ can flash new versions of the firmware using the OTA (Over The Air) method.
 
 See [doc/flashing.md](the flashing guide) for hints on opening up the
 device and flashing its firmware using its serial interface.
+
+< [Why custom firmware?](why_custom_firmware.md) | [Index](../README.md) | [Configuration guide](configuration.md) >
