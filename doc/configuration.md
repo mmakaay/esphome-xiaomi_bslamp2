@@ -227,6 +227,7 @@ or parts of the front panel are involved in the touch events.
 ```yaml
 binary_sensor:
   - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_power_button
     part: POWER_BUTTON
     on_press:
       then:
@@ -252,6 +253,37 @@ the following identifiers are available:
 * All other options from [Binary Sensor](https://esphome.io/components/binary_sensor/index.html#config-binary-sensor).
 
 ## Component: sensor
+
+The sensor component publishes touch events for the front panel slider. The published value
+represents the level at which the slider was touched.
+
+*Note: This sensor only reports the touched slider level. It cannot be used for detecting release
+events. If you want to handle touch/release events for the slider, then you can make use of
+the [binary_sensor](#component-binary_sensor) instead.*
+
+```yaml
+sensor:
+  - platform: xiaomi_bslamp2
+  - id: my_bedside_lamp_slider_level
+    range_from: 0.2
+    range_to: 0.9
+    on_value:
+      then:
+        - light.turn_on:
+            id: my_bedside_lamp
+            brightness: !lambda return x;    
+```
+
+### Configuration variables:
+
+* **name** (*Optional*, string): The name of the sensor. Setting a name will expose the
+  sensor as an entity in Home Assistant. If you do not need this, you can omit the name.
+* **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
+  you can reference the sensor from automation rules (e.g. to retrieve the current state
+  of the binary_sensor).
+* **range_from** (*Optional*, float): By default, published values vary from the range 0.01 to 1.00,
+  in 20 steps. This option modifies the lower bound of the range.
+* **range_to** (*Optional*, float): This option modifies the upper bound of the range.
 
 ## Component: output
 
