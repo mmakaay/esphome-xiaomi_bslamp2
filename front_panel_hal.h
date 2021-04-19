@@ -37,39 +37,39 @@ using EVENT = uint16_t;
 // BITS  INDICATE  PATTERN  RESULT
 // 1     status    0        parsing event failed
 //                 1        parsing event successful
-// 2-3   part      00       part unknown
-//                 01       power button
-//                 10       color button
-//                 11       slider 
-// 4-5   type      00       type unknown
+// 2-4   part      000      part unknown
+//                 001      power button
+//                 010      color button
+//                 100      slider 
+// 5-6   type      00       type unknown
 //                 01       touch
 //                 10       release
-// 6-10  slider    00000    level known (or part is not "slider")
+// 7-11  slider    00000    level known (or part is not "slider")
 //       level     00001    level 1
 //                  ...     up to
 //                 10101    level 21
 //
-static const EVENT FLAG_INIT          = 0b0000000000;
+static const EVENT FLAG_INIT          = 0b00000000000;
 
-static const EVENT FLAG_ERR           = 0b0000000000;
-static const EVENT FLAG_OK            = 0b0000000001;
+static const EVENT FLAG_ERR           = 0b00000000000;
+static const EVENT FLAG_OK            = 0b00000000001;
 
 static const EVENT FLAG_PART_SHIFT    = 1;
-static const EVENT FLAG_PART_MASK     = 0b0000000110;
-static const EVENT FLAG_PART_UNKNOWN  = 0b0000000000;
-static const EVENT FLAG_PART_POWER    = 0b0000000010;
-static const EVENT FLAG_PART_COLOR    = 0b0000000100;
-static const EVENT FLAG_PART_SLIDER   = 0b0000000110;
+static const EVENT FLAG_PART_MASK     = 0b00000001110;
+static const EVENT FLAG_PART_UNKNOWN  = 0b00000000000;
+static const EVENT FLAG_PART_POWER    = 0b00000000010;
+static const EVENT FLAG_PART_COLOR    = 0b00000000100;
+static const EVENT FLAG_PART_SLIDER   = 0b00000001000;
 
-static const EVENT FLAG_TYPE_SHIFT    = 3;
-static const EVENT FLAG_TYPE_MASK     = 0b0000011000;
-static const EVENT FLAG_TYPE_UNKNOWN  = 0b0000000000;
-static const EVENT FLAG_TYPE_TOUCH    = 0b0000001000;
-static const EVENT FLAG_TYPE_RELEASE  = 0b0000010000;
+static const EVENT FLAG_TYPE_SHIFT    = 4;
+static const EVENT FLAG_TYPE_MASK     = 0b00000110000;
+static const EVENT FLAG_TYPE_UNKNOWN  = 0b00000000000;
+static const EVENT FLAG_TYPE_TOUCH    = 0b00000010000;
+static const EVENT FLAG_TYPE_RELEASE  = 0b00000100000;
 
-static const EVENT FLAG_LEVEL_SHIFT   = 5;
-static const EVENT FLAG_LEVEL_MASK    = 0b1111100000;
-static const EVENT FLAG_LEVEL_UNKNOWN = 0b0000000000;
+static const EVENT FLAG_LEVEL_SHIFT   = 6;
+static const EVENT FLAG_LEVEL_MASK    = 0b11111000000;
+static const EVENT FLAG_LEVEL_UNKNOWN = 0b00000000000;
 
 /**
  * This class implements a parser that translates event byte codes from the

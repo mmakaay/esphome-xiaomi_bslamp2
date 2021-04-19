@@ -243,22 +243,32 @@ for the front panel. On touch, a binary_sensor will publish `True`, on release i
 will publish `False`. The configuration of a binary_sensor determines what part
 or parts of the front panel are involved in the touch events.
 
-```yaml
-binary_sensor:
-  - platform: xiaomi_bslamp2
-    id: my_bedside_lamp_power_button
-    part: POWER_BUTTON
-    on_press:
-      then:
-        - light.toggle: my_bedside_lamp
-```
-
-For specifying specific parts of the front panel in the upcoming configuration variables,
-the following identifiers are available:
+For referencing the parts of the front panel, the following identifiers are available:
 
 * POWER_BUTTON (or its alias: POWER)
 * COLOR_BUTTON (or its alias: COLOR)
 * SLIDER
+
+```yaml
+binary_sensor:
+  - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_power_button
+    for: POWER_BUTTON
+    on_press:
+      then:
+        - light.toggle: my_bedside_lamp
+
+  - platform: xiaomi_bslamp2
+    id: my_bedside_lamp_power_plus_color_button
+    for:
+      - POWER_BUTTON
+      - COLOR_BUTTON
+    on_press:
+      then:
+        - light.turn_on:
+            id: my_bedside_lamp
+            effect: BlinkyBlink
+```
 
 ### Configuration variables:
 
@@ -267,8 +277,9 @@ the following identifiers are available:
 * **id** (*Optional*, ID): Manually specify the ID used for code generation. By providing an id,
   you can reference the binary_sensor from automation rules (to retrieve the current state
   of the binary_sensor).
-* **part** (*Optional*, part identifier): This specifies what part of the front panel the binary sensor must
-  look at. Valid options are: "any" (the default) or one of the abovementioned part identifiers.
+* **for** (*Mandatory*, part identifier or list): This specifies what part or parts of the
+  front panel the binary sensor must look at. When multiple parts are specified here, the
+  binary_sensor will handle multi-touch events using those parts.
 * All other options from [Binary Sensor](https://esphome.io/components/binary_sensor/index.html#config-binary-sensor).
 
 ## Component: sensor
