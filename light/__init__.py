@@ -22,6 +22,9 @@ CONF_NEXT = "next"
 CONF_GROUP = "group"
 CONF_PRESET = "preset"
 
+MIRED_MIN = 153
+MIRED_MAX = 588
+
 XiaomiBslamp2LightState = bslamp2_ns.class_("XiaomiBslamp2LightState", light.LightState)
 XiaomiBslamp2LightOutput = bslamp2_ns.class_("XiaomiBslamp2LightOutput", light.LightOutput)
 PresetsContainer = bslamp2_ns.class_("PresetsContainer", cg.Component)
@@ -35,29 +38,46 @@ PRESETS_SCHEMA = cv.Schema({
     })
 })
 
-PRESET_SCHEMA_BASE = cv.Schema(
-    {
-        cv.GenerateID(CONF_ID): cv.use_id(XiaomiBslamp2LightState),
-        cv.GenerateID(CONF_PRESET_ID): cv.declare_id(Preset),
-    }
-)
+def validate_preset(conf):
+    has_rgb = CONF_RED in conf or CONF_GREEN in conf or CONF_BLUE in conf
+    has_white = CONF_COLOR_TEMPERATURE in conf
+    has_effect = CONF_EFFECT in conf
 
-PRESET_SCHEMA = cv.Any(
-    PRESET_SCHEMA_BASE.extend({
-        cv.Required(CONF_EFFECT): cv.string
-    }),
-    PRESET_SCHEMA_BASE.extend({
-        cv.Required(CONF_COLOR_TEMPERATURE): cv.color_temperature,
-        cv.Optional(CONF_BRIGHTNESS): cv.percentage,
-        cv.Optional(CONF_TRANSITION_LENGTH): cv.positive_time_period_milliseconds,
-    }),
-    PRESET_SCHEMA_BASE.extend({
-        cv.Required(CONF_RED): cv.percentage,
-        cv.Required(CONF_GREEN): cv.percentage,
-        cv.Required(CONF_BLUE): cv.percentage,
-        cv.Optional(CONF_BRIGHTNESS): cv.percentage,
-        cv.Optional(CONF_TRANSITION_LENGTH): cv.positive_time_period_milliseconds,
-    }),
+    # Check mutual exclusivity of preset options.
+    if (has_rgb + has_white + has_effect) > 1:
+        raise cv.Invalid("Use only one of RGB light, white (color temperature) light or an effect")
+
+    # Check the color temperature value range.
+    if has_white:
+        if conf[CONF_COLOR_TEMPERATURE] < MIRED_MIN or conf[CONF_COLOR_TEMPERATURE] > MIRED_MAX:
+            raise cv.Invalid(f"The color temperature must be in the range {MIRED_MIN} - {MIRED_MAX}")
+
+    # When defining an RGB color, it is allowed to omit RGB components that have value 0.
+    if has_rgb:
+        if CONF_RED not in conf:
+            conf[CONF_RED] = 0
+        if CONF_GREEN not in conf:
+            conf[CONF_GREEN] = 0
+        if CONF_BLUE not in conf:
+            conf[CONF_BLUE] = 0
+
+    return conf
+
+PRESET_SCHEMA = cv.All(
+    cv.Schema(
+        {
+            cv.GenerateID(CONF_ID): cv.use_id(XiaomiBslamp2LightState),
+            cv.GenerateID(CONF_PRESET_ID): cv.declare_id(Preset),
+            cv.Optional(CONF_EFFECT): cv.string,
+            cv.Optional(CONF_COLOR_TEMPERATURE): cv.color_temperature,
+            cv.Optional(CONF_RED): cv.percentage,
+            cv.Optional(CONF_GREEN): cv.percentage,
+            cv.Optional(CONF_BLUE): cv.percentage,
+            cv.Optional(CONF_BRIGHTNESS): cv.percentage,
+            cv.Optional(CONF_TRANSITION_LENGTH): cv.positive_time_period_milliseconds,
+        }
+    ),
+    validate_preset
 )
 
 CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(

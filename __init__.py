@@ -35,38 +35,33 @@ bslamp2_ns = xiaomi_ns.namespace("bslamp2")
 LightHAL = bslamp2_ns.class_("LightHAL", cg.Component)
 FrontPanelHAL = bslamp2_ns.class_("FrontPanelHAL", cg.Component, I2CDevice)
 
-def make_config_schema():
-    schema = cv.COMPONENT_SCHEMA.extend({
-        # RGBWW Light
-        cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
-        cv.GenerateID(CONF_RED_ID): cv.declare_id(LEDCOutput),
-        cv.Optional(CONF_RED, default="GPIO13"): pins.validate_gpio_pin,
-        cv.GenerateID(CONF_GREEN_ID): cv.declare_id(LEDCOutput),
-        cv.Optional(CONF_GREEN, default="GPIO14"): pins.validate_gpio_pin,
-        cv.GenerateID(CONF_BLUE_ID): cv.declare_id(LEDCOutput),
-        cv.Optional(CONF_BLUE, default="GPIO5"): pins.validate_gpio_pin,
-        cv.GenerateID(CONF_WHITE_ID): cv.declare_id(LEDCOutput),
-        cv.Optional(CONF_WHITE, default="GPIO12"): pins.validate_gpio_pin,
-        cv.GenerateID(CONF_MASTER1_ID): cv.declare_id(GPIOBinaryOutput),
-        cv.Optional(CONF_MASTER1, default="GPIO33"): pins.validate_gpio_pin,
-        cv.GenerateID(CONF_MASTER2_ID): cv.declare_id(GPIOBinaryOutput),
-        cv.Optional(CONF_MASTER2, default="GPIO4"): pins.validate_gpio_pin,
+CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
+    # RGBWW Light
+    cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
+    cv.GenerateID(CONF_RED_ID): cv.declare_id(LEDCOutput),
+    cv.Optional(CONF_RED, default="GPIO13"): pins.validate_gpio_pin,
+    cv.GenerateID(CONF_GREEN_ID): cv.declare_id(LEDCOutput),
+    cv.Optional(CONF_GREEN, default="GPIO14"): pins.validate_gpio_pin,
+    cv.GenerateID(CONF_BLUE_ID): cv.declare_id(LEDCOutput),
+    cv.Optional(CONF_BLUE, default="GPIO5"): pins.validate_gpio_pin,
+    cv.GenerateID(CONF_WHITE_ID): cv.declare_id(LEDCOutput),
+    cv.Optional(CONF_WHITE, default="GPIO12"): pins.validate_gpio_pin,
+    cv.GenerateID(CONF_MASTER1_ID): cv.declare_id(GPIOBinaryOutput),
+    cv.Optional(CONF_MASTER1, default="GPIO33"): pins.validate_gpio_pin,
+    cv.GenerateID(CONF_MASTER2_ID): cv.declare_id(GPIOBinaryOutput),
+    cv.Optional(CONF_MASTER2, default="GPIO4"): pins.validate_gpio_pin,
 
-        # Front panel I2C
-        cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
-        cv.GenerateID(CONF_FP_I2C_ID): cv.use_id(I2CComponent),
-        cv.Optional(CONF_SDA, default="GPIO21"): pins.validate_gpio_pin,
-        cv.Optional(CONF_SCL, default="GPIO19"): pins.validate_gpio_pin,
-        cv.Optional(CONF_ADDRESS, default="0x2C"): cv.i2c_address,
-        cv.Optional(CONF_TRIGGER_PIN, default="GPIO16"): cv.All(
-            pins.validate_gpio_pin,
-            pins.validate_has_interrupt
-        ),
-    })
-
-    return schema;
-
-CONFIG_SCHEMA = make_config_schema()
+    # Front panel I2C
+    cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
+    cv.GenerateID(CONF_FP_I2C_ID): cv.use_id(I2CComponent),
+    cv.Optional(CONF_SDA, default="GPIO21"): pins.validate_gpio_pin,
+    cv.Optional(CONF_SCL, default="GPIO19"): pins.validate_gpio_pin,
+    cv.Optional(CONF_ADDRESS, default="0x2C"): cv.i2c_address,
+    cv.Optional(CONF_TRIGGER_PIN, default="GPIO16"): cv.All(
+        pins.validate_gpio_pin,
+        pins.validate_has_interrupt
+    ),
+})
 
 @coroutine
 def make_gpio(number, mode="OUTPUT"):

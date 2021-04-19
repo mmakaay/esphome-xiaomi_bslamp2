@@ -170,12 +170,12 @@ light:
 If you use duplicate preset names within a single group, then the last preset will override the
 earlier one(s).*
 
-A preset can define one of the following light types:
+A preset can define one of the following:
 
 * **RGB light**
-  * **red** (**Required**, percentage): the red component of the RGB value.
-  * **green** (**Required**, percentage): the green component of the RGB value.
-  * **blue** (**Required**, percentage): the blue component of the RGB value.
+  * **red** (**Optional**, percentage): the red component of the RGB value (default = 0%).
+  * **green** (**Optional**, percentage): the green component of the RGB value (default = 0%).
+  * **blue** (**Optional**, percentage): the blue component of the RGB value (default = 0%).
   * **brightness** (*Optional*, percentage): the brightness to use (default = current brightness).
   * **transition_length** (*Optional*, time): the transition length to use.
 * **White light**
@@ -184,6 +184,8 @@ A preset can define one of the following light types:
   * **transition_length** (*Optional*, time): the transition length to use.
 * **Light effect**
   * **effect** (**Required**, string): the name of a light effect to activate.
+* **Brightness change only**
+  * **brightness** (**Required**, percentage): the brightness to use.
 
 **Activating presets from automations**
 
