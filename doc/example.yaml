@@ -156,10 +156,7 @@ binary_sensor:
       then:
         - light.turn_on:
             id: ${id_light}
-            red: 1
-            green: 1
-            blue: 1
-            brightness: 0.01
+            brightness: 1%
 
   # When tapping the color button, acivate the next preset.
   # When holding the color button, activate the next preset group.
