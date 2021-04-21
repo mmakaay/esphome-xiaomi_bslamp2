@@ -27,8 +27,8 @@ public:
             [this](EVENT ev) {
                 auto part_in_event = ev & FLAG_PART_MASK;
                 if (for_ == 0 || part_in_event == for_) {
-                    auto is_touch = (ev & FLAG_TYPE_MASK) == FLAG_TYPE_TOUCH;
-                    this->publish_state(is_touch);
+                    auto new_state = (ev & FLAG_TYPE_MASK) == FLAG_TYPE_TOUCH;
+                    this->publish_state(new_state);
                 }
             }
         );
@@ -44,7 +44,6 @@ public:
 
 protected:
     FrontPanelHAL *front_panel_;
-    EVENT match_ = 0;
     EVENT for_ = 0;
 };
     
