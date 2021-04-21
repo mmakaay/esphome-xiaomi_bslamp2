@@ -258,40 +258,28 @@ is already well on its way.*
 Binary sensors can be added to the configuration for handling touch/release
 events for the front panel. On touch, a binary_sensor will publish `True`,
 on release it will publish `False`. The configuration of a binary_sensor
-determines what part or parts of the front panel are involved in the touch
-events.
-
-For referencing the parts of the front panel, the following identifiers are
-available:
-
-* POWER_BUTTON (or POWER)
-* COLOR_BUTTON (or its alias: COLOR)
-* SLIDER
-
-If personal taste dictates so, you can use lower case characters and spaces
-instead of underscores. This means that for example "Power Button" would also
-be a valid identifier.
+determines what part of the front panel is involved in the touch events.
 
 ```yaml
 binary_sensor:
   - platform: xiaomi_bslamp2
     id: my_bedside_lamp_power_button
     for: POWER_BUTTON
-    on_release:
-      then:
-        - light.toggle: my_bedside_lamp
-
-  - platform: xiaomi_bslamp2
-    id: my_bedside_lamp_power_plus_color_button
-    for:
-      - POWER_BUTTON
-      - COLOR_BUTTON
     on_press:
       then:
-        - light.turn_on:
-            id: my_bedside_lamp
-            effect: BlinkyBlink
+        - light.toggle: my_bedside_lamp
 ```
+
+For referencing the parts of the front panel, the following part identifiers
+are available:
+
+* POWER_BUTTON (or its alias: POWER)
+* COLOR_BUTTON (or its alias: COLOR)
+* SLIDER
+
+If personal taste dictates so, you can use lower case characters and spaces
+instead of underscores. This means that for example "Power Button" and
+"power" would be valid identifiers for the power button.
 
 ### Configuration variables:
 
@@ -301,61 +289,10 @@ binary_sensor:
 * **id** (*Optional*, ID): Manually specify the ID used for code generation.
   By providing an id, you can reference the binary_sensor from automation
   rules (to retrieve the current state of the binary_sensor).
-* **for** (*Mandatory*, single identifier or a list): This specifies what part
-  or parts of the front panel the binary sensor must look at. When multiple
-  parts are specified here, the binary_sensor will handle multi-touch events
-  using those parts.
+* **for** (*Mandatory*, part identifier): This specifies to for part of the
+  front panel the binary sensor must report touch events.
 * All other options from
   [Binary Sensor](https://esphome.io/components/binary_sensor/index.html#config-binary-sensor).
-
-### Multi-touch support
-
-When using a multi-touch binary-sensor, beware to use non-conflicting
-triggers for any related binary sensors. For example, when you implement a
-multi-touch binary sensor for the power + color button, then you probably
-should not also be using `on_press` triggers for the two individual buttons.
-
-First a few definitions:
-
-* **multi-touch binary sensor**: when two or more parts of the front panel
-  can be touched concurrently to trigger an automation. A binary sensor can
-  be defined as multi-touch by configuring two or more parts in the `for:`
-  parameter.
-* **lower order binary sensors**: binary sensors that use a subset of the
-  parts of a multi-touch binary sensor. For example a binary sensor for the
-  power button is a lower order binary sensor for a multi-touch binary
-  sensor for the power + color button.
-
-Why not use `on_press` for every binary sensor:
-
-The user of your lamp will very likely not touch the power and color buttons
-at the *exact same time*. Therefore, you would first get an `on_press`
-trigger for one of these buttons, followed by the `on_press` trigger for the
-multi-touch binary sensor. Thus, if you have defined `on_press` for every
-binary sensor, then two automations would be triggered. Most likely, this
-would be unwanted behavior.
-
-Interlocking to the rescue:
-
-Multi-touch binary sensors provide a form of interlocking behavior, to
-facilitate their use.
-
-* When multi-touch binary sensors trigger `on_press`, they will block all
-  further triggers for their lower order binary sensors.
-* These blocks will be released after all involved parts have been released. 
-
-Because of interlocking, in the above example you might first have gotten
-an `on_press` trigger for the power button, followed by an `on_press`
-trigger for the multi-touch power + color buttons. When after this the
-buttons are released, then only the multi-touch binary sensor will trigger
-`on_release`.
-
-TL;DR:
-
-* If a sensor is a lower order sensor for a multi-touch sensor, then it is
-  best to only use an `on_release` trigger.
-* A multi-touch sensor can also act on other triggers.
-
 
 ## Component: sensor
 

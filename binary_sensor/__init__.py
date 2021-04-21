@@ -25,26 +25,9 @@ PARTS = {
 XiaomiBslamp2TouchBinarySensor = bslamp2_ns.class_(
     "XiaomiBslamp2TouchBinarySensor", binary_sensor.BinarySensor, cg.Component)
 
-def get_part_id(value):
-    normalized = re.sub('\s+', '_', value.upper())
-    try:
-        return PARTS[normalized]
-    except KeyError:
-        raise cv.Invalid(f"[{value}] is not a valid part identifier")
-
 def validate_for(value):
-    parts = set()
-    if isinstance(value, str):
-        parts.add(get_part_id(value)) 
-    elif isinstance(value, list):
-        for x in value:
-            parts.add(get_part_id(x))
-    else:
-        cv.Invalid("The value must be a single part identifier or a list of identifiers.")
-    return list(parts)
-
-def validate_part(value):
-    return [ get_part_id(value) ]
+    value = cv.string(value)
+    return cv.enum(PARTS, upper=True, space='_')(value)
 
 def validate_binary_sensor(conf):
     if CONF_PART in conf and CONF_FOR in conf:
@@ -63,7 +46,7 @@ CONFIG_SCHEMA = cv.All(
             # This option is not advertised in the documentation. It must be
             # considered deprecated. I'm not announcing it as such yet. Not sure
             # if it's useful to do so.
-            cv.Optional(CONF_PART): validate_part,
+            cv.Optional(CONF_PART): validate_for,
             cv.Optional(CONF_FOR): validate_for,
         }
     ).extend(cv.COMPONENT_SCHEMA),
@@ -77,5 +60,4 @@ def to_code(config):
 
     front_panel_hal_var = yield cg.get_variable(config[CONF_FRONT_PANEL_HAL_ID])
     cg.add(var.set_parent(front_panel_hal_var))
-    for part_id in config[CONF_FOR]:
-        cg.add(var.include_part(part_id))
+    cg.add(var.set_for(config[CONF_FOR]))

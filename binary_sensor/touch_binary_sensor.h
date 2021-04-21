@@ -18,44 +18,34 @@ public:
         front_panel_ = front_panel;
     }
 
-    void include_part(int part) {
-        match_ = match_ | part; 
+    void set_for(int part) {
+        for_ = part;
     }
 
     void setup() {
         front_panel_->add_on_event_callback(
             [this](EVENT ev) {
-                auto part = ev & FLAG_PART_MASK;
-                auto is_touch = (ev & FLAG_TYPE_MASK) == FLAG_TYPE_TOUCH;
-                if (is_touch) {
-                    active_ = active_ | part;
-                } else {
-                    active_ = active_ & ~part;
+                auto part_in_event = ev & FLAG_PART_MASK;
+                if (for_ == 0 || part_in_event == for_) {
+                    auto is_touch = (ev & FLAG_TYPE_MASK) == FLAG_TYPE_TOUCH;
+                    this->publish_state(is_touch);
                 }
-
-                this->publish_state(active_ == match_);
             }
         );
     }
 
     void dump_config() {
         ESP_LOGCONFIG(TAG, "Front panel binary_sensor:");
-        ESP_LOGCONFIG(TAG, "  Part(s):");
-        if ((match_ & FLAG_PART_POWER) == FLAG_PART_POWER) {
-          ESP_LOGCONFIG(TAG, "    - Power button");
-        }
-        if ((match_ & FLAG_PART_COLOR) == FLAG_PART_COLOR) {
-          ESP_LOGCONFIG(TAG, "    - Color button");
-        }
-        if ((match_ & FLAG_PART_SLIDER) == FLAG_PART_SLIDER) {
-          ESP_LOGCONFIG(TAG, "    - Slider");
-        }
+        ESP_LOGCONFIG(TAG, "  For: %s",
+            for_ & FLAG_PART_POWER ? "power button" :
+            for_ & FLAG_PART_COLOR ? "color button" :
+            for_ & FLAG_PART_SLIDER ? "slider" : "ERR");
     }
 
 protected:
     FrontPanelHAL *front_panel_;
     EVENT match_ = 0;
-    EVENT active_ = 0;
+    EVENT for_ = 0;
 };
     
 } // namespace bslamp2
