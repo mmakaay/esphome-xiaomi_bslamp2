@@ -84,14 +84,27 @@ public:
         }
 
         light_mode = end_->light_mode;
+        progress_ = transformer_->get_progress();
 
         // Determine required GPIO outputs for current transition progress.
-        progress_ = transformer_->get_progress();
-        auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress_);
-        red = esphome::lerp(smoothed, start_->red, end_->red);
-        green = esphome::lerp(smoothed, start_->green, end_->green);
-        blue = esphome::lerp(smoothed, start_->blue, end_->blue);
-        white = esphome::lerp(smoothed, start_->white, end_->white);
+
+        // In night light mode, do not use actual transitions. Transitioning
+        // between colors at the very low LED output levels of the night light,
+        // results in light drops, which are plain ugly to watch. 
+        if (light_mode == "night") {
+            red = end_->red;
+            green = end_->green;
+            blue = end_->blue;
+            white = end_->white;
+        }
+        // In other light modes, apply smooth transitioning.
+        else {
+            auto smoothed = light::LightTransitionTransformer::smoothed_progress(progress_);
+            red = esphome::lerp(smoothed, start_->red, end_->red);
+            green = esphome::lerp(smoothed, start_->green, end_->green);
+            blue = esphome::lerp(smoothed, start_->blue, end_->blue);
+            white = esphome::lerp(smoothed, start_->white, end_->white);
+        }
 
         return true;
     }
