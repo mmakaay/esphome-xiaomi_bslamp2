@@ -273,7 +273,6 @@ public:
             v.get_brightness(), &rgb_a_);
 
         // Determine duty cycle measurements for the inner ring.
-        auto level_b = ceil(level);
         set_duty_cycles_(
             &rgbp_b_, level_a, v.get_red(), v.get_green(), v.get_blue(),
             v.get_brightness(), &rgb_b_);

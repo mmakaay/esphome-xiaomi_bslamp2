@@ -29,8 +29,6 @@ namespace bslamp2 {
 class ColorInstantHandler : public GPIOOutputs {
 public:
     bool set_light_color_values(light::LightColorValues v) {
-        GPIOOutputs *delegate;
-        
         // The actual implementation of the various light modes is in
         // separated targeted classes. These classes are called here
         // in a chain of command-like pattern, to let the first one
