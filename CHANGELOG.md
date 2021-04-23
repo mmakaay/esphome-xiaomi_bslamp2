@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Transitions are now fully suppressed when in night light mode. In that mode, LED output
   levels are too low for producing good looking transitions.
   Fixes [issue #10](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/10).
+- Formatted the codebase using the ESPHome clang rules.
 
 ## [1.0.0-RC1]
 ### Added
