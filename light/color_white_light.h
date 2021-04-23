@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "../common.h"
-#include "light_modes.h" 
+#include "light_modes.h"
 #include "gpio_outputs.h"
 
 namespace esphome {
@@ -24,15 +24,16 @@ static const int MIRED_MIN = 153;
 static const int MIRED_MAX = 588;
 
 struct RGBWLevelsByTemperature {
-    float from_temperature;
-    float red;
-    float green;
-    float blue;
-    float white;
+  float from_temperature;
+  float red;
+  float green;
+  float blue;
+  float white;
 };
 
 using RGBWLevelsTable = std::array<RGBWLevelsByTemperature, 15>;
 
+// clang-format off
 static const RGBWLevelsTable rgbw_levels_1_ {{
     { 501.0f, 0.873f, 0.907f, 1.000f,  0.063f },
     { 455.0f, 0.873f, 0.896f, 1.000f,  0.063f },
@@ -68,62 +69,60 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
     { 154.0f, 1.000f, 0.000f, 0.218f, 0.368f },
     { 153.0f, 1.000f, 0.000f, 0.187f, 0.335f }
 }};
+// clang-format on
 
 /**
  * This class can handle the GPIO outputs for the white light mode,
  * based on color temperature + brightness.
  */
 class ColorWhiteLight : public GPIOOutputs {
-public:
-    bool set_light_color_values(light::LightColorValues v) {
-        light_mode = LIGHT_MODE_WHITE;
+ public:
+  bool set_light_color_values(light::LightColorValues v) {
+    light_mode = LIGHT_MODE_WHITE;
 
-        if (v.get_white() == 0.0f) {
-            return false;
-        }
-
-        auto temperature = clamp_temperature_(v.get_color_temperature());
-        auto brightness = clamp_brightness_(v.get_brightness());
-
-        auto levels_1 = lookup_in_table_(rgbw_levels_1_, temperature);
-        auto levels_100 = lookup_in_table_(rgbw_levels_100_, temperature);
-
-        red = esphome::lerp(brightness, levels_1.red, levels_100.red);
-        green = esphome::lerp(brightness, levels_1.green, levels_100.green);
-        blue = esphome::lerp(brightness, levels_1.blue, levels_100.blue);
-        white = esphome::lerp(brightness, levels_1.white, levels_100.white);
-
-        return true;
+    if (v.get_white() == 0.0f) {
+      return false;
     }
 
-protected:
-    float clamp_temperature_(float temperature)
-    {
-        if (temperature > MIRED_MAX)
-            temperature = MIRED_MAX;
-        else if (temperature < MIRED_MIN) 
-            temperature = MIRED_MIN;
-        return temperature;
-    }
+    auto temperature = clamp_temperature_(v.get_color_temperature());
+    auto brightness = clamp_brightness_(v.get_brightness());
 
-    float clamp_brightness_(float brightness)
-    {
-        if (brightness < 0.01f)
-            brightness = 0.01f;
-        else if (brightness > 1.00f)
-            brightness = 1.00f;
-        return brightness;
-    }
+    auto levels_1 = lookup_in_table_(rgbw_levels_1_, temperature);
+    auto levels_100 = lookup_in_table_(rgbw_levels_100_, temperature);
 
-    RGBWLevelsByTemperature lookup_in_table_(RGBWLevelsTable table, float temperature)
-    {
-        for (RGBWLevelsByTemperature& item : table) 
-            if (temperature >= item.from_temperature) 
-                return item;
-        throw std::invalid_argument("received too low temperature");
-    }
+    red = esphome::lerp(brightness, levels_1.red, levels_100.red);
+    green = esphome::lerp(brightness, levels_1.green, levels_100.green);
+    blue = esphome::lerp(brightness, levels_1.blue, levels_100.blue);
+    white = esphome::lerp(brightness, levels_1.white, levels_100.white);
+
+    return true;
+  }
+
+ protected:
+  float clamp_temperature_(float temperature) {
+    if (temperature > MIRED_MAX)
+      temperature = MIRED_MAX;
+    else if (temperature < MIRED_MIN)
+      temperature = MIRED_MIN;
+    return temperature;
+  }
+
+  float clamp_brightness_(float brightness) {
+    if (brightness < 0.01f)
+      brightness = 0.01f;
+    else if (brightness > 1.00f)
+      brightness = 1.00f;
+    return brightness;
+  }
+
+  RGBWLevelsByTemperature lookup_in_table_(RGBWLevelsTable table, float temperature) {
+    for (RGBWLevelsByTemperature& item : table)
+      if (temperature >= item.from_temperature)
+        return item;
+    throw std::invalid_argument("received too low temperature");
+  }
 };
 
-} // namespace bslamp2
-} // namespace xiaomi
-} // namespace esphome
+}  // namespace bslamp2
+}  // namespace xiaomi
+}  // namespace esphome

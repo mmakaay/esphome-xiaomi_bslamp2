@@ -4,22 +4,22 @@
 #include <cmath>
 
 #include "../common.h"
-#include "light_modes.h" 
 #include "gpio_outputs.h"
+#include "light_modes.h"
 
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
 struct RGB {
-    float red;
-    float green;
-    float blue;
+  float red;
+  float green;
+  float blue;
 };
 
 struct RGBPoint {
-    RGB low;
-    RGB high;
+  RGB low;
+  RGB high;
 };
 
 using RGBRing = std::array<RGBPoint, 24>;
@@ -27,8 +27,8 @@ using RGBRing = std::array<RGBPoint, 24>;
 using RGBCircle = std::array<RGBRing, 7>;
 
 /**
- * The following table contains GPIO PWM duty cycles as used for driving the
- * LEDs in the device in RGB mode.
+ * The following table contains GPIO PWM duty cycles as used for driving
+ * the LEDs in the device in RGB mode.
  *
  * The base for this table are measurements against the original device
  * firmware, using the RGB color circle as used in Home Assistant as the
@@ -49,6 +49,7 @@ using RGBCircle = std::array<RGBRing, 7>;
  *   in-between brightnesses can be derived from these values by means of
  *   linear interpolation.
  */
+// clang-format off
 static const RGBCircle rgb_circle_ {{
     // Ring 0, min value RGB component value = 0
     {{ 
@@ -240,144 +241,138 @@ static const RGBCircle rgb_circle_ {{
         {{ 0.9167, 0.8727, 0.9360 }, { 0.4406, 0.0000, 0.6330 }}  // 345° [255,228,219]
     }}
 }};
+// clang-format on
 
 /**
  * This class can handle the GPIO outputs for the RGB light mode,
  * based on RGB color values + brightness.
  */
 class ColorRGBLight : public GPIOOutputs {
-public:
-    bool set_light_color_values(light::LightColorValues v) {
-        light_mode = LIGHT_MODE_RGB;
+ public:
+  bool set_light_color_values(light::LightColorValues v) {
+    light_mode = LIGHT_MODE_RGB;
 
-        if (v.get_white() > 0.0f) {
-            return false;
-        }
-
-        // Determine the ring level for the color. This is a value between 0
-        // and 7, determining in what ring of the RGB circle the requested
-        // color resides.
-        auto rgb_min = min(min(v.get_red(), v.get_green()), v.get_blue());
-        auto level = 7.0f * rgb_min;
-
-        // While the default color circle in Home Assistant presents only a
-        // subset of colors, it is possible to request colors outside this
-        // subset as well. Therefore, the ring level might contain a
-        // fractional value instead of a plain integer. To accomodate for
-        // this, interpolation will be done to get the final outputs.
-
-        // Determine duty cycle measurements for the outer ring.
-        auto level_a = floor(level);
-        set_duty_cycles_(
-            &rgbp_a_, level_a, v.get_red(), v.get_green(), v.get_blue(),
-            v.get_brightness(), &rgb_a_);
-
-        // Determine duty cycle measurements for the inner ring.
-        set_duty_cycles_(
-            &rgbp_b_, level_a, v.get_red(), v.get_green(), v.get_blue(),
-            v.get_brightness(), &rgb_b_);
-
-        // Almost there! We now have the correct duty cycles for the
-        // two rings that we were looking at. In this last step, the
-        // two values are interpolated based on the ring level.
-        auto d = level - level_a;
-        red = esphome::lerp(d, rgb_a_.red, rgb_b_.red);
-        green = esphome::lerp(d, rgb_a_.green, rgb_b_.green);
-        blue = esphome::lerp(d, rgb_a_.blue, rgb_b_.blue);
-
-        // The white output channel will always be 0 for RGB.
-        white = 0.0f;
-
-        return true;
+    if (v.get_white() > 0.0f) {
+      return false;
     }
 
-    RGBPoint rgbp_a_;
-    RGBPoint rgbp_b_;
-    RGB rgb_a_;
-    RGB rgb_b_;
+    // Determine the ring level for the color. This is a value between 0
+    // and 7, determining in what ring of the RGB circle the requested
+    // color resides.
+    auto rgb_min = min(min(v.get_red(), v.get_green()), v.get_blue());
+    auto level = 7.0f * rgb_min;
 
-    void set_duty_cycles_(RGBPoint *p, int ring_level,
-        float r, float g, float b, float brightness, RGB *rgb) {
+    // While the default color circle in Home Assistant presents only a
+    // subset of colors, it is possible to request colors outside this
+    // subset as well. Therefore, the ring level might contain a
+    // fractional value instead of a plain integer. To accomodate for
+    // this, interpolation will be done to get the final outputs.
 
-        // Ring level 7 = white light center. The duty cycles for this level
-        // can be computed using a few basic functions.
-        if (ring_level == 7) {
-            rgb->red = 0.932101 - 0.383377 * brightness;
-            rgb->green = 0.883185 - 0.881623 * brightness;
-            rgb->blue = 0.94188 - 0.284498 * brightness;
-            return;
-        }
+    // Determine duty cycle measurements for the outer ring.
+    auto level_a = floor(level);
+    set_duty_cycles_(&rgbp_a_, level_a, v.get_red(), v.get_green(), v.get_blue(), v.get_brightness(), &rgb_a_);
 
-        // Other ring levels are more complex. Start by retrieving the duty
-        // cycle measurement data for the ring at hand.
-        auto ring = rgb_circle_[ring_level];
+    // Determine duty cycle measurements for the inner ring.
+    set_duty_cycles_(&rgbp_b_, level_a, v.get_red(), v.get_green(), v.get_blue(), v.get_brightness(), &rgb_b_);
 
-        // Because we only have a subset of all colors in the RGB ring
-        // available in the configuration table, some interpolation will
-        // have to be done.
-        // First, compute the position on the ring for the requested RGB
-        // color. This is basically a hue representation of the requested
-        // color. It is expressed as a number of degrees around the ring,
-        // starting with red (at 0°).
-        auto pos = ring_pos_(r, g, b) / 15.0f;
+    // Almost there! We now have the correct duty cycles for the
+    // two rings that we were looking at. In this last step, the
+    // two values are interpolated based on the ring level.
+    auto d = level - level_a;
+    red = esphome::lerp(d, rgb_a_.red, rgb_b_.red);
+    green = esphome::lerp(d, rgb_a_.green, rgb_b_.green);
+    blue = esphome::lerp(d, rgb_a_.blue, rgb_b_.blue);
 
-        // Since there are 24 measurements for each ring, each measurement
-        // covers 360°/24 = 15°. Using that knowledge, the measurements to
-        // use for interpolation can be picked from the ring data.
-        auto pos_x = floor(pos);
-        auto x = ring[pos_x];
-        auto pos_y = ceil(pos);
-        auto y = ring[pos_y > 23 ? 0 : pos_y];
+    // The white output channel will always be 0 for RGB.
+    white = 0.0f;
 
-        // Interpolate based on the ring position.
-        auto d = pos - pos_x;
-        p->low.red = esphome::lerp(d, x.low.red, y.low.red);
-        p->low.green = esphome::lerp(d, x.low.green, y.low.green);
-        p->low.blue = esphome::lerp(d, x.low.blue, y.low.blue);
-        p->high.red = esphome::lerp(d, x.high.red, y.high.red);
-        p->high.green = esphome::lerp(d, x.high.green, y.high.green);
-        p->high.blue = esphome::lerp(d, x.high.blue, y.high.blue);
+    return true;
+  }
 
-        // Interpolate based on brightness level.
-        apply_brightness_(p, brightness, rgb);
+  RGBPoint rgbp_a_;
+  RGBPoint rgbp_b_;
+  RGB rgb_a_;
+  RGB rgb_b_;
+
+  void set_duty_cycles_(RGBPoint *p, int ring_level, float r, float g, float b, float brightness, RGB *rgb) {
+    // Ring level 7 = white light center. The duty cycles for this level
+    // can be computed using a few basic functions.
+    if (ring_level == 7) {
+      rgb->red = 0.932101 - 0.383377 * brightness;
+      rgb->green = 0.883185 - 0.881623 * brightness;
+      rgb->blue = 0.94188 - 0.284498 * brightness;
+      return;
     }
 
-protected:
-    /**
-     * Returns the position on an RGB ring in degrees (0 - 359).
-     */
-    float ring_pos_(float red, float green, float blue) {
-        auto rgb_min = min(min(red, green), blue);
-        auto rgb_max = max(max(red, green), blue);
-        auto delta = rgb_max - rgb_min;
-        float pos; 
-        if (delta == 0.0f)
-            pos = 0.0f;
-        else if (red == rgb_max)
-            pos = 60.0f * fmod((green - blue) / delta, 6);
-        else if (green == rgb_max)
-            pos = 60.0f * ((blue - red) / delta + 2.0f);
-        else
-            pos = 60.0f * ((red - green) / delta + 4.0f);
-        if (pos < 0)
-            pos = pos + 360;
-        return pos;
-    }
+    // Other ring levels are more complex. Start by retrieving the duty
+    // cycle measurement data for the ring at hand.
+    auto ring = rgb_circle_[ring_level];
 
-    /**
-     * Apply brightness interpolation to the duty cycle measurements. We
-     * have the low (0.01) and high (1.00) brightness measurements in the
-     * data. Brightness can be applied by means of linear interpolation.
-     */
-    void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
-        auto d = brightness - 0.01f;
-        rgb->red = esphome::lerp(d, p->low.red, p->high.red);
-        rgb->green = esphome::lerp(d, p->low.green, p->high.green);
-        rgb->blue = esphome::lerp(d, p->low.blue, p->high.blue);
-    }
+    // Because we only have a subset of all colors in the RGB ring
+    // available in the configuration table, some interpolation will
+    // have to be done.
+    // First, compute the position on the ring for the requested RGB
+    // color. This is basically a hue representation of the requested
+    // color. It is expressed as a number of degrees around the ring,
+    // starting with red (at 0°).
+    auto pos = ring_pos_(r, g, b) / 15.0f;
+
+    // Since there are 24 measurements for each ring, each measurement
+    // covers 360°/24 = 15°. Using that knowledge, the measurements to
+    // use for interpolation can be picked from the ring data.
+    auto pos_x = floor(pos);
+    auto x = ring[pos_x];
+    auto pos_y = ceil(pos);
+    auto y = ring[pos_y > 23 ? 0 : pos_y];
+
+    // Interpolate based on the ring position.
+    auto d = pos - pos_x;
+    p->low.red = esphome::lerp(d, x.low.red, y.low.red);
+    p->low.green = esphome::lerp(d, x.low.green, y.low.green);
+    p->low.blue = esphome::lerp(d, x.low.blue, y.low.blue);
+    p->high.red = esphome::lerp(d, x.high.red, y.high.red);
+    p->high.green = esphome::lerp(d, x.high.green, y.high.green);
+    p->high.blue = esphome::lerp(d, x.high.blue, y.high.blue);
+
+    // Interpolate based on brightness level.
+    apply_brightness_(p, brightness, rgb);
+  }
+
+ protected:
+  /**
+   * Returns the position on an RGB ring in degrees (0 - 359).
+   */
+  float ring_pos_(float red, float green, float blue) {
+    auto rgb_min = min(min(red, green), blue);
+    auto rgb_max = max(max(red, green), blue);
+    auto delta = rgb_max - rgb_min;
+    float pos;
+    if (delta == 0.0f)
+      pos = 0.0f;
+    else if (red == rgb_max)
+      pos = 60.0f * fmod((green - blue) / delta, 6);
+    else if (green == rgb_max)
+      pos = 60.0f * ((blue - red) / delta + 2.0f);
+    else
+      pos = 60.0f * ((red - green) / delta + 4.0f);
+    if (pos < 0)
+      pos = pos + 360;
+    return pos;
+  }
+
+  /**
+   * Apply brightness interpolation to the duty cycle measurements. We
+   * have the low (0.01) and high (1.00) brightness measurements in the
+   * data. Brightness can be applied by means of linear interpolation.
+   */
+  void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
+    auto d = brightness - 0.01f;
+    rgb->red = esphome::lerp(d, p->low.red, p->high.red);
+    rgb->green = esphome::lerp(d, p->low.green, p->high.green);
+    rgb->blue = esphome::lerp(d, p->low.blue, p->high.blue);
+  }
 };
 
-
-} // namespace bslamp2
-} // namespace xiaomi
-} // namespace esphome
+}  // namespace bslamp2
+}  // namespace xiaomi
+}  // namespace esphome
