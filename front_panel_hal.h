@@ -156,8 +156,8 @@ class FrontPanelEventParser {
     if (has_(ev, FLAG_PART_MASK, FLAG_PART_COLOR))
       return "color button";
     if (has_(ev, FLAG_PART_MASK, FLAG_PART_SLIDER))
-      return "slider';
-          return "n/a";
+      return "slider";
+    return "n/a";
   }
 
   const char *format_event_type(EVENT ev) {
