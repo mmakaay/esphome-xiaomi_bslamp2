@@ -31,6 +31,8 @@ warranty. Perhaps you will destroy your lamp and your computer.
 
 ## Opening the lamp, to expose the PCB
 
+*Tip: you can click on all images from below to view them in full size.*
+
 Remove the rubber pads from the botton of the lamp, to get access to 4
 screws that attach the bottom to the rest of the lamp.
 
@@ -136,7 +138,7 @@ find another way to attach `GPIO0` to ground. Some options:
   some other options, but if you only need to do the initial backup and firmware
   flash of the lamp, then this can be all that you need. Remove the lead after
   flashing is done, otherwise the lamp won't boot in normal mode.
-  [example image](images/13_connect_to_serial_with_soldered_gnd.jpg)
+  [example image](images/13_connect_to_serial_with_soldered_gnd.jpg) (photo by @erwinschoonhoven)
 
 In the following images, you will see the first solution, using a breadboard.
 
@@ -241,12 +243,22 @@ reconnect the power to boot into the new ESPHome firmware.
 
 <img src="images/18_disconnect_GPIO0.jpg" width="200">
 
+The lamp should now be operational using the new firmware.
+
+<img src="images/19_test_run.jpg" width="200">
+
 From here on, it is possible to flash the lamp OTA (over the air, which
 means that the firmware is uploaded over WiFi) from ESPHome. Therefore, it
-is now time to tuck away or remove those soldered wires and add the bottom
-cover back on.
+is now time to tuck away or remove those soldered wires.
 
-<img src="images/19_test_run.jpg" width="200"><img src="images/20_tuck_away_wires.jpg" width="200"><img src="images/21_reassemble_and_enjoy.jpg" width="200">
+Because I want to keep them around for future use, I tuck them away, making
+sure that the connectors don't touch each other or the board.
+
+<img src="images/20_tuck_away_wires.jpg" width="200">
+
+The bottom cover can now be put back on. The lamp is ready for use.
+
+<img src="images/21_reassemble_and_enjoy.jpg" width="200">
 
 
 ## Troubleshooting flash
