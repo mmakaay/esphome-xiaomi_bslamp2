@@ -5,14 +5,14 @@
 Table of contents:
 * [Warning](#warning)
 * [Tools needed](#tools-needed)
-* [Opening the lamp, to expose the PCB](#)
-* [Solder wires to the board](#)
-* [Connect the wires to your serial to USB adapter](#)
-* [When you only have one GND pin on your USB Adapter](#)
-* [Make a backup of the current firmware](#)
-* [How to restore the backed up firmware](#)
-* [Flash new ESPHome firmware](#)
-* [Troubleshooting flash](#)
+* [Opening the lamp, to expose the PCB](#opening-the-lamp-to-expose-the-pcb)
+* [Solder wires to the board](#solder-wires-to-the-board)
+* [Connect the wires to your serial to USB adapter](#connect-the-wires-to-your-serial-to-usb-adapter)
+* [When you only have one GND pin on your USB Adapter](#when-you-only-have-one-gnd-pin-on-your-usb-adapter)
+* [Make a backup of the current firmware](#make-a-backup-of-the-current-firmware)
+* [How to restore the backed up firmware](#how-to-restore-the-backed-up-firmware)
+* [Flash new ESPHome firmware](#flash-new-esphome-firmware)
+* [Troubleshooting flash](#troubleshooting-flash)
 
 ## Warning
 
