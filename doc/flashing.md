@@ -6,9 +6,9 @@
 
 * Allen key (2mm, 5/64") or torx (T8) screw driver
 * Soldering Iron
-* Perhaps some sticky tape
 * A serial to USB adapter (FTDI)
 * Some wires
+* Optional: sticky tape, hot glue
 
 ## Warning
 
@@ -34,32 +34,41 @@ Unbolt the 4 screws which were hidden under the rubber pads.
 Detach the bottom from the rest of the lamp, exposing the PCB. This might
 take a bit of force. Just pull it off bit by bit, until it pops loose.
 
-<img src="images/06_pull_off_the_bottom.jpg" width="200"><img src="images/07_bottom_removed.jpg" width="200"><img src="images/08_board_exposed.jpg" width="200">
+<img src="images/06_pull_off_the_bottom.jpg" width="200"><img src="images/07_bottom_removed.jpg" width="200">
+
+<img src="images/08_board_exposed.jpg" width="400">
 
 ## Solder the wires
 
 The wires will be connected to the debug pads that are shown in the following image.
 
-<img src="images/09_debug_pads_for_soldering.jpg " width="400">
+<img src="images/09_debug_pads_for_soldering.jpg" width="400">
 
 Many of the serial to USB adapter have some header pins to which you can
 connect the wires of a device. Therefore, it might be  useful to take some
 dupont wires, cut off one end, and solder the stripped end to the board.
-TODO
 
+*Note: Whether to use male or female dupont wires depends on how you want to connect
+the serial adapter. In this example, I have used male wires, so I could plug them
+into a breadbord.*
 
-<img src="images/10_stripped_dupont_wires.jpg " width="200">
+<img src="images/10_stripped_dupont_wires.jpg" width="200">
 
+Solder the wires to the `RX`, `TX`, `GND` and `GPIO0` debug pads.
 
-
-Solder the wires to the `RX`, `TX`, `GND` and `GPIO0` debug pads that are
-shown in the following photo. It is *not* required to solder a wire to the
-`3.3V` debug pad. This pad is not directly connected to the 3.3V Vin of the
+*Note: The board has a debug pad that exposes 3.3V. It is not required to
+solder a wire to this debug pad. For that reason, I have not marked this debug
+pad in the images. This pad is not directly connected to the 3.3V Vin of the
 ESP32 chip, making it a less than optimal candidate for powering the board
-during flashing. Instead, powering the lamp using its own power supply works
-best.
+during flashing. Instead, powering the lamp using its own power supply works best.*
 
-You can use some sticky tape to fixate the cables before soldering.
+You could use some sticky tape to fixate the cables before soldering.
+
+When you want to keep the wires attached after flashing the new firmware,
+then you might want to apply some hot glue to fixate the wires. This prevents
+the wires from breaking off, due to excessive movement.
+
+<img src="images/11_soldered_wires.jpg" width="200"><img src="images/12_optional_hot_glue.jpg" width="200">
 
 ## Connect the wires to your serial to USB adapter
 
@@ -107,6 +116,11 @@ find another way to attach `GPIO0` to ground. Some options:
   initial backup and firmware flash of the lamp, then this can be all
   that you need. Remove the lead after flashing is done, otherwise the
   lamp won't boot in normal mode.
+
+In the images below, you can see the first solution, using a breadboard.
+
+<img src="images/
+13_connect_to_serial_to_usb_adapter.jpg" width="200"><img src="images/14_connect_to_serial_to_usb_adapter_close_up.jpg" width="200">
 
 ## Make a backup of the current firmware
 
