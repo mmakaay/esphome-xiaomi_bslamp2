@@ -39,7 +39,11 @@ lamp in your Home Assistant setup.
   night mode? Use the illumination behind the slider bar to represent the
   progress of your sour dough bread bulk fermentation?
   Go ahead, make it so! :-)
-
+ 
+* **Possibilities to extend the device's functionality through hardware mods.**
+  There are GPIO pins that are not in use. If "tinkerer" is your middle name,
+  you can use those pins to come up with your own hardware hacks to extend
+  the device's functionality. 
 
 ## Quick start guide
 
