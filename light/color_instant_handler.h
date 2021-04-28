@@ -41,8 +41,10 @@ class ColorInstantHandler : public GPIOOutputs {
       white_light_->copy_to(this);
     else if (rgb_light_->set_light_color_values(v))
       rgb_light_->copy_to(this);
-    else
-      throw std::logic_error("None of the GPIOOutputs classes handles the requested light state");
+    else {
+      ESP_LOGE(TAG, "Light color error: (None of the GPIOOutputs classes handles the requested light state; defaulting to 'off'");
+      off_light_->copy_to(this);
+    }
 
     return true;
   }

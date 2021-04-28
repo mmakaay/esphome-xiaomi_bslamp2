@@ -119,7 +119,10 @@ class ColorWhiteLight : public GPIOOutputs {
     for (RGBWLevelsByTemperature& item : table)
       if (temperature >= item.from_temperature)
         return item;
-    throw std::invalid_argument("received too low temperature");
+    // Temperature too low. Shouldn't happen, because of validation
+    // at higher levels. But when it happens, simply return the data
+    // for lowest available temperature.
+    return table[0];
   }
 };
 
