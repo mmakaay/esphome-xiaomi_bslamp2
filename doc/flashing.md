@@ -18,28 +18,39 @@ warranty. Perhaps you will destroy your lamp and your computer.
 ## Opening the lamp, to expose the PCB
 
 Remove the rubber pads from the botton of the lamp, to get access to 4
-screws that attach the bottom to the rest of the lamp. Note that you don't
-have to remove these pads fully. Once you can access the screws, you've
-gone far enough.
+screws that attach the bottom to the rest of the lamp.
+
+<img src="images/01_unboxed.jpg" width="200"><img src="images/02_remove_rubber_pads.jpg" width="200">
+
+Note that you don't have to remove these pads fully. Once you can access
+the screws, you've gone far enough.
+
+<img src="images/03_bolts_overview.jpg" width="200">
 
 Unbolt the 4 screws which were hidden under the rubber pads.
 
-![Photo of the screws](images/screws.jpg "Use an allen key or torx screw driver to remove the screws.")
+<img src="images/04_remove_bolts.jpg" width="200"><img src="images/05_bolts.jpg" width="200">
 
 Detach the bottom from the rest of the lamp, exposing the PCB. This might
-take a bit of force. Just pull it up bit by bit until it pops loose.
+take a bit of force. Just pull it off bit by bit, until it pops loose.
 
-For some good pictures of disassembling this lamp, take a look [at this
-blog post](https://mysku.ru/blog/china-stores/78455.html) It is in Russian,
-but the translation by Google works well and moreover, the pictures are the
-most important thing here. If you scroll down, you will find them easily.
+<img src="images/06_pull_off_the_bottom.jpg" width="200"><img src="images/07_bottom_removed.jpg" width="200"><img src="images/08_board_exposed.jpg" width="200">
 
 ## Solder the wires
 
+The wires will be connected to the debug pads that are shown in the following image.
+
+<img src="images/09_debug_pads_for_soldering.jpg " width="400">
+
 Many of the serial to USB adapter have some header pins to which you can
-connect the wires of a device. Therefore, I find it most useful to take some
-dupont wires with a female end to them, and cut off the other end. Strip the
-wire on the other and, and solder this end to the board.
+connect the wires of a device. Therefore, it might be  useful to take some
+dupont wires, cut off one end, and solder the stripped end to the board.
+TODO
+
+
+<img src="images/10_stripped_dupont_wires.jpg " width="200">
+
+
 
 Solder the wires to the `RX`, `TX`, `GND` and `GPIO0` debug pads that are
 shown in the following photo. It is *not* required to solder a wire to the
@@ -47,8 +58,6 @@ shown in the following photo. It is *not* required to solder a wire to the
 ESP32 chip, making it a less than optimal candidate for powering the board
 during flashing. Instead, powering the lamp using its own power supply works
 best.
-
-![Soldering points](images/Soldering_points.jpg)
 
 You can use some sticky tape to fixate the cables before soldering.
 
