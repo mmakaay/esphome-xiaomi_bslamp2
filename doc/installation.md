@@ -46,7 +46,7 @@ config
 
 Then create the required configuration in your device's yaml configuration
 file. For an example file, take a look at the example file
-[doc/example.yaml](example.yaml) in this repository.
+[example.yaml](example.yaml) in this repository.
 Detailed configuration instructions can be found in the
 [Configuration guide](configuration.md).
 
@@ -57,7 +57,7 @@ Like normal with ESPHome, the first time you will have to flash the
 device using a serial interface. After this initial flashing operation, you
 can flash new versions of the firmware using the OTA (Over The Air) method.
 
-See [doc/flashing.md](the flashing guide) for hints on opening up the
+See [the flashing guide](flashing.md) for hints on opening up the
 device and flashing its firmware using its serial interface.
 
 < [Why custom firmware?](why_custom_firmware.md) | [Index](../README.md) | [Configuration guide](configuration.md) >
