@@ -119,8 +119,22 @@ find another way to attach `GPIO0` to ground. Some options:
 
 In the images below, you can see the first solution, using a breadboard.
 
-<img src="images/
-13_connect_to_serial_to_usb_adapter.jpg" width="200"><img src="images/14_connect_to_serial_to_usb_adapter_close_up.jpg" width="200">
+<img src="images/13_connect_to_serial_to_usb_adapter.jpg" width="400">
+
+In close up:
+
+<img src="images/14_connect_to_serial_to_usb_adapter_close_up.jpg" width="400">
+
+You can now connect the serial to USB adapter to you computer.
+Start the esphome-flasher tool, select the COM port (optionally, the tool might autodetect it just fine)
+and click on "View logs". Then plug in the lamp's original power supply to boot up the lamp.
+All wires are now connected.
+
+<img src="images/15_power_up_for_flashing.jpg" width="400">
+
+If all went well, the log output in esphome-flasher looks somewhat like this:
+
+<img src="images/16_serial_showing_download_mode.png" width="400">
 
 ## Make a backup of the current firmware
 
