@@ -46,9 +46,9 @@ config
 
 Then create the required configuration in your device's yaml configuration
 file. For an example file, take a look at the example file
-[doc/example.yaml](doc/example.yaml) in this repository.
+[doc/example.yaml](example.yaml) in this repository.
 Detailed configuration instructions can be found in the
-[Configuration guide](doc/configuration.md).
+[Configuration guide](configuration.md).
 
 After these steps you can compile your firmware `firmware.bin` file.
 This firmware can then be flashed onto the device.
