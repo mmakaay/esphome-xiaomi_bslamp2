@@ -115,7 +115,7 @@ find another way to attach `GPIO0` to ground. Some options:
 - **Use a breadbord**, so you can connect the USB Adapter `GND` pin to a row on
   the bread bord, and connect the `GND` and `GPIO0` wires of the lamp's
   board to that same row. The rest of this guide will show this method.
-  [example image](images/13_connect_to_serial_to_usb_adapter.jpg)
+  [View example by @mmakaay](images/13_connect_to_serial_to_usb_adapter.jpg).
 
 - **Solder a button on the board** that connects `GPIO0` to `GND` when pressed.
   Then you can hold down this button while plugging in the lamp's power
@@ -125,7 +125,8 @@ find another way to attach `GPIO0` to ground. Some options:
   needed, from then on OTA - Over The Air - updates are possible), but it
   was a great help to me during the initial reverse engineering and firmware
   development.
-  [example image](images/13_connect_to_serial_with_button.jpg)
+  [View example by @mmakaay](images/13_connect_to_serial_with_button.jpg) or
+  [another example by @edwinschoonhoven](images/13_connect_to_serial_with_button_alternative.jpg).
 
 - **Manually hold a wire connected** to both a GND surface (e.g. the silver pad
   on the left of the board) and the `GPIO0` debug pad, while plugging in the
@@ -138,7 +139,7 @@ find another way to attach `GPIO0` to ground. Some options:
   some other options, but if you only need to do the initial backup and firmware
   flash of the lamp, then this can be all that you need. Remove the lead after
   flashing is done, otherwise the lamp won't boot in normal mode.
-  [example image](images/13_connect_to_serial_with_soldered_gnd.jpg) (photo by @erwinschoonhoven)
+  [View example by @erwinschoonhoven](images/13_connect_to_serial_with_soldered_gnd.jpg).
 
 In the following images, you will see the first solution, using a breadboard.
 
