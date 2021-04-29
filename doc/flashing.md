@@ -24,7 +24,7 @@ warranty. Perhaps you will destroy your lamp and your computer.
 
 * Allen key (2mm, 5/64") or torx (T8) screw driver
 * Soldering Iron
-* A serial to USB adapter (FTDI)
+* A serial to USB adapter (for example FTDI) that can provide 3.3V RX/TX signals
 * Some wires
 * Optional: sticky tape, hot glue gun, magnifying glass
 
@@ -93,13 +93,19 @@ A few tips:
 
 ## Connect the wires to your serial to USB adapter
 
+Make sure that your adapter uses 3.3V for the pns that you will connect to the lamp.
+Some of these adapters allow you to switch between 3.3V and 5V using a switch or a jumper.
+Do not use an adapter that only provides 5V output. Reason for this, is that the ESP32 chip
+works at 3.3V. I have seen the chips accept 5V serial input, but I am not sure if they are
+actually 5V tolerant. Better safe than sorry in such case!
+
 The wires must be connected as follows:
 
   | Soldering point| Serial USB Adapter name  |
   | -------------- |:------------------------:|
   | GND            |  GND                     |
   | TX             |  RX                      |
-  | RX             |  TX                      |
+  | RX             |  TX (3.3V)               |
   | GPIO0          |  GND                     |
 
 To be able to flash the lamp, `GPIO0` must be connected to ground while the lamp boots up.
