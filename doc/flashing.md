@@ -33,7 +33,7 @@ warranty. Perhaps you will destroy your lamp and your computer.
 
 *Tip: you can click on all images from below to view them in full size.*
 
-Remove the rubber pads from the botton of the lamp, to get access to 4
+Remove the rubber pads from the bottom of the lamp, to get access to 4
 screws that attach the bottom to the rest of the lamp.
 
 <img src="images/01_unboxed.jpg" width="200"><img src="images/02_remove_rubber_pads.jpg" width="200">
