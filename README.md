@@ -71,5 +71,5 @@ then take a look at the [known issues document](doc/known_issues.md).
 * [Configuration_guide](doc/configuration.md)
 * [Flashing guide](doc/flashing.md)
 * [Known issues](doc/known_issues.md)
-* [Hardware information](doc/hardware.md)
+* [Technical details](doc/technical_details.md)
 * [Sponsoring](doc/sponsoring.md)

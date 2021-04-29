@@ -1,4 +1,4 @@
-< [Flashing guide](flashing.md) | [Index](../README.md) | [Hardware information](hardware.md) >
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Technical details](technical_details.md) >
 
 # Known issues
 
@@ -83,4 +83,4 @@ the ESP32.
 For this reason, I advise to completely omit logging or use a very low log
 level for production purposes.
 
-< [Flashing guide](flashing.md) | [Index](../README.md) | [Hardware information](hardware.md) >
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Technical details](technical_details.md) >

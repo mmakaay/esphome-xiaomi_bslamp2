@@ -1,6 +1,6 @@
 < [Known issues](known_issues.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
 
-# Hardware information
+# Technical details
 
 In this section, you can find some of the information that was gathered
 during the reverse engineering of the Bedside Lamp 2 hardware.

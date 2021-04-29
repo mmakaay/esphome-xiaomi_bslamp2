@@ -1,4 +1,4 @@
-< [Hardware information](hardware.md) | [Index](../README.md)
+< [Technical details](technical_details.md) | [Index](../README.md)
 
 # Sponsoring the project
 
@@ -18,4 +18,4 @@ this project were:
   the I2C protocol of the front panel.
 * Various wires and buttons.
 
-< [Hardware information](hardware.md) | [Index](../README.md)
+< [Technical details](technical_details.md) | [Index](../README.md)
