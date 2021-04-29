@@ -55,9 +55,9 @@ For those who have experience with flashing ESPHome onto devices:
 * Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)]).
 * Compile the `firmware.bin` file and download it to the device to which you
   have connected your serial to USB adapter (FTDI).
-* Open up the lamp and connect its `TX`, `RX`, `GND` and `GPIO0` debug pads
-  to the serial adapter (see the [installation
-  guide](doc/installation.md) for the debug pad locations).
+* [Open up the lamp](doc/flashing.md#opening-the-lamp-to-expose-the-pcb) and connect
+  its `TX`, `RX`, `GND` and `GPIO0` debug pads to the serial adapter. Check this
+  [image for the debug pad locations](doc/images/09_debug_pads_for_soldering.jpg).
 * Power up the lamp with `GPIO0` connected to GND to enable flashing mode.
 * Flash `firmware.bin` onto the device.
 
