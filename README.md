@@ -52,7 +52,7 @@ For those who have experience with flashing ESPHome onto devices:
 * Clone the [GitHub repo](https://github.com/mmakaay/esphome-xiaomi_bslamp2)
   into your ESPHome `config/custom_components` directory.
 * Copy `[doc/example.yaml](doc/example.yaml)` to `config/your_device_name.yaml`.
-* Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)]).
+* Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)).
 * Compile the `firmware.bin` file and download it to the device to which you
   have connected your serial to USB adapter (FTDI).
 * [Open up the lamp](doc/flashing.md#opening-the-lamp-to-expose-the-pcb) and connect
