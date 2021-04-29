@@ -16,25 +16,23 @@ Table of contents:
 
 No documentation is complete without some ASCII art schematics.
 
-```   
+```
                                     RX/TX/GND for
    12V power supply                 flashing and logs
          |                               |           
          v                               |                 Front panel
  +---------------+                  +---------------+         .---.
- | Power supply  |---- 3.3V -.----->| ESP-WROOM-32D |         | O | -- color
+ | Power supply  |---- 3.3V -.----->| ESP-WROOM-32D |<- I2C ->| O | -- color
  +---------------+            \     | single core   |         |   |    button
-         |                     \    | 4 MB flash    |         | | |
+         |                     \    | 4 MB flash    |<- IRQ --| | |
         12V                     \   +---------------+         | | |
-         |                       \       |  ^  |              | | | -- slider
-         |                        `------|--|--|--- 3.3V ---->| | | 
-         |                               |  |  |              | | |
-         v                               |  |  +--- I2C ------| | |
- +---------------+                       |  |                 | | |
- | RGB and white |<---- RGBW + master ---+  +------ IRQ ------|   |    power
+         |                       `-------|------------------->| | | -- slider
+         v                               |                    | | |
+ +---------------+                       |                    | | |
+ | RGB and white |<---- RGBW + master ---+                    |   |    power
  | LED circuitry |      PWM    on/off                         | O | -- button
  +---------------+                                            `---`
-``` 
+```
 
 The LED circuitry provides two light modes:
 
