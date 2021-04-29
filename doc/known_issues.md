@@ -36,7 +36,7 @@ in the folder where your device's yaml configuration file is stored (e.g.
 when using the Home Assistant plugin: `/config/esphome/libs/`).
 Then clone the following repository into that folder:
 
-  https://github.com/OttoWinter/AsyncTCP
+  https://github.com/mmakaay/AsyncTCP
 
 For example on the command line:
 
@@ -44,7 +44,7 @@ For example on the command line:
 # cd /config/esphome
 # mkdir libs
 # cd libs
-# git clone https://github.com/OttoWinter/AsyncTCP
+# git clone https://github.com/mmakaay/AsyncTCP
 ```
 
 Then add a pointer to this folder from within your device's yaml
