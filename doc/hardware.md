@@ -63,15 +63,15 @@ pins that are not in use and their possible applications.
 | GND  |        | Ground    | Connected to ground            | -            |
 | 3.3V |        | Power     | Power supply input             | -            |
 | 9    |        | Reset     | Can be pulled to GND to reset  | -            |
-| 5    | GPIO36 | -         |                                | I            |
-| 8    | GPIO39 | -         |                                | I            |
-| 10   | GPIO34 | -         |                                | I            |
-| 11   | GPIO35 | -         |                                | I            |
-| 12   | GPIO32 | -         |                                | I/O          |
+| 5    | GPIO36 | -         |                                | IN           |
+| 8    | GPIO39 | -         |                                | IN           |
+| 10   | GPIO34 | -         |                                | IN           |
+| 11   | GPIO35 | -         |                                | IN           |
+| 12   | GPIO32 | -         |                                | IN/OUT       |
 | 13   | GPIO33 | LEDs      | LEDs, master switch 1          | -            |
-| 14   | GPIO25 | ???       | 10k pull up, unknown function  | I/O (1)      |
-| 15   | GPIO26 | -         |                                | I/O          |
-| 16   | GPIO27 | -         |                                | I/O          |
+| 14   | GPIO25 | ???       | 10k pull up, unknown function  | IN/OUT (1)   |
+| 15   | GPIO26 | -         |                                | IN/OUT       |
+| 16   | GPIO27 | -         |                                | IN/OUT       |
 | 17   | GPIO14 | LEDs      | LEDs, green PWM channel        | -            |
 | 18   | GPIO12 | LEDs      | LEDs, white PWM channel        | -            |
 | GND  |        | Ground    | Connected to ground            | -            |
@@ -82,8 +82,8 @@ pins that are not in use and their possible applications.
 | 31   | GPIO6  | SPI       | SPI flash memory               | -            |
 | 32   | GPIO7  | SPI       | SPI flash memory               | -            |
 | 33   | GPIO8  | SPI       | SPI flash memory               | -            |
-| 21   | GPIO15 | -         |                                | I/O (2)      |
-| 22   | GPIO2  | ???       | Debug pad, unknown function    | I/O (3)      |
+| 21   | GPIO15 | -         |                                | IN/OUT (2)   |
+| 22   | GPIO2  | ???       | Debug pad, unknown function    | IN/OUT (3)   |
 | 23   | GPIO0  | Boot mode | Pull to GND for flashing mode  | -            |
 | 24   | GPIO4  | LEDs      | LEDs, master switch 2          | -            |
 | 25   | GPIO16 | Front pnl | Front panel interrupt          | -            |
@@ -95,8 +95,8 @@ pins that are not in use and their possible applications.
 | 42   | GPIO21 | Front pnl | Front panel I2C SDA            | -            |
 | 40   | GPIO3  | Serial    | Debug pad, RX (flashing, logs) | -            |
 | 41   | GPIO1  | Serial    | Debug pad, TX (flashing, logs) | -            |
-| 39   | GPIO22 | -         |                                | I/O          |
-| 36   | GPIO23 | -         |                                | I/O          |
+| 39   | GPIO22 | -         |                                | IN/OUT       |
+| 36   | GPIO23 | -         |                                | IN/OUT       |
 | GND  |        | Ground    | Connected to ground            | -            |
 
 1. GPIO25 is connected to a 10k pull up resistor. This suggests that it
