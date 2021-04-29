@@ -51,12 +51,12 @@ represent the actual brightness setting of the device.
 
 In the following image, you can find the pinout as used for the ESP32:
 
-<img src="images/hardware/ESP32_pinout.jpg" width="400">
+<img src="images/hardware/ESP32_pinout.jpg" width="600">
 
 Here's an overview of all exposed pins of the chip, starting at the GND +
 3.3V pins, and going anti-clockwise. The table shows not only the functions
 of the pins that are actually in use by the lamp's circuitry, but also the
-pins that are not in use and their possible applications.
+pins that are not in use and their possible use.
 
 | PIN  | GPIO#  | Function  | Description                    | Possible use |
 |------|--------|-----------|--------------------------------|--------------|
@@ -119,7 +119,7 @@ this [ESP32 pinout reference information](https://randomnerdtutorials.com/esp32-
 
 ## Front panel
 
-<img src="images/hardware/front_panel.jpg" width="400">
+<img src="images/hardware/front_panel.jpg" width="150">
 
 The front panel is a stand-alone component, with its own control chip
 (KungFu KF8TS2716). Communication between the ESP32 and the front panel
@@ -159,21 +159,21 @@ Commands can be written to the front panel at any time.
 
 The available commands are:
 
-| Command           | Byte sequence to send |
-|-------------------|-----------------------|
-| `TURN PANEL ON`   | 02 03 5E 00 64 00 00  |
-| `TURN PANEL OFF`  | 02 03 0C 00 64 00 00  |
-| `SET LEVEL 1`     | 02 03 5E 00 64 00 00  |
-| `SET LEVEL 2`     | 02 03 5F 00 64 00 00  |
-| `SET LEVEL 3`     | 02 03 5F 80 64 00 00  |
-| `SET LEVEL 4`     | 02 03 5F C0 64 00 00  |
-| `SET LEVEL 5`     | 02 03 5F E0 64 00 00  |
-| `SET LEVEL 6`     | 02 03 5F F0 64 00 00  |
-| `SET LEVEL 7`     | 02 03 5F F8 64 00 00  |
-| `SET LEVEL 8`     | 02 03 5F FC 64 00 00  |
-| `SET LEVEL 9`     | 02 03 5F FE 64 00 00  |
-| `SET LEVEL 10`    | 02 03 5F FF 64 00 00  |
-| `READY FOR EVENT` | 01 00 00 00 00 00 01  |
+| Command         | Byte sequence to send |
+|-----------------|-----------------------|
+| TURN PANEL ON   | 02 03 5E 00 64 00 00  |
+| TURN PANEL OFF  | 02 03 0C 00 64 00 00  |
+| SET LEVEL 1     | 02 03 5E 00 64 00 00  |
+| SET LEVEL 2     | 02 03 5F 00 64 00 00  |
+| SET LEVEL 3     | 02 03 5F 80 64 00 00  |
+| SET LEVEL 4     | 02 03 5F C0 64 00 00  |
+| SET LEVEL 5     | 02 03 5F E0 64 00 00  |
+| SET LEVEL 6     | 02 03 5F F0 64 00 00  |
+| SET LEVEL 7     | 02 03 5F F8 64 00 00  |
+| SET LEVEL 8     | 02 03 5F FC 64 00 00  |
+| SET LEVEL 9     | 02 03 5F FE 64 00 00  |
+| SET LEVEL 10    | 02 03 5F FF 64 00 00  |
+| READY FOR EVENT | 01 00 00 00 00 00 01  |
 
 *Note: The `READY FOR EVENT` command is only used when a new event is provided
 by the front panel. Information about this command can be found in the next
