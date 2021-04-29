@@ -1,4 +1,4 @@
-< [Known issues](known_issues.md) | [Index](../README.md)
+< [Hardware information](hardware.md) | [Index](../README.md)
 
 # Sponsoring the project
 
@@ -18,4 +18,4 @@ this project were:
   the I2C protocol of the front panel.
 * Various wires and buttons.
 
-< [Known issues](known_issues.md) | [Index](../README.md)
+< [Hardware information](hardware.md) | [Index](../README.md)
