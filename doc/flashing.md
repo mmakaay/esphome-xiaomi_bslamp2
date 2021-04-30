@@ -130,9 +130,9 @@ find another way to attach `GPIO0` to ground. Some options:
   practical solution for most people (since only one such flash operation is
   needed, from then on OTA - Over The Air - updates are possible), but it
   was a great help to me during the initial reverse engineering and firmware
-  development.
-  [View example by @mmakaay](images/13_connect_to_serial_with_button.jpg) or
-  [another example by @edwinschoonhoven](images/13_connect_to_serial_with_button_alternative.jpg).
+  development. Some example implementations: [a crude one by @mmakaay](images/13_connect_to_serial_with_button.jpg),
+  [one by @edwinschoonhoven](images/13_connect_to_serial_with_button_alternative.jpg),
+  and [one by @mmakaay, inspired by Erwin's](images/13_connect_to_serial_with_button_alternative2.jpg).
 
 - **Manually hold a wire connected** to both a GND surface (e.g. the silver pad
   on the left of the board) and the `GPIO0` debug pad, while plugging in the
