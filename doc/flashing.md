@@ -241,29 +241,24 @@ If all went well, the final log output in esphome-flasher looks somewhat like th
 
 If you want to flash with esptool, you can use the following command.
 
-*Note: This is probably not correct to get the lamp fully operational. This
-does not update partition table and the bootloader, which are also needed to
-get a functioning ESPHome device. Unless you know exactly what you're doing
-with esptool here, I recommend to use the esphome-flasher instead.*
+*Note: unless you know exactly what you're doing with esptool here,
+I recommend to use the esphome-flasher instead.*
 
 ```
-python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x1000 <path\to\yourfirmware.bin>
-```
-
-*The following is a bit more in the direction of the required command
-for flashing. If you have some definitive info on how to handle this best,
-please let me know.*
-
-```
-python esptool.py --chip esp32  \
-    -p /dev/ttyUSB0 --baud 115200 \
-    --before default_reset --after hard_reset \
+python esptool.py --chip esp32  -p /dev/ttyUSB0 --baud 115200 \
     write_flash -z --flash_mode dout --flash_freq 40m --flash_size detect \
     0x1000 bootloader_dout_40m.bin \
     0x8000 partitions.bin \
     0xe000 boot_app0.bin \
-    0x10000 ~/Downloads/firmware.bin
+    0x10000 firmware.bin
 ```
+
+The required .bin files can be found in the following locations:
+
+- **bootloader_dout_40m.bin**: [from arduino-esp32 package](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc/blob/v1.0.6/tools/sdk/bin/bootloader_dout_40m.bin) in `tools/sdk/bin/`
+- **partitions.bin**: from `<config dir>/<device name>/.pioenvs/<device name>/partitions.bin`
+- **boot_app0.bin**: [from arduino-esp32 package](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc/blob/v1.0.6/tools/partitions/boot_app0.bin) in `tools/partitions/`
+- **firmware.bin**: from `<config dir>/<device name>/.pioenvs/<device name>/firmware.bin`
 
 After flashing, power down the lamp, disconnect `GPIO0` from GND and
 reconnect the power to boot into the new ESPHome firmware.
