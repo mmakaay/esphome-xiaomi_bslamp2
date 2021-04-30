@@ -10,6 +10,7 @@ Table of contents:
 * [High level overview](#high-level-overview)
 * [ESP32 pinout](#esp32-pinout)
 * [Front panel](#front-panel)
+* [Build requirements](#build-requirements)
 * [Original firmware](#original-firmware)
 
 
@@ -239,6 +240,49 @@ event and a new signal is sent over the interrupt line.
 
 The ESP32 can read the last event multiple times. It will not be cleared
 by the front panel after reading it.
+
+
+## Build requirements
+
+The ESP-WROOM-32D that is used for this lamp (and for various other Xiaomi devices),
+contains a single core CPU, even though the data sheet for ESP-WROOM-32D specifies
+a dual core CPU. Therefore, when flashing the device with a generic ESP32 build,
+you will end up with the following boot error:
+
+```
+E (459) cpu_start: Running on single core chip, but application is built with dual core support.
+E (459) cpu_start: Please enable CONFIG_FREERTOS_UNICORE option in menuconfig.
+```
+
+Another issue with a lot of these devices, is that the MAC address that is burnt into
+EFUSE does not match the CRC checksum that is also burnt into EFUSE. Using a generic
+ESP32 build, you will end up with the boot error:
+
+```
+Base MAC address from BLK0 of EFUSE CRC error
+```
+
+For these reasons, you must build the firmware using a taylored version of arduino-esp32.
+You can make use of the version [created by @pauln](https://github.com/pauln/arduino-esp32)
+or the version [created by @mmakaay](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc).
+
+To make use of one of these in an ESPHome build, you'll have to provide a platform package
+definition for the PlatformIO build. Here's an example configuration that will work for
+these Xiaomi devices:
+
+```yaml
+esphome:
+  name: my_device_name
+  platform: ESP32
+  board: esp32doit-devkit-v1
+  platformio_options:
+    platform: espressif32@3.2.0
+    platform_packages: |-
+      framework-arduinoespressif32 @ https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc
+```
+
+If you want to build your own platform package, then you can checkout
+the build scripts [by @mmakaay here](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc-builder).
 
 
 ## Original firmware
