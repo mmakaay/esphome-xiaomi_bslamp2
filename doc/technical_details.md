@@ -10,6 +10,7 @@ Table of contents:
 * [High level overview](#high-level-overview)
 * [ESP32 pinout](#esp32-pinout)
 * [Front panel](#front-panel)
+* [Original firmware](#original-firmware)
 
 
 ## High level overview
@@ -238,5 +239,83 @@ event and a new signal is sent over the interrupt line.
 
 The ESP32 can read the last event multiple times. It will not be cleared
 by the front panel after reading it.
+
+
+## Original firmware
+
+Below, I have gathered some of the interesting boot messages from the
+original firmware. These messages are logged via the serial interface.
+
+**SPI Flash memory:**
+```
+boot: SPI Flash RID  : 0xB20B4
+boot: SPI Flash  MF  : 0xB4
+boot: SPI Flash  ID  : 0x200B
+boot: SPI Speed      : 40MHz
+boot: SPI Mode       : DIO
+boot: SPI Flash Size : 4MB
+```
+
+**Partition table:**
+```
+boot: Partition Table:
+boot: ## Label            Usage          Type ST Offset   Length
+boot:  0 nvs              WiFi data        01 02 00009000 00004000
+boot:  1 otadata          OTA data         01 00 0000d000 00002000
+boot:  2 phy_init         RF data          01 01 0000f000 00001000
+boot:  3 miio_fw1         OTA app          00 10 00010000 001e0000
+boot:  4 miio_fw2         OTA app          00 11 001f0000 001e0000
+boot:  5 test             test app         00 20 003d0000 00013000
+boot:  6 mfi_p            Unknown data     01 82 003e3000 00001000
+boot:  7 factory_nvs      WiFi data        01 02 003e4000 00004000
+boot:  8 coredump         Unknown data     01 03 003e8000 00010000
+boot:  9 minvs            Unknown data     01 fe 003f8000 00004000
+boot: End of partition table
+```
+
+**MIIO initialization:**
+```
+_|      _|  _|_|_|  _|_|_|    _|_|  
+_|_|  _|_|    _|      _|    _|    _|
+_|  _|  _|    _|      _|    _|    _|
+_|      _|    _|      _|    _|    _|
+_|      _|  _|_|_|  _|_|_|    _|_|  
+08:00:00.200 [I] did=332985470 hostname=MiBedsideLamp2-7651
+
+JENKINS BUILD NUMBER: N/A
+BUILD TIME: Sep  5 2019,07:12:39
+BUILT BY: N/A
+MIIO APP VER: 2.0.6_0030
+Setup ID: 95XJ
+Getting setup info from factory NVS
+MIIO MCU VER: 
+MIIO DID: *********
+MIIO WIFI MAC: ************
+MIIO MODEL: yeelink.light.bslamp2
+ARCH TYPE: esp32,0x0000a601
+ARCH VER: d178b9b
+```
+
+**Network initialized:**
+```
+[20:27:05]08:00:04.180 [I] miio_net: Wifi station connected
+[20:27:05]Registering HomeKit web handlers
+[20:27:05]Announcing _hap._tcp mDNS service
+```
+
+**Phoning home to the Mijia cloud:**
+```
+ots: httpdns resolve start failed, -12 (ots_cloud_host_update,850)
+otu: Opened.
+ots: de.ots.io.mi.com resolved to 3.126.247.75.
+ots: ots connect 3.126.247.75::443...
+tls: connect to server Mijia Cloud, domain is 3.126.247.75, port is 443.
+tls: timeout[100]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+tls: timeout[200]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+tls: timeout[300]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+tls: timeout[400]! mbedtls_ssl_handshake returned -0x6800 (d0_tls_open,369)
+ots: Connected.
+```
+
 
 < [Known issues](known_issues.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
