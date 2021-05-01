@@ -134,6 +134,39 @@ It is possible to control the night light mode separately. An example of
 this can be found in the [example.yaml](example.yaml), in which holding the
 power button is bound to activating the night light.
 
+### light.disco_on Action
+
+This action sets the state of the light immediately
+(i.e. without waiting for the next main loop iteration),
+without saving the state to memory and without publishing
+the state change.
+
+```yaml
+on_...:
+  then:
+    - light.disco_on:
+        id: my_bedside_lamp
+        brightness: 80%
+        red: 70%
+        green: 0%
+        blue: 100%
+```
+
+The possible configuration options for this Action are the same
+as those for the standard `light.turn_on` Action.
+
+### light.disco_off Action
+
+This action turns off the disco mode by restoring the state
+of the lamp to the last known state that was saved to memory.
+
+```yaml
+on_...:
+  then:
+    - light.disco_off:
+        id: my_bedside_lamp
+```
+
 ### Light presets
 
 The presets functionality was written with the original lamp firemware

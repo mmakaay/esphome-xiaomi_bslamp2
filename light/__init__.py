@@ -5,8 +5,8 @@ from esphome import automation
 from esphome.core import coroutine
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_COLOR_TEMPERATURE,
-    CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
-    CONF_TRANSITION_LENGTH, CONF_BRIGHTNESS, CONF_EFFECT
+    CONF_STATE, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
+    CONF_TRANSITION_LENGTH, CONF_BRIGHTNESS, CONF_EFFECT, CONF_FLASH_LENGTH
 )
 from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
@@ -31,6 +31,7 @@ PresetsContainer = bslamp2_ns.class_("PresetsContainer", cg.Component)
 Preset = bslamp2_ns.class_("Preset", cg.Component)
 BrightnessTrigger = bslamp2_ns.class_("BrightnessTrigger", automation.Trigger.template())
 ActivatePresetAction = bslamp2_ns.class_("ActivatePresetAction", automation.Action)
+DiscoAction = bslamp2_ns.class_("DiscoAction", automation.Action)
 
 PRESETS_SCHEMA = cv.Schema({
     str.lower: cv.Schema({
@@ -124,6 +125,53 @@ def maybe_simple_preset_action(schema):
         return schema(conf)
 
     return validator
+
+@automation.register_action(
+    "light.disco_on", DiscoAction, light.automation.LIGHT_TURN_ON_ACTION_SCHEMA 
+)
+def disco_action_on_to_code(config, action_id, template_arg, args):
+    light_var = yield cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, light_var)
+
+    if CONF_STATE in config:
+        template_ = yield cg.templatable(config[CONF_STATE], args, bool)
+        cg.add(var.set_state(template_))
+    if CONF_TRANSITION_LENGTH in config:
+        template_ = yield cg.templatable(
+            config[CONF_TRANSITION_LENGTH], args, cg.uint32
+        )
+        cg.add(var.set_transition_length(template_))
+    if CONF_FLASH_LENGTH in config:
+        template_ = yield cg.templatable(config[CONF_FLASH_LENGTH], args, cg.uint32)
+        cg.add(var.set_flash_length(template_))
+    if CONF_BRIGHTNESS in config:
+        template_ = yield cg.templatable(config[CONF_BRIGHTNESS], args, float)
+        cg.add(var.set_brightness(template_))
+    if CONF_RED in config:
+        template_ = yield cg.templatable(config[CONF_RED], args, float)
+        cg.add(var.set_red(template_))
+    if CONF_GREEN in config:
+        template_ = yield cg.templatable(config[CONF_GREEN], args, float)
+        cg.add(var.set_green(template_))
+    if CONF_BLUE in config:
+        template_ = yield cg.templatable(config[CONF_BLUE], args, float)
+        cg.add(var.set_blue(template_))
+    if CONF_COLOR_TEMPERATURE in config:
+        template_ = yield cg.templatable(config[CONF_COLOR_TEMPERATURE], args, float)
+        cg.add(var.set_color_temperature(template_))
+    if CONF_EFFECT in config:
+        template_ = yield cg.templatable(config[CONF_EFFECT], args, cg.std_string)
+        cg.add(var.set_effect(template_))
+    yield var
+
+@automation.register_action(
+    "light.disco_off", DiscoAction, light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA 
+)
+def disco_action_off_to_code(config, action_id, template_arg, args):
+    light_var = yield cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, light_var)
+    cg.add(var.set_disco_state(False))
+    yield var
 
 @automation.register_action(
     "preset.activate",

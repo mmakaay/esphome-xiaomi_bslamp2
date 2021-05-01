@@ -2,27 +2,12 @@
 
 #include "../common.h"
 #include "color_instant_handler.h"
+#include "interfaces.h"
 #include "gpio_outputs.h"
 
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
-
-/**
- * This is an interface definition that is used to extend the LightState
- * class with functionality to inspect LightTransformer data from
- * within other classes.
- *
- * This interface is required for the ColorTransitionHandler, so it can
- * check whether or not a light color transition is in progress.
- */
-class LightStateTransformerInspector {
- public:
-  virtual bool is_active() = 0;
-  virtual bool is_transition() = 0;
-  virtual light::LightColorValues get_end_values() = 0;
-  virtual float get_progress() = 0;
-};
 
 /**
  * This class is used to handle specific light color transition requirements
