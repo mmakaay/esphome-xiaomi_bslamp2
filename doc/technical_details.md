@@ -83,7 +83,7 @@ pins that are not in use and their possible use.
 | 32   | GPIO7  | SPI       | SPI flash memory               | -            |
 | 33   | GPIO8  | SPI       | SPI flash memory               | -            |
 | 21   | GPIO15 | -         |                                | IN/OUT (2)   |
-| 22   | GPIO2  | ???       | Debug pad, unknown function    | IN/OUT (3)   |
+| 22   | GPIO2  | -         | Debug pad, no function         | IN/OUT (3)   |
 | 23   | GPIO0  | Boot mode | Pull to GND for flashing mode  | -            |
 | 24   | GPIO4  | LEDs      | LEDs, master switch 2          | -            |
 | 25   | GPIO16 | Front pnl | Front panel interrupt          | -            |
@@ -105,9 +105,10 @@ pins that are not in use and their possible use.
    repurpose it, then please let me know.
 1. Beware that GPIO15 outputs a PWM signal at boot. This might make the pin
    less useful for your use case.
-1. Often, GPIO2 is used for an on-board LED, but it looks like it is only
-   connected to the debug pad here. I think the pin is usable, and that it 
-   might only be used for testing purposes in the original firmware.
+1. Often, GPIO2 is used for an on-board LED. Here, it is only connected
+   to the debug pad. The pin is usable for I/O (I tested it), which is great
+   because of the easy access of the debug pad. GPIO2 might only be used for
+   testing purposes in the original firmware.
 1. The connected IC, using I2C address 0x10, looks a lot like an EEPROM,
    but this has yet to be confirmed. It uses a decicated I2C bus, separate
    from the I2C bus of the front panel.
