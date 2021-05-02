@@ -41,7 +41,7 @@ lamp in your Home Assistant setup.
   Go ahead, make it so! :-)
  
 * **Possibilities to extend the device's functionality through hardware mods.**
-  There are [GPIO pins that are not in use](doc/hardware.md#esp32-pinout).
+  There are [GPIO pins that are not in use](doc/technical_details.md#esp32-pinout).
   If "tinkerer" is your middle name, you can use those pins to come up with
   your own hardware hacks to extend the device's functionality. 
 
