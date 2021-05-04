@@ -13,15 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Transitions are now fully suppressed when in night light mode. In that mode, LED output
   levels are too low for producing good looking transitions.
   Fixes [issue #10](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/10).
+- The `example.yaml` now uses my own arduino-esp32 unicore build.
 - Formatted the codebase using the ESPHome clang rules.
+- The documentation has been restructured and the flashing guide got a big update.
 
 ## [1.0.0-RC1]
 ### Added
+- Support for disco mode-style light updates through the `light.disco_on` and `light.disco_off` actions.
+  The `light.disco_on` action can be used to configure the lamp state without delay, without publishing
+  the update and without saving the state. The `light.disco_off` action will restore the lamp to its
+  last save state, so from before the `light.disco_on` updates.
 - Support for configuring light presets, making it possible to mimic the lamp's original firmware
   feature to switch light color using the color button.
   This fixes [issue #8](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/8).
+- New documentation section: Technical details (it's all about the internals)
 - New documentation section: Configuration guide (explaining all the YAML file configuration options).
-- The documentation has been restructured.
 
 ## [1.0-beta]
 ### Changed
