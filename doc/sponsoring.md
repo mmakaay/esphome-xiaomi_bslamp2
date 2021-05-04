@@ -17,5 +17,7 @@ this project were:
 * a simple 8 port logic analyzer that helped me with reverse engineering
   the I2C protocol of the front panel.
 * Various wires and buttons.
+* An Arduino Uno R3, to [help out somebody in the community forums with
+  flashing the lamp using the Arduino](https://community.home-assistant.io/t/hacking-yeelight-fw-enabling-lan-control/284406/214?u=mmakaay).
 
 < [Technical details](technical_details.md) | [Index](../README.md)
