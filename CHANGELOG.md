@@ -15,9 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Fixes [issue #10](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/10).
 - The `example.yaml` now uses my own arduino-esp32 unicore build.
 - Formatted the codebase using the ESPHome clang rules.
-- The documentation has been restructured and the flashing guide got a big update.
+- The flashing guide got a big update, with detailed pictures for every step on the way.
+
+### Added
+- New documentation section: Technical details (it's all about the internals)
 
 ## [1.0.0-RC1]
+### Changed
+- The documentation has been restructured.
+
 ### Added
 - Support for disco mode-style light updates through the `light.disco_on` and `light.disco_off` actions.
   The `light.disco_on` action can be used to configure the lamp state without delay, without publishing
@@ -26,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for configuring light presets, making it possible to mimic the lamp's original firmware
   feature to switch light color using the color button.
   This fixes [issue #8](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/8).
-- New documentation section: Technical details (it's all about the internals)
 - New documentation section: Configuration guide (explaining all the YAML file configuration options).
 
 ## [1.0-beta]
