@@ -1,9 +1,9 @@
-< [Known issues](known_issues.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
 
 # Technical details
 
-In this section, you can find some of the information that was gathered
-during the reverse engineering of the Bedside Lamp 2 hardware.
+In this section, you can find some of the information that was gathered during the reverse
+engineering of the Bedside Lamp 2 hardware.
 
 Table of contents:
 
@@ -41,10 +41,9 @@ The LED circuitry provides two light modes:
 * Colored RGB light;
 * Warm to cool white light.
 
-The front panel of the device contains a two touch buttons (power on/off and
-color selection) and a touch slider (for setting the brightness level). This
-panel is lit when the device is turned on. The light behind the slider will
-represent the actual brightness setting of the device.
+The front panel of the device contains a two touch buttons (power on/off and color selection) and a
+touch slider (for setting the brightness level). This panel is lit when the device is turned on. The
+light behind the slider will represent the actual brightness setting of the device.
 
 
 ## ESP32 pinout
@@ -53,10 +52,9 @@ In the following image, you can find the pinout as used for the ESP32:
 
 <img src="images/hardware/ESP32_pinout.jpg" width="600">
 
-Here's an overview of all exposed pins of the chip, starting at the GND +
-3.3V pins, and going anti-clockwise. The table shows not only the functions
-of the pins that are actually in use by the lamp's circuitry, but also the
-pins that are not in use and their possible use.
+Here's an overview of all exposed pins of the chip, starting at the GND + 3.3V pins, and going
+anti-clockwise. The table shows not only the functions of the pins that are actually in use by the
+lamp's circuitry, but also the pins that are not in use and their possible use.
 
 | PIN  | GPIO#  | Function  | Description                    | Possible use |
 |------|--------|-----------|--------------------------------|--------------|
@@ -99,19 +97,16 @@ pins that are not in use and their possible use.
 | 36   | GPIO23 | -         |                                | IN/OUT       |
 | GND  |        | Ground    | Connected to ground            | -            |
 
-1. GPIO25 is connected to a 10k pull up resistor. This suggests that it
-   might have some function in the lamp, but I have not found that function
-   yet. If you find the actual use for this pin, or find that you can indeed
-   repurpose it, then please let me know.
-1. Beware that GPIO15 outputs a PWM signal at boot. This might make the pin
-   less useful for your use case.
-1. Often, GPIO2 is used for an on-board LED. Here, it is only connected
-   to the debug pad. The pin is usable for I/O (I tested it), which is great
-   because of the easy access of the debug pad. GPIO2 might only be used for
-   testing purposes in the original firmware.
-1. The connected IC, using I2C address 0x10, looks a lot like an EEPROM,
-   but this has yet to be confirmed. It uses a decicated I2C bus, separate
-   from the I2C bus of the front panel.
+1. GPIO25 is connected to a 10k pull up resistor. This suggests that it might have some function in
+   the lamp, but I have not found that function yet. If you find the actual use for this pin, or
+   find that you can indeed repurpose it, then please let me know.
+1. Beware that GPIO15 outputs a PWM signal at boot. This might make the pin less useful for your use
+   case.
+1. Often, GPIO2 is used for an on-board LED. Here, it is only connected to the debug pad. The pin is
+   usable for I/O (I tested it), which is great because of the easy access of the debug pad. GPIO2
+   might only be used for testing purposes in the original firmware.
+1. The connected IC, using I2C address 0x10, looks a lot like an EEPROM, but this has yet to be
+   confirmed. It uses a decicated I2C bus, separate from the I2C bus of the front panel.
    [This picture](images/hardware/IC_on_I2C_GPIO1718.jpg) shows the IC.
 
 For more information on the use of pins on the ESP32 chip, please check out
@@ -122,9 +117,8 @@ this [ESP32 pinout reference information](https://randomnerdtutorials.com/esp32-
 
 <img src="images/hardware/front_panel.jpg" width="150">
 
-The front panel is a stand-alone component, with its own control chip
-(KungFu KF8TS2716). Communication between the ESP32 and the front panel
-is done using:
+The front panel is a stand-alone component, with its own control chip (KungFu KF8TS2716).
+Communication between the ESP32 and the front panel is done using:
 
 - **An I2C bus**
   - the front panel is the I2C slave, the ESP32 is the I2C master
@@ -137,20 +131,17 @@ is done using:
   - the default state is HIGH
   - line is pulled LOW for at least 6 ms when a new event is available
 
-Commands can be written to and data can be read from the front panel
-component using I2C. The I2C protocol is fairly simple. All read and write
-operations uses 6 bytes of data. No register selection is done before
-reading or writing.
+Commands can be written to and data can be read from the front panel component using I2C. The I2C
+protocol is fairly simple. All read and write operations uses 6 bytes of data. No register selection
+is done before reading or writing.
 
-The interrupt data line is used by the front panel, to signal the ESP32 that
-a new button or slider event is available. Further details on this can be
-found below.
+The interrupt data line is used by the front panel, to signal the ESP32 that a new button or slider
+event is available. Further details on this can be found below.
 
 **Connection to the main board**
 
-The front panel is connected to the main board using a flat cable.
-The picture below shows the connector on the main board, including the
-functions of the cable pins:
+The front panel is connected to the main board using a flat cable. The picture below shows the
+connector on the main board, including the functions of the cable pins:
 
 <img src="images/hardware/front_panel_flat_cable_connection.jpg" width="400">
 
@@ -176,9 +167,8 @@ The available commands are:
 | SET LEVEL 10    | 02 03 5F FF 64 00 00  |
 | READY FOR EVENT | 01 00 00 00 00 00 01  |
 
-*Note: The `READY FOR EVENT` command is only used when a new event is provided
-by the front panel. Information about this command can be found in the next
-section.*
+*Note: The `READY FOR EVENT` command is only used when a new event is provided by the front panel.
+Information about this command can be found in the next section.*
 
 **Reading events from the front panel**
 
@@ -188,21 +178,21 @@ The types of events that can occur can be summarized as:
 - Touch or release the color button
 - Touch or release the slider at a certain level
 
-Because the front panel is an I2C slave device, it cannot contact the ESP32 via
-I2C. Only an I2C master device can initiate communication. Therefore, when the
-front panel has a new event available, it will pull down the interrupt line for
-a short period of time, to signal the ESP32 about this new event.
+Because the front panel is an I2C slave device, it cannot contact the ESP32 via I2C. Only an I2C
+master device can initiate communication. Therefore, when the front panel has a new event available,
+it will pull down the interrupt line for a short period of time, to signal the ESP32 about this new
+event.
 
-*Note that the ESP32 needs to poll the interrupt line at least at 667 Hz to be
-able to trustworthy detect the 6 ms signal. Unfortunately, the interrupt line
-does not wait for the ESP32 to respond to its signalling. The best way to
-handle signals from this line, is to use an actual interrupt handler.*
+*Note that the ESP32 needs to poll the interrupt line at least at 667 Hz to be able to trustworthy
+detect the 6 ms signal. Unfortunately, the interrupt line does not wait for the ESP32 to respond to
+its signalling. The best way to handle signals from this line, is to use an actual interrupt
+handler.*
 
-After detecting this signal, the ESP32 must first write the "READY FOR EVENT"
-command (`01 00 00 00 00 00 01`) via I2C to the front panel.
+After detecting this signal, the ESP32 must first write the "READY FOR EVENT" command (`01 00 00 00
+00 00 01`) via I2C to the front panel.
 
-After the front panel has ACK'ed this command, the ESP32 can read 6 bytes,
-which will represent the event that occurred.
+After the front panel has ACK'ed this command, the ESP32 can read 6 bytes, which will represent the
+event that occurred.
 
 Here's the mapping for the events and their corresponding byte sequences:
 
@@ -235,29 +225,28 @@ Here's the mapping for the events and their corresponding byte sequences:
 
 **Behavior when more events come in than can be handled**
 
-The front panel does not queue events. When a new event occurs, before the
-previous event has be read by the ESP32, the new event will replace the old
-event and a new signal is sent over the interrupt line.
+The front panel does not queue events. When a new event occurs, before the previous event has be
+read by the ESP32, the new event will replace the old event and a new signal is sent over the
+interrupt line.
 
-The ESP32 can read the last event multiple times. It will not be cleared
-by the front panel after reading it.
+The ESP32 can read the last event multiple times. It will not be cleared by the front panel after
+reading it.
 
 
 ## Build requirements
 
-The ESP-WROOM-32D that is used for this lamp (and for various other Xiaomi devices),
-contains a single core CPU, even though the data sheet for ESP-WROOM-32D specifies
-a dual core CPU. Therefore, when flashing the device with a generic ESP32 build,
-you will end up with the following boot error:
+The ESP-WROOM-32D that is used for this lamp (and for various other Xiaomi devices), contains a
+single core CPU, even though the data sheet for ESP-WROOM-32D specifies a dual core CPU. Therefore,
+when flashing the device with a generic ESP32 build, you will end up with the following boot error:
 
 ```
 E (459) cpu_start: Running on single core chip, but application is built with dual core support.
 E (459) cpu_start: Please enable CONFIG_FREERTOS_UNICORE option in menuconfig.
 ```
 
-Another issue with a lot of these devices, is that the MAC address that is burnt into
-EFUSE does not match the CRC checksum that is also burnt into EFUSE. Using a generic
-ESP32 build, you will end up with the boot error:
+Another issue with a lot of these devices, is that the MAC address that is burnt into EFUSE does not
+match the CRC checksum that is also burnt into EFUSE. Using a generic ESP32 build, you will end up
+with the boot error:
 
 ```
 Base MAC address from BLK0 of EFUSE CRC error
@@ -268,8 +257,8 @@ You can make use of the version [created by @pauln](https://github.com/pauln/ard
 or the version [created by @mmakaay](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc).
 
 To make use of one of these in an ESPHome build, you'll have to provide a platform package
-definition for the PlatformIO build. Here's an example configuration that will work for
-these Xiaomi devices:
+definition for the PlatformIO build. Here's an example configuration that will work for these Xiaomi
+devices:
 
 ```yaml
 esphome:
@@ -288,8 +277,8 @@ the build scripts [by @mmakaay here](https://github.com/mmakaay/arduino-esp32-un
 
 ## Original firmware
 
-Below, I have gathered some of the interesting boot messages from the
-original firmware. These messages are logged via the serial interface.
+Below, I have gathered some of the interesting boot messages from the original firmware. These
+messages are logged via the serial interface.
 
 **SPI Flash memory:**
 ```
@@ -363,4 +352,4 @@ ots: Connected.
 ```
 
 
-< [Known issues](known_issues.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
+< [Flashing guide](flashing.md) | [Index](../README.md) | [Sponsoring](sponsoring.md) >
