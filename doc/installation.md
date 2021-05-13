@@ -9,7 +9,7 @@ the [ESPHome website](https://esphome.io).
 
 The component code is distributed directly from GitHub. You will not have to download and install
 the code manually. This leverages the external components feature that was introduced in ESPHome
-version 1.18.0. Therefore, you must use ESPHome version 1.18.0 or later.
+v1.18.0. Therefore, you must use ESPHome v1.18.0 or later.
 
 Before you can compile the firmware, you will have to create the YAML configuration file for your
 device. You can take the [example.yaml](../example.yaml) from this repository as a starting point, and
