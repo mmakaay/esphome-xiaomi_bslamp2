@@ -59,7 +59,7 @@ logger:
 external_components:
   - source:
       type: git
-      url: https://github.com/mmakaay/xiaomi_bslamp2
+      url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
       ref: main
 
 # A special platform package is used for enabling unicore and disabling the

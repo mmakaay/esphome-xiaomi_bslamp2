@@ -3,7 +3,7 @@
 # Configuration guide
 
 I think, the best starting point for creating your own yaml configuration, is to look at the
-[example.yaml](example.yaml) file from the project documentation. This configuration was written
+[example.yaml](../example.yaml) file from the project documentation. This configuration was written
 with the functionality of the original firmware in mind and it makes use of all available options.
 This configuration guide can be used to fill in the blanks.
 
@@ -33,7 +33,7 @@ I do mention the platform configuration here for completeness sake, but **genera
 to add the following configuration option to your yaml file**. It is loaded automatically by the
 components that need it, and the GPIO + I2C configurations are fully prepared to work for the
 Bedside Lamp 2 wiring out of the box. Therefore, you will not find this piece of configuration in
-the [example.yaml](example.yaml).
+the [example.yaml](../example.yaml).
 
 Having said that, here are the configuration options:
 
@@ -126,7 +126,7 @@ mode. In this ESPHome firmware, setting the brightness to its lowest value trigg
 mode. This makes things a lot easier to control.
 
 It is possible to control the night light mode separately. An example of this can be found in the
-[example.yaml](example.yaml), in which holding the power button is bound to activating the night
+[example.yaml](../example.yaml), in which holding the power button is bound to activating the night
 light.
 
 ### light.disco_on Action
@@ -169,7 +169,7 @@ switch to the next preset within the active preset group. The same button can be
 while, to switch to the other preset group.
 
 In your light configuration, you can mimic this behavior (in fact: it is done so in the
-[example.yaml](example.yaml)) by means of the presets system. This system consists of two parts:
+[example.yaml](../example.yaml)) by means of the presets system. This system consists of two parts:
 
 * Defining presets
 * Activating presets from automations

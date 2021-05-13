@@ -6,10 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- The GitHub repository structure has been updated, in order to make it compatible with
+  the new `external_components` feature of ESPHome v1.18.0. From now on, the code from this
+  repository no longer has to be downloaded and installed manually. The `example.yaml` has
+  been updated for using this new feature.
 - A fix has been implemented to prevent the lamp from being disconnected from Home Assistant
   a lot (resulting in the lamp becoming unavailable).
   Fixes [issue #19](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/19).
-  ESPHome v?.?.? or higher is required for making this fix work.
+  ESPHome v1.18.0 or higher is required for making this fix work.
 - Transitions are now fully suppressed when in night light mode. In that mode, LED output
   levels are too low for producing good looking transitions.
   Fixes [issue #10](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/10).
@@ -19,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - New documentation section: Technical details (it's all about the internals)
+
+### Removed
+- The known issue documentation page has been removed, now we have a fix for the disconnect issues
+  in ESPHome v1.18.0.
 
 ## [1.0.0-RC1]
 ### Changed
