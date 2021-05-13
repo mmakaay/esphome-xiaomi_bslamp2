@@ -13,7 +13,7 @@ been introduced.
 * Remove the cached framework package: 
   `/bin/rm -fR ~/.platformio/packages/framework-arduinoespressif32` 
 
-* Copy `[example.yaml](../example.yaml)` to a clean build directory, and update the first two sections for the
+* Copy [`example.yaml`](../example.yaml) to a clean build directory, and update the first two sections for the
   local setup (substitutions, wifi, api, ota).
 
 * Use `esphome example.yaml compile` to build the code.

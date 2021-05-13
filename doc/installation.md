@@ -12,7 +12,7 @@ the code manually. This leverages the external components feature that was intro
 v1.18.0. Therefore, you must use ESPHome v1.18.0 or later.
 
 Before you can compile the firmware, you will have to create the YAML configuration file for your
-device. You can take the [example.yaml](../example.yaml) from this repository as a starting point, and
+device. You can take the [`example.yaml`](../example.yaml) from this repository as a starting point, and
 modify that one to your needs. Detailed information about the YAML configuration options can be
 found in the [Configuration guide](configuration.md).
 

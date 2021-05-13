@@ -3,7 +3,7 @@
 # Configuration guide
 
 I think, the best starting point for creating your own yaml configuration, is to look at the
-[example.yaml](../example.yaml) file from the project documentation. This configuration was written
+[`example.yaml`](../example.yaml) file from the project documentation. This configuration was written
 with the functionality of the original firmware in mind and it makes use of all available options.
 This configuration guide can be used to fill in the blanks.
 
@@ -33,7 +33,7 @@ I do mention the platform configuration here for completeness sake, but **genera
 to add the following configuration option to your yaml file**. It is loaded automatically by the
 components that need it, and the GPIO + I2C configurations are fully prepared to work for the
 Bedside Lamp 2 wiring out of the box. Therefore, you will not find this piece of configuration in
-the [example.yaml](../example.yaml).
+the [`example.yaml`](../example.yaml).
 
 Having said that, here are the configuration options:
 
