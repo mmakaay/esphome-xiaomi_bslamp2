@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Not yet released]
+
+### Changed
+- Made the codebase compatible with ESPHome v1.x.0
+  ([PR #1657: Introduce new async-def coroutine syntax](https://github.com/esphome/esphome/pull/1657))
+
 ## [1.0.0]
 
 **Note**: This release requires ESPHome v1.18.0 or newer.
