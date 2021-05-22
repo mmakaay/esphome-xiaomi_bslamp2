@@ -123,8 +123,5 @@ def to_code(config):
     # the AUTO_LOAD feature unfortunately.
     CORE.config["output"].append({ CONF_PLATFORM: "gpio" })
 
-    # A work-around for API disconnects.
-    cg.add_define("DISABLE_ASYNCTCP_ACK_TIMEOUTS")
-
     yield make_light_hal(config)
     yield make_front_panel_hal(config)
