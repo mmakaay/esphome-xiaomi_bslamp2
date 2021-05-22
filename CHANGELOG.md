@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made the codebase compatible with ESPHome v1.x.0
   ([PR #1657: Introduce new async-def coroutine syntax](https://github.com/esphome/esphome/pull/1657))
 
+### Added
+- Implemented support for visual feedback during the OTA flashing process in the
+  `example.yaml` file: the light becomes blue during the process, the brightness bar
+  represents the update progress, when updating fails the light flashes red and when it
+  completes successfuly, the light flashes green.
+
 ## [1.0.0]
 
 **Note**: This release requires ESPHome v1.18.0 or newer.
