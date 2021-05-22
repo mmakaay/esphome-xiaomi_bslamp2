@@ -111,12 +111,12 @@ async def make_front_panel_hal(config):
     cg.add(fp_hal.set_i2c_parent(fp_i2c_var))
     cg.add(fp_hal.set_i2c_address(config[CONF_ADDRESS]))
 
-def to_code(config):
+async def to_code(config):
     # Dirty little hack to make the ESPHome component loader include
     # the code for the "gpio" platform for the "output" domain.
     # Loading specific platform components is not possible using
     # the AUTO_LOAD feature unfortunately.
     CORE.config["output"].append({ CONF_PLATFORM: "gpio" })
 
-    yield make_light_hal(config)
-    yield make_front_panel_hal(config)
+    await make_light_hal(config)
+    await make_front_panel_hal(config)
