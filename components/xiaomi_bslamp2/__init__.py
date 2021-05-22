@@ -65,14 +65,14 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
 
 @coroutine
 def make_gpio(number, mode="OUTPUT"):
-    yield from cg.gpio_pin_expression({ "number": number, "mode": mode });
+    yield cg.gpio_pin_expression({ "number": number, "mode": mode });
 
 @coroutine
 def make_gpio_binary_output(id_, number):
     gpio_var = yield make_gpio(number)
     output_var = cg.new_Pvariable(id_)
     cg.add(output_var.set_pin(gpio_var))   
-    yield from cg.register_component(output_var, {})
+    yield cg.register_component(output_var, {})
 
 @coroutine
 def make_ledc_output(id_, number, frequency, channel):
@@ -80,7 +80,7 @@ def make_ledc_output(id_, number, frequency, channel):
     ledc_var = cg.new_Pvariable(id_, gpio_var)
     cg.add(ledc_var.set_frequency(frequency));
     cg.add(ledc_var.set_channel(channel));
-    yield from cg.register_component(ledc_var, {})
+    yield cg.register_component(ledc_var, {})
 
 @coroutine
 def make_light_hal(config):
