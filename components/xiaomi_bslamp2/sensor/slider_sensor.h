@@ -40,6 +40,13 @@ class XiaomiBslamp2SliderSensor : public sensor::Sensor, public Component {
         float corrected_level = max(0.0f, level - 2.0f);
 
         float final_level = range_from_ + (slope_ * corrected_level);
+
+        // Accomodate for rounding errors that might push the result
+        // value just past the "range to" value.
+        if (final_level > range_to_) {
+            final_level = range_to_;
+        }
+
         this->publish_state(final_level);
       }
     });
