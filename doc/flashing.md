@@ -1,4 +1,4 @@
-< [Configuration guide](configuration.md) | [Index](../README.md) | [Technical details](doc/technical_details.md) >
+< [Configuration guide](configuration.md) | [Index](../README.md) | [Technical details](technical_details.md) >
 
 # Flashing guide
 
@@ -282,4 +282,4 @@ to power the board using the 3.3V debug pad.
 After seeing this error, user @tabacha was able to successfully flash his lamp using the regular
 power adapter.
 
-< [Configuration guide](configuration.md) | [Index](../README.md) | [Technical details](doc/technical_details.md) >
+< [Configuration guide](configuration.md) | [Index](../README.md) | [Technical details](technical_details.md) >
