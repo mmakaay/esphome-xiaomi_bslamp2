@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Not yet released]
 
 ### Changed
+- Fixed a rounding error in the slider sensor component. When using custom "range from" / "range to"
+  settings, the maximum value could exceed the "range to" value due to rounding errors.
+  Thanks to Jos for the heads up!
 - Made the codebase compatible with ESPHome v1.x.0
   ([PR #1657: Introduce new async-def coroutine syntax](https://github.com/esphome/esphome/pull/1657))
 
