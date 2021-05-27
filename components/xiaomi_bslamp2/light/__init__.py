@@ -180,8 +180,8 @@ def disco_action_off_to_code(config, action_id, template_arg, args):
         maybe_simple_preset_action(cv.Any(
             cv.Schema({
                 cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
-                cv.Required(CONF_GROUP): is_preset_group,
-                cv.Optional(CONF_PRESET): is_preset
+                cv.Required(CONF_GROUP): cv.templatable(cv.string),
+                cv.Optional(CONF_PRESET): cv.templatable(cv.string)
             }),
             cv.Schema({
                 cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
@@ -197,11 +197,14 @@ def preset_activate_to_code(config, action_id, template_arg, args):
         cg.add(action_var.set_operation(f"next_{config[CONF_NEXT]}"))
     elif CONF_PRESET in config:
         cg.add(action_var.set_operation("activate_preset"))
-        cg.add(action_var.set_group(config[CONF_GROUP]))
-        cg.add(action_var.set_preset(config[CONF_PRESET]))
+        group_template_ = yield cg.templatable(config[CONF_GROUP], args, cg.std_string)
+        cg.add(action_var.set_group(group_template_))
+        preset_template_ = yield cg.templatable(config[CONF_PRESET], args, cg.std_string)
+        cg.add(action_var.set_preset(preset_template_))
     else:
         cg.add(action_var.set_operation("activate_group"))
-        cg.add(action_var.set_group(config[CONF_GROUP]))
+        group_template_ = yield cg.templatable(config[CONF_GROUP], args, cg.std_string)
+        cg.add(action_var.set_group(group_template_))
     yield action_var
 
 @coroutine
