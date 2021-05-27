@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Not yet released]
 
 ### Changed
+- Made it possible to use lambdas with the `preset.activate` automation. This makes it
+  possible to link the action to an api service, which exposes the preset functionality
+  to Home Assistant. The `example.yaml` has been updated with an example for this.
 - Fixed a rounding error in the slider sensor component. When using custom "range from" / "range to"
   settings, the maximum value could exceed the "range to" value due to rounding errors.
   Thanks to Jos for the heads up!
