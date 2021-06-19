@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Not yet released]
 
+### Added
+- Implemented support for visual feedback during the OTA flashing process in the
+  `example.yaml` file: the light becomes blue during the process, the brightness bar
+  represents the update progress, when updating fails the light flashes red and when it
+  completes successfuly, the light flashes green.
+
+## [1.1.0]
+
 ### Changed
 - Made it possible to use lambdas with the `preset.activate` automation. This makes it
   possible to link the action to an api service, which exposes the preset functionality
@@ -13,14 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a rounding error in the slider sensor component. When using custom "range from" / "range to"
   settings, the maximum value could exceed the "range to" value due to rounding errors.
   Thanks to Jos for the heads up!
-- Made the codebase compatible with ESPHome v1.x.0
+- Made the codebase compatible with ESPHome v1.19.0
   ([PR #1657: Introduce new async-def coroutine syntax](https://github.com/esphome/esphome/pull/1657))
-
-### Added
-- Implemented support for visual feedback during the OTA flashing process in the
-  `example.yaml` file: the light becomes blue during the process, the brightness bar
-  represents the update progress, when updating fails the light flashes red and when it
-  completes successfuly, the light flashes green.
 
 ## [1.0.0]
 
