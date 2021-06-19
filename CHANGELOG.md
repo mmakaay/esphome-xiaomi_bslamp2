@@ -4,15 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Not yet released]
-
-### Added
-- Implemented support for visual feedback during the OTA flashing process in the
-  `example.yaml` file: the light becomes blue during the process, the brightness bar
-  represents the update progress, when updating fails the light flashes red and when it
-  completes successfuly, the light flashes green.
-
 ## [1.1.0]
+
+**Note**: This release requires ESPHome v1.19.0 or newer.
 
 ### Changed
 - Made it possible to use lambdas with the `preset.activate` automation. This makes it
@@ -23,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Thanks to Jos for the heads up!
 - Made the codebase compatible with ESPHome v1.19.0
   ([PR #1657: Introduce new async-def coroutine syntax](https://github.com/esphome/esphome/pull/1657))
+  Thanks to @Kaibob2 for giving me a heads up that my code was not compiling anymore!
 
 ## [1.0.0]
 
