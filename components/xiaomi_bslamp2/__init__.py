@@ -63,35 +63,31 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     ),
 })
 
-@coroutine
-def make_gpio(number, mode="OUTPUT"):
-    yield from cg.gpio_pin_expression({ "number": number, "mode": mode });
+async def make_gpio(number, mode="OUTPUT"):
+    return await cg.gpio_pin_expression({ "number": number, "mode": mode });
 
-@coroutine
-def make_gpio_binary_output(id_, number):
-    gpio_var = yield make_gpio(number)
+async def make_gpio_binary_output(id_, number):
+    gpio_var = await make_gpio(number)
     output_var = cg.new_Pvariable(id_)
     cg.add(output_var.set_pin(gpio_var))   
-    yield from cg.register_component(output_var, {})
+    return await cg.register_component(output_var, {})
 
-@coroutine
-def make_ledc_output(id_, number, frequency, channel):
-    gpio_var = yield make_gpio(number)
+async def make_ledc_output(id_, number, frequency, channel):
+    gpio_var = await make_gpio(number)
     ledc_var = cg.new_Pvariable(id_, gpio_var)
     cg.add(ledc_var.set_frequency(frequency));
     cg.add(ledc_var.set_channel(channel));
-    yield from cg.register_component(ledc_var, {})
+    return await cg.register_component(ledc_var, {})
 
-@coroutine
-def make_light_hal(config):
-    r_var = yield make_ledc_output(config[CONF_RED_ID], config[CONF_RED], 3000, 0)
-    g_var = yield make_ledc_output(config[CONF_GREEN_ID], config[CONF_GREEN], 3000, 1)
-    b_var = yield make_ledc_output(config[CONF_BLUE_ID], config[CONF_BLUE], 3000, 2)
-    w_var = yield make_ledc_output(config[CONF_WHITE_ID], config[CONF_WHITE], 10000, 4)
-    m1_var = yield make_gpio_binary_output(config[CONF_MASTER1_ID], config[CONF_MASTER1])
-    m2_var = yield make_gpio_binary_output(config[CONF_MASTER2_ID], config[CONF_MASTER2])
+async def make_light_hal(config):
+    r_var = await make_ledc_output(config[CONF_RED_ID], config[CONF_RED], 3000, 0)
+    g_var = await make_ledc_output(config[CONF_GREEN_ID], config[CONF_GREEN], 3000, 1)
+    b_var = await make_ledc_output(config[CONF_BLUE_ID], config[CONF_BLUE], 3000, 2)
+    w_var = await make_ledc_output(config[CONF_WHITE_ID], config[CONF_WHITE], 10000, 4)
+    m1_var = await make_gpio_binary_output(config[CONF_MASTER1_ID], config[CONF_MASTER1])
+    m2_var = await make_gpio_binary_output(config[CONF_MASTER2_ID], config[CONF_MASTER2])
     light_hal = cg.new_Pvariable(config[CONF_LIGHT_HAL_ID])
-    yield cg.register_component(light_hal, config)
+    await cg.register_component(light_hal, config)
     cg.add(light_hal.set_red_pin(r_var))
     cg.add(light_hal.set_green_pin(g_var))
     cg.add(light_hal.set_blue_pin(b_var))
@@ -99,29 +95,28 @@ def make_light_hal(config):
     cg.add(light_hal.set_master1_pin(m1_var))
     cg.add(light_hal.set_master2_pin(m2_var))
 
-@coroutine
-def make_front_panel_hal(config):
-    trigger_pin = yield make_gpio(config[CONF_TRIGGER_PIN], "INPUT")
+async def make_front_panel_hal(config):
+    trigger_pin = await make_gpio(config[CONF_TRIGGER_PIN], "INPUT")
     fp_hal = cg.new_Pvariable(config[CONF_FRONT_PANEL_HAL_ID])
-    yield cg.register_component(fp_hal, config)
+    await cg.register_component(fp_hal, config)
     cg.add(fp_hal.set_trigger_pin(trigger_pin))   
 
     # The i2c component automatically sets up one I2C bus.
     # Take that bus and update is to make it work for the
     # front panel I2C communication.
-    fp_i2c_var = yield cg.get_variable(config[CONF_FP_I2C_ID])
+    fp_i2c_var = await cg.get_variable(config[CONF_FP_I2C_ID])
     cg.add(fp_i2c_var.set_sda_pin(config[CONF_SDA]))
     cg.add(fp_i2c_var.set_scl_pin(config[CONF_SCL]))
     cg.add(fp_i2c_var.set_scan(True))
     cg.add(fp_hal.set_i2c_parent(fp_i2c_var))
     cg.add(fp_hal.set_i2c_address(config[CONF_ADDRESS]))
 
-def to_code(config):
+async def to_code(config):
     # Dirty little hack to make the ESPHome component loader include
     # the code for the "gpio" platform for the "output" domain.
     # Loading specific platform components is not possible using
     # the AUTO_LOAD feature unfortunately.
     CORE.config["output"].append({ CONF_PLATFORM: "gpio" })
 
-    yield make_light_hal(config)
-    yield make_front_panel_hal(config)
+    await make_light_hal(config)
+    await make_front_panel_hal(config)

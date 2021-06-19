@@ -39,6 +39,22 @@ api:
   # flicker.
   reboot_timeout: 0s
 
+api:
+  password: !secret api_password
+
+  # If you want to use light presets (see below) from Home Assistant,
+  # then you can expose the required functionality as a service here.
+  # This is an example of how you could expose the activation of a preset.
+  services:
+    - service: activate_preset
+      variables:
+        my_group: string
+        my_preset: string
+      then:
+        - preset.activate:
+            group: !lambda 'return my_group;'
+            preset: !lambda 'return my_preset;'
+
 ota:
   password: "Password-For-Flashing-This-Device-Over-The-Air"
 
@@ -78,7 +94,7 @@ esphome:
 light:
   - platform: xiaomi_bslamp2
     id: ${id_light}
-    name: ${friendly_name} RGBW Light
+    name: ${friendly_name} RGBWW Light
     default_transition_length: ${transition_length}
     # When the brightness is changed, then update the level indicator
     # on the front panel accordingly. In night light mode, turn off
