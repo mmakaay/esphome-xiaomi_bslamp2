@@ -58,6 +58,47 @@ api:
 ota:
   password: "Password-For-Flashing-This-Device-Over-The-Air"
 
+  # These OTA triggers are used to provide some visual feedback during the OTA
+  # flashing process. The light is turned blue when the upgrade starts, the
+  # brightness indicator will represent the update progress (fills up from 0%
+  # to 100%), the light will flash red when the upgrade fails or green when the
+  # upgrade succeeds.
+  # You can safely remove these if you don't want the visual feedback.
+  on_begin:
+    then:
+      - light.disco_on:
+          id: ${id_light}
+          red: 0%
+          green: 0%
+          blue: 100%
+          brightness: 2%
+          transition_length: 0s
+  on_progress:
+    then:
+      - output.set_level:
+          id: ${id_front_panel_illumination}
+          level: !lambda return (x / 100.0f);
+  on_end:
+    then:
+      - light.disco_on:
+          id: ${id_light}
+          red: 0%
+          green: 100%
+          blue: 0%
+          brightness: 2%
+          transition_length: 0s
+  on_error:
+    then:
+      - light.disco_on:
+          id: ${id_light}
+          red: 100%
+          green: 0%
+          blue: 0%
+          brightness: 2%
+      - delay: 1s
+      - light.disco_off:
+          id: ${id_light}
+
 # The log level can be raised when needed for debugging the firmware. For
 # production, a low log level is recommended. Mainly because high volume log
 # output might interfere with the API/WiFi connection stability. So when
