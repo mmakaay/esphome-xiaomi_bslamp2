@@ -6,11 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Not yet released]
 
+**Note**: This release requires ESPHome v1.20.0 or newer.
+
 ### Added
-- Implemented support for visual feedback during the OTA flashing process in the
-  `example.yaml` file: the light becomes blue during the process, the brightness bar
-  represents the update progress, when updating fails the light flashes red and when it
-  completes successfuly, the light flashes green.
+- Implemented support for visual feedback during the OTA update process in the
+  `example.yaml` file: the light becomes blue during flahsing, the brightness bar
+  represents the progress, on failure the light flashes red and on success the
+  light flashes green.
 
 ## [1.1.0-RC1]
 
