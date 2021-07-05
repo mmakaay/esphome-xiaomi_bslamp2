@@ -149,7 +149,7 @@ connector on the main board, including the functions of the cable pins:
 
 Commands can be written to the front panel at any time.
 
-The available commands are:
+The commands that are used by the original firmware are these:
 
 | Command         | Byte sequence to send |
 |-----------------|-----------------------|
@@ -169,6 +169,29 @@ The available commands are:
 
 *Note: The `READY FOR EVENT` command is only used when a new event is provided by the front panel.
 Information about this command can be found in the next section.*
+
+Further experimentation has uncovered that the LEDs of the front panel (power, color, level 1 - 10)
+can be enabled individually. The original firmware does not use this, but I built support for it
+into the custom firmware, because it opens up some nice possibilities.
+
+How this works, is that the general format of the "set LEDs" command is: `02 03 XX XX 64 00 00`.
+The LEDs to enable are specified using the `XX XX` part. This is a 16 bit value, which can be
+constructed by bitwise OR-ing the following LED bit values:
+
+| LED to enable | Bit pattern       |
+|---------------|-------------------|
+| POWER         | 01001100 00000000 |
+| COLOR         | 00011100 00000000 |
+| LED 1         | 00001110 00000000 |
+| LED 2         | 00001101 00000000 |
+| LED 3         | 00001100 10000000 |
+| LED 4         | 00001100 01000000 |
+| LED 5         | 00001100 00100000 |
+| LED 6         | 00001100 00010000 |
+| LED 7         | 00001100 00001000 |
+| LED 8         | 00001100 00000100 |
+| LED 9         | 00001100 00000010 |
+| LED 10        | 00001100 00000001 |
 
 **Reading events from the front panel**
 
