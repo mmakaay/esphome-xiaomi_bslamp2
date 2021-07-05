@@ -11,24 +11,44 @@ namespace xiaomi {
 namespace bslamp2 {
 
 static const uint8_t MSG_LEN = 7;
-using MSG = uint8_t[7];
+using MSG = uint8_t[MSG_LEN];
+using LED = uint16_t;
 
 // clang-format off
 
-// The commands that are supported by the front panel component.
+// Bit patterns that are used for making a front panel LED light up.
+// These patterns can be bitwise OR-ed to target multiple LEDs.
+static const LED LED_NONE        = 0b0000110000000000;
+static const LED LED_POWER       = 0b0100110000000000;
+static const LED LED_COLOR       = 0b0001110000000000;
+static const LED LED_1           = 0b0000111000000000;
+static const LED LED_2           = 0b0000110100000000;
+static const LED LED_3           = 0b0000110010000000;
+static const LED LED_4           = 0b0000110001000000;
+static const LED LED_5           = 0b0000110000100000;
+static const LED LED_6           = 0b0000110000010000;
+static const LED LED_7           = 0b0000110000001000;
+static const LED LED_8           = 0b0000110000000100;
+static const LED LED_9           = 0b0000110000000010;
+static const LED LED_10          = 0b0000110000000001;
+
+// Combinations of LEDs that are use by the original firmware to
+// indicate the current brightness setting of the lamp..
+static const LED LED_LEVEL_0     = LED_NONE;
+static const LED LED_LEVEL_1     = LED_POWER|LED_COLOR|LED_1;
+static const LED LED_LEVEL_2     = LED_POWER|LED_COLOR|LED_1|LED_2;
+static const LED LED_LEVEL_3     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3;
+static const LED LED_LEVEL_4     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4;
+static const LED LED_LEVEL_5     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5;
+static const LED LED_LEVEL_6     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6;
+static const LED LED_LEVEL_7     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7;
+static const LED LED_LEVEL_8     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8;
+static const LED LED_LEVEL_9     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9;
+static const LED LED_LEVEL_10    = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9|LED_10;
+
+// Commands for the I2C interface.
 static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-static const MSG TURN_ON      = {0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00};
-static const MSG TURN_OFF     = {0x02, 0x03, 0x0C, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_1  = {0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_2  = {0x02, 0x03, 0x5F, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_3  = {0x02, 0x03, 0x5F, 0x80, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_4  = {0x02, 0x03, 0x5F, 0xC0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_5  = {0x02, 0x03, 0x5F, 0xE0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_6  = {0x02, 0x03, 0x5F, 0xF0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_7  = {0x02, 0x03, 0x5F, 0xF8, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_8  = {0x02, 0x03, 0x5F, 0xFC, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_9  = {0x02, 0x03, 0x5F, 0xFE, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_10 = {0x02, 0x03, 0x5F, 0xFF, 0x64, 0x00, 0x00};
+static const MSG SET_LEDS     = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
 
 using EVENT = uint16_t;
 
@@ -213,9 +233,30 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
       }
     }
   }
+  
+  /**
+   * Enables the LEDs according to the provided input.
+   * The input value is a bitwise OR-ed set of LED constants.
+   * E.g. LED_POWER|LED_1|LED2
+   */
+  void set_leds(uint16_t leds) {
+    MSG msg;
+    msg[0] = SET_LEDS[0];
+    msg[1] = SET_LEDS[1];
+    msg[2] = leds >> 8;
+    msg[3] = leds & 0xff;
+    msg[4] = SET_LEDS[4];
+    msg[5] = SET_LEDS[5];
+    msg[6] = SET_LEDS[6];
+
+    write_bytes_raw(msg, MSG_LEN);
+  }
 
   /**
    * Sets the front panel illumination to the provided level (0.0 - 1.0).
+   *
+   * This implements the behavior of the original firmware for representing
+   * the lamp's brightness.
    *
    * Level 0.0 means: turn off the front panel illumination.
    * The other levels are translated to one of the available levels,
@@ -224,27 +265,27 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    */
   void set_light_level(float level) {
     if (level == 0.0f)
-      write_bytes_raw(TURN_OFF, MSG_LEN);
+      set_leds(LED_LEVEL_0);
     else if (level < 0.15)
-      write_bytes_raw(SET_LEVEL_1, MSG_LEN);
+      set_leds(LED_LEVEL_1);
     else if (level < 0.25)
-      write_bytes_raw(SET_LEVEL_2, MSG_LEN);
+      set_leds(LED_LEVEL_2);
     else if (level < 0.35)
-      write_bytes_raw(SET_LEVEL_3, MSG_LEN);
+      set_leds(LED_LEVEL_3);
     else if (level < 0.45)
-      write_bytes_raw(SET_LEVEL_4, MSG_LEN);
+      set_leds(LED_LEVEL_4);
     else if (level < 0.55)
-      write_bytes_raw(SET_LEVEL_5, MSG_LEN);
+      set_leds(LED_LEVEL_5);
     else if (level < 0.65)
-      write_bytes_raw(SET_LEVEL_6, MSG_LEN);
+      set_leds(LED_LEVEL_6);
     else if (level < 0.75)
-      write_bytes_raw(SET_LEVEL_7, MSG_LEN);
+      set_leds(LED_LEVEL_7);
     else if (level < 0.85)
-      write_bytes_raw(SET_LEVEL_8, MSG_LEN);
+      set_leds(LED_LEVEL_8);
     else if (level < 0.95)
-      write_bytes_raw(SET_LEVEL_9, MSG_LEN);
+      set_leds(LED_LEVEL_9);
     else
-      write_bytes_raw(SET_LEVEL_10, MSG_LEN);
+      set_leds(LED_LEVEL_10);
   }
 
  protected:
