@@ -48,7 +48,6 @@ static const LED LED_LEVEL_10    = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|L
 
 // Commands for the I2C interface.
 static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-static const MSG SET_LEDS     = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
 
 using EVENT = uint16_t;
 
@@ -233,23 +232,30 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
       }
     }
   }
-  
+
   /**
-   * Enables the LEDs according to the provided input.
+   * Turn on one or more LEDs (leaving the state of the other LEDs intact).
    * The input value is a bitwise OR-ed set of LED constants.
-   * E.g. LED_POWER|LED_1|LED2
+   */
+  void turn_on_leds(uint16_t leds) {
+    set_leds_(led_state_ | leds);
+  }
+
+  /**
+   * Turn off one or more LEDs (leaving the state of the other LEDs intact).
+   * The input value is a bitwise OR-ed set of LED constants.
+   */
+  void turn_off_leds(uint16_t leds) {
+    set_leds_(led_state_ & ~leds);
+  }
+
+  /**
+   * Updates the state of the LEDs according to the provided input.
+   * The input value is a bitwise OR-ed set of LED constants, representing the
+   * LEDs that must be turned on. All other LEDs are turned off.
    */
   void set_leds(uint16_t leds) {
-    MSG msg;
-    msg[0] = SET_LEDS[0];
-    msg[1] = SET_LEDS[1];
-    msg[2] = leds >> 8;
-    msg[3] = leds & 0xff;
-    msg[4] = SET_LEDS[4];
-    msg[5] = SET_LEDS[5];
-    msg[6] = SET_LEDS[6];
-
-    write_bytes_raw(msg, MSG_LEN);
+    set_leds_(leds);
   }
 
   /**
@@ -294,6 +300,16 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   volatile int event_id_ = 0;
   int last_event_id_ = 0;
   CallbackManager<void(EVENT)> event_callback_{};
+
+  MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
+  uint16_t led_state_ = 0;
+
+  void set_leds_(uint16_t leds) {
+    led_state_ = 0b0000110000000000 | leds;
+    led_msg_[2] = led_state_ >> 8;
+    led_msg_[3] = led_state_ & 0xff;
+    write_bytes_raw(led_msg_, MSG_LEN);
+  }
 };
 
 /**

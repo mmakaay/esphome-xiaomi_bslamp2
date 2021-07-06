@@ -13,7 +13,6 @@ from esphome.const import (
 
 CODEOWNERS = ["@mmakaay"]
 
-CONF_HUB_ID = "xiaomi_bslamp2_hub_id"
 CONF_RED_ID = "red_id"
 CONF_GREEN_ID = "green_id"
 CONF_BLUE_ID = "blue_id"
@@ -25,8 +24,8 @@ CONF_MASTER2_ID = "master2_id"
 CONF_FP_I2C_ID = "front_panel_i2c_id"
 CONF_LIGHT_HAL_ID = "light_hal_id"
 CONF_FRONT_PANEL_HAL_ID = "front_panel_hal_id"
-
 CONF_ON_BRIGHTNESS = "on_brightness"
+CONF_LEDS = "leds"
 
 AUTO_LOAD = ["ledc", "output", "i2c"]
 
