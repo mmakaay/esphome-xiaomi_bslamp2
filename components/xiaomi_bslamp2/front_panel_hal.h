@@ -13,43 +13,42 @@ namespace bslamp2 {
 static const uint8_t MSG_LEN = 7;
 using MSG = uint8_t[MSG_LEN];
 using LED = uint16_t;
+using EVENT = uint16_t;
 
 // clang-format off
 
-// Bit patterns that are used for making a front panel LED light up.
-// These patterns can be bitwise OR-ed to target multiple LEDs.
-static const LED LED_NONE        = 0b0000110000000000;
-static const LED LED_POWER       = 0b0100110000000000;
-static const LED LED_COLOR       = 0b0001110000000000;
-static const LED LED_1           = 0b0000111000000000;
-static const LED LED_2           = 0b0000110100000000;
-static const LED LED_3           = 0b0000110010000000;
-static const LED LED_4           = 0b0000110001000000;
-static const LED LED_5           = 0b0000110000100000;
-static const LED LED_6           = 0b0000110000010000;
-static const LED LED_7           = 0b0000110000001000;
-static const LED LED_8           = 0b0000110000000100;
-static const LED LED_9           = 0b0000110000000010;
-static const LED LED_10          = 0b0000110000000001;
+enum FrontPanelLeds {
+  LED_NONE  = 0,
+  LED_POWER = 1 << 14,
+  LED_COLOR = 1 << 12,
+  LED_1     = 1 << 9,
+  LED_2     = 1 << 8,
+  LED_3     = 1 << 7,
+  LED_4     = 1 << 6,
+  LED_5     = 1 << 5,
+  LED_6     = 1 << 4,
+  LED_7     = 1 << 3,
+  LED_8     = 1 << 2,
+  LED_9     = 1 << 1,
+  LED_10    = 1,
+};
 
 // Combinations of LEDs that are use by the original firmware to
 // indicate the current brightness setting of the lamp..
-static const LED LED_LEVEL_0     = LED_NONE;
-static const LED LED_LEVEL_1     = LED_POWER|LED_COLOR|LED_1;
-static const LED LED_LEVEL_2     = LED_POWER|LED_COLOR|LED_1|LED_2;
-static const LED LED_LEVEL_3     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3;
-static const LED LED_LEVEL_4     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4;
-static const LED LED_LEVEL_5     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5;
-static const LED LED_LEVEL_6     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6;
-static const LED LED_LEVEL_7     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7;
-static const LED LED_LEVEL_8     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8;
-static const LED LED_LEVEL_9     = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9;
-static const LED LED_LEVEL_10    = LED_POWER|LED_COLOR|LED_1|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9|LED_10;
+static const LED LED_LEVEL_0  = LED_NONE;
+static const LED LED_LEVEL_1  = LED_POWER | LED_COLOR | LED_1;
+static const LED LED_LEVEL_2  = LED_LEVEL_1 | LED_2;
+static const LED LED_LEVEL_3  = LED_LEVEL_2 | LED_3;
+static const LED LED_LEVEL_4  = LED_LEVEL_3 | LED_4;
+static const LED LED_LEVEL_5  = LED_LEVEL_4 | LED_5;
+static const LED LED_LEVEL_6  = LED_LEVEL_5 | LED_6;
+static const LED LED_LEVEL_7  = LED_LEVEL_6 | LED_7;
+static const LED LED_LEVEL_8  = LED_LEVEL_7 | LED_8;
+static const LED LED_LEVEL_9  = LED_LEVEL_8 | LED_9;
+static const LED LED_LEVEL_10 = LED_LEVEL_9 | LED_10;
 
-// Commands for the I2C interface.
+// This I2C command is used during front panel event handling.
 static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-
-using EVENT = uint16_t;
 
 // Bit flags that are used for specifying an event.
 // Events are registered using the following bit pattern
