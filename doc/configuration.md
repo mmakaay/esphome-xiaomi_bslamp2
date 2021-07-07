@@ -417,7 +417,7 @@ This can also be written as:
         - front_panel.set_leds: [ POWER, COLOR, 1, 2, 3 ]
 ```
 
-If only one LED is specified, you are allowed to omit the list;
+If only one LED is specified, you are allowed to omit the list definition:
 
 ```yaml
     on_...:
