@@ -5,7 +5,8 @@ from esphome.const import CONF_ID
 from esphome import automation
 from .. import (
     bslamp2_ns, CODEOWNERS,
-    CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL, CONF_LEDS
+    CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL, FRONT_PANEL_LED_OPTIONS,
+    CONF_LEDS
 )
 
 AUTO_LOAD = ["xiaomi_bslamp2"]
@@ -29,7 +30,6 @@ def to_code(config):
     front_panel_hal_var = yield cg.get_variable(config[CONF_FRONT_PANEL_HAL_ID])
     cg.add(var.set_parent(front_panel_hal_var))
 
-
 def maybe_simple_leds_value(schema):
     def validator(value):
         if isinstance(value, dict):
@@ -37,19 +37,48 @@ def maybe_simple_leds_value(schema):
         return schema({ "leds": value })
     return validator
 
-@automation.register_action(
-    "output.set_leds",
-    SetLEDsAction,
-    cv.Schema(
-        maybe_simple_leds_value(cv.Schema({
-            cv.GenerateID(CONF_ID): cv.use_id(XiaomiBslamp2FrontPanelOutput),
-            cv.Required(CONF_LEDS): cv.templatable(cv.uint16_t),
-        }))
-    )
+FRONT_PANEL_LED_SCHEMA = cv.Schema(
+    maybe_simple_leds_value(cv.Schema({
+        cv.GenerateID(CONF_ID): cv.use_id(XiaomiBslamp2FrontPanelOutput),
+        cv.Required(CONF_LEDS): cv.ensure_list(cv.enum(FRONT_PANEL_LED_OPTIONS, upper=True)),
+    }))
 )
+
+@automation.register_action("front_panel.set_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
 async def set_leds_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID]) 
-    var = cg.new_Pvariable(action_id, template_arg, output_var)
-    template_ = await cg.templatable(config[CONF_LEDS], args, cg.uint16)
-    cg.add(var.set_leds(template_))
-    return var
+    action_var = cg.new_Pvariable(action_id, template_arg, output_var)
+    bits = (
+        [FRONT_PANEL_LED_OPTIONS['NONE']] +
+        [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
+    )
+    value = cg.RawExpression("|".join(map(str, bits)))
+    cg.add(action_var.set_mode(2))
+    cg.add(action_var.set_leds(value))
+    return action_var
+
+@automation.register_action("front_panel.turn_on_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
+async def turn_on_leds_to_code(config, action_id, template_arg, args):
+    output_var = await cg.get_variable(config[CONF_ID]) 
+    action_var = cg.new_Pvariable(action_id, template_arg, output_var)
+    bits = (
+        [FRONT_PANEL_LED_OPTIONS['NONE']] +
+        [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
+    )
+    value = cg.RawExpression("|".join(map(str, bits)))
+    cg.add(action_var.set_mode(1))
+    cg.add(action_var.set_leds(value))
+    return action_var
+
+@automation.register_action("front_panel.turn_off_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
+async def turn_off_leds_to_code(config, action_id, template_arg, args):
+    output_var = await cg.get_variable(config[CONF_ID]) 
+    action_var = cg.new_Pvariable(action_id, template_arg, output_var)
+    bits = (
+        [FRONT_PANEL_LED_OPTIONS['NONE']] +
+        [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
+    )
+    value = cg.RawExpression("|".join(map(str, bits)))
+    cg.add(action_var.set_mode(0))
+    cg.add(action_var.set_leds(value))
+    return action_var

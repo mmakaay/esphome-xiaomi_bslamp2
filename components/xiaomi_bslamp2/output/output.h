@@ -27,6 +27,14 @@ class XiaomiBslamp2FrontPanelOutput : public output::FloatOutput, public Compone
     front_panel_->set_leds(leds);
   }
 
+  void turn_on_leds(uint16_t leds) {
+    front_panel_->turn_on_leds(leds);
+  }
+
+  void turn_off_leds(uint16_t leds) {
+    front_panel_->turn_off_leds(leds);
+  }
+
  protected:
   FrontPanelHAL *front_panel_;
 };

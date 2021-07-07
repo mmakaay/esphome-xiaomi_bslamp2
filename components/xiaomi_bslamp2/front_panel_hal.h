@@ -5,6 +5,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/esphal.h"
 #include <array>
+#include <cmath>
 
 namespace esphome {
 namespace xiaomi {
@@ -17,7 +18,10 @@ using EVENT = uint16_t;
 
 // clang-format off
 
-enum FrontPanelLeds {
+// Bit flags that are used for indicating the LEDs in the front panel. 
+// LED_1 is the slider LED closest to the power button.
+// LED_10 is the one closest to the color button.
+enum FrontPanelLEDs {
   LED_NONE  = 0,
   LED_POWER = 1 << 14,
   LED_COLOR = 1 << 12,
@@ -32,20 +36,6 @@ enum FrontPanelLeds {
   LED_9     = 1 << 1,
   LED_10    = 1,
 };
-
-// Combinations of LEDs that are use by the original firmware to
-// indicate the current brightness setting of the lamp..
-static const LED LED_LEVEL_0  = LED_NONE;
-static const LED LED_LEVEL_1  = LED_POWER | LED_COLOR | LED_1;
-static const LED LED_LEVEL_2  = LED_LEVEL_1 | LED_2;
-static const LED LED_LEVEL_3  = LED_LEVEL_2 | LED_3;
-static const LED LED_LEVEL_4  = LED_LEVEL_3 | LED_4;
-static const LED LED_LEVEL_5  = LED_LEVEL_4 | LED_5;
-static const LED LED_LEVEL_6  = LED_LEVEL_5 | LED_6;
-static const LED LED_LEVEL_7  = LED_LEVEL_6 | LED_7;
-static const LED LED_LEVEL_8  = LED_LEVEL_7 | LED_8;
-static const LED LED_LEVEL_9  = LED_LEVEL_8 | LED_9;
-static const LED LED_LEVEL_10 = LED_LEVEL_9 | LED_10;
 
 // This I2C command is used during front panel event handling.
 static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
@@ -230,6 +220,10 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
         }
       }
     }
+
+    if (led_state_ != last_led_state_) {
+        update_leds();
+    }
   }
 
   /**
@@ -237,7 +231,7 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * The input value is a bitwise OR-ed set of LED constants.
    */
   void turn_on_leds(uint16_t leds) {
-    set_leds_(led_state_ | leds);
+    led_state_ = led_state_ | 0b0000110000000000 | leds;
   }
 
   /**
@@ -245,7 +239,7 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * The input value is a bitwise OR-ed set of LED constants.
    */
   void turn_off_leds(uint16_t leds) {
-    set_leds_(led_state_ & ~leds);
+    led_state_ = (led_state_ | 0b0000110000000000) & ~leds;
   }
 
   /**
@@ -254,7 +248,14 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * LEDs that must be turned on. All other LEDs are turned off.
    */
   void set_leds(uint16_t leds) {
-    set_leds_(leds);
+    led_state_ = 0b0000110000000000 | leds;
+  }
+
+  void update_leds() {
+    led_msg_[2] = led_state_ >> 8;
+    led_msg_[3] = led_state_ & 0xff;
+    write_bytes_raw(led_msg_, MSG_LEN);
+    last_led_state_ = led_state_;
   }
 
   /**
@@ -266,31 +267,32 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * Level 0.0 means: turn off the front panel illumination.
    * The other levels are translated to one of the available levels,
    * represented by the level indicator (i.e. the illumination of the
-   * slider bar.)
+   * slider bar.) The power and color button are also turned on.
    */
   void set_light_level(float level) {
+    const LED base = LED_POWER | LED_COLOR | LED_1;
     if (level == 0.0f)
-      set_leds(LED_LEVEL_0);
+      set_leds(LED_NONE);
     else if (level < 0.15)
-      set_leds(LED_LEVEL_1);
+      set_leds(base);
     else if (level < 0.25)
-      set_leds(LED_LEVEL_2);
+      set_leds(base|LED_2);
     else if (level < 0.35)
-      set_leds(LED_LEVEL_3);
+      set_leds(base|LED_2|LED_3);
     else if (level < 0.45)
-      set_leds(LED_LEVEL_4);
+      set_leds(base|LED_2|LED_3|LED_4);
     else if (level < 0.55)
-      set_leds(LED_LEVEL_5);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5);
     else if (level < 0.65)
-      set_leds(LED_LEVEL_6);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6);
     else if (level < 0.75)
-      set_leds(LED_LEVEL_7);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7);
     else if (level < 0.85)
-      set_leds(LED_LEVEL_8);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8);
     else if (level < 0.95)
-      set_leds(LED_LEVEL_9);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9);
     else
-      set_leds(LED_LEVEL_10);
+      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9|LED_10);
   }
 
  protected:
@@ -302,13 +304,7 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
 
   MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
   uint16_t led_state_ = 0;
-
-  void set_leds_(uint16_t leds) {
-    led_state_ = 0b0000110000000000 | leds;
-    led_msg_[2] = led_state_ >> 8;
-    led_msg_[3] = led_state_ & 0xff;
-    write_bytes_raw(led_msg_, MSG_LEN);
-  }
+  uint16_t last_led_state_ = 0;
 };
 
 /**
