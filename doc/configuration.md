@@ -129,7 +129,7 @@ It is possible to control the night light mode separately. An example of this ca
 [example.yaml](../example.yaml), in which holding the power button is bound to activating the night
 light.
 
-### light.disco_on Action
+### `light.disco_on` Action
 
 This action sets the state of the light immediately (i.e. without waiting for the next main loop
 iteration), without saving the state to memory and without publishing the state change.
@@ -148,7 +148,7 @@ on_...:
 The possible configuration options for this Action are the same as those for the standard
 `light.turn_on` Action.
 
-### light.disco_off Action
+### `light.disco_off` Action
 
 This action turns off the disco mode by restoring the state of the lamp to the last known state from
 before using the disco mode.
@@ -198,7 +198,7 @@ light:
     ..
 ```
 
-*Note: duplicate template names are ok, as long as they are within their own group. If you use
+*Note: Duplicate template names are ok, as long as they are within their own group. If you use
 duplicate preset names within a single group, then the last preset will override the earlier
 one(s).*
 
@@ -348,8 +348,9 @@ sensor:
 ## Component: output
 
 The (float) output component is linked to the front panel illumination + level indicator. Setting
-this output to value 0.0 will turn off the frontpanel illumination. Other values, up to 1.0, will
-turn on the illumination and will set the level indicator to the requested level (in 10 steps).
+this output (using the standard `output.set_level` action) to value 0.0 will turn off the frontpanel
+illumination. Other values, up to 1.0, will turn on the illumination and will set the level indicator
+to the requested level (in 10 steps).
 
 ```yaml
 output:
@@ -361,6 +362,97 @@ output:
 
 * **id** (**Required**, ID): The id to use for this output component.
 * All other options from [Output](https://esphome.io/components/output/index.html)
+
+### Addressing the LEDs of the illumination individually
+
+While the standard `output.set_level` action emulates the front panel illumination behavior
+of the original device firmware, it is also possible to control all of the LEDs for this
+illumination individually, in case you need some different behavior, e.g. leaving the
+power button on at night, so the user can easily find it in the dark.
+
+To address the LEDs, the following identifiers can be used in your YAML configuration:
+
+* `POWER` : The power button illumination.
+* `COLOR` : The color button illumination.
+* `1`, `2`, .., `10` : The 10 LEDs on the slider, where LED `1` is closest to the
+  power button and LED `10` is closest to the color button.
+* `ALL` : represents all of the available LEDs
+* `NONE` : represents none of the available LEDs
+
+#### `front_panel.set_leds` Action
+
+This action turns on the provided LEDs, all other LEDs are turned off.
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds:
+            leds:
+              - POWER
+              - COLOR
+              - 1
+              - 2
+              - 3
+```
+
+The `leds:` key can also be omitted here, making the following action calls
+equivalent to the one above.
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds:
+            - POWER
+            - COLOR
+            - 1
+            - 2
+            - 3
+```
+ 
+This can also be written as:
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds: [ POWER, COLOR, 1, 2, 3 ]
+```
+
+If only one LED is specified, you are allowed to omit the list definition:
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds: POWER
+```
+
+#### `front_panel.turn_on_leds` Action
+
+This action turns on the provided LEDs, and leaves the rest of the LEDs as-is.
+The LEDs to affect are specified in the same wat as above for `front_panel.set_leds`.
+
+#### `front_panel.turn_off_leds` Action
+
+This action turns off the provided LEDs, and leaves the rest of the LEDs as-is.
+The LEDs to affect are specified in the same wat as above for `front_panel.set_leds`.
+
+#### `front_panel.update_leds` Action
+
+The previous actions only modify the required state for the front panel LEDs.
+Updating the actual state of the LEDs is done when the main loop for the
+output component is run by ESPHome.
+
+If you need the required state to be pushed to the LEDs immediately, regardless
+the main loop, then this action can ben used to take care of this.
+
+*Note: In most situations, you will not need to use this action explicitly
+to make the LEDs update. Only use it when you are sure that this is required.*
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds: POWER
+        - front_panel.update_leds:
+```
 
 ## Component: text_sensor
 

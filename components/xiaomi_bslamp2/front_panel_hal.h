@@ -5,32 +5,41 @@
 #include "esphome/core/component.h"
 #include "esphome/core/esphal.h"
 #include <array>
+#include <cmath>
 
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
 static const uint8_t MSG_LEN = 7;
-using MSG = uint8_t[7];
+using MSG = uint8_t[MSG_LEN];
+using LED = uint16_t;
+using EVENT = uint16_t;
 
 // clang-format off
 
-// The commands that are supported by the front panel component.
-static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-static const MSG TURN_ON      = {0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00};
-static const MSG TURN_OFF     = {0x02, 0x03, 0x0C, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_1  = {0x02, 0x03, 0x5E, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_2  = {0x02, 0x03, 0x5F, 0x00, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_3  = {0x02, 0x03, 0x5F, 0x80, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_4  = {0x02, 0x03, 0x5F, 0xC0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_5  = {0x02, 0x03, 0x5F, 0xE0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_6  = {0x02, 0x03, 0x5F, 0xF0, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_7  = {0x02, 0x03, 0x5F, 0xF8, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_8  = {0x02, 0x03, 0x5F, 0xFC, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_9  = {0x02, 0x03, 0x5F, 0xFE, 0x64, 0x00, 0x00};
-static const MSG SET_LEVEL_10 = {0x02, 0x03, 0x5F, 0xFF, 0x64, 0x00, 0x00};
+// Bit flags that are used for indicating the LEDs in the front panel. 
+// LED_1 is the slider LED closest to the power button.
+// LED_10 is the one closest to the color button.
+enum FrontPanelLEDs {
+  LED_ALL   = 16384 + 4096 + 1023,
+  LED_POWER = 16384,
+  LED_COLOR = 4096,
+  LED_1     = 512,
+  LED_2     = 256,
+  LED_3     = 128,
+  LED_4     = 64,
+  LED_5     = 32,
+  LED_6     = 16,
+  LED_7     = 8,
+  LED_8     = 4,
+  LED_9     = 2,
+  LED_10    = 1,
+  LED_NONE  = 0,
+};
 
-using EVENT = uint16_t;
+// This I2C command is used during front panel event handling.
+static const MSG READY_FOR_EV = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
 // Bit flags that are used for specifying an event.
 // Events are registered using the following bit pattern
@@ -212,39 +221,80 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
         }
       }
     }
+
+    if (led_state_ != last_led_state_) {
+        update_leds();
+    }
+  }
+
+  /**
+   * Turn on one or more LEDs (leaving the state of the other LEDs intact).
+   * The input value is a bitwise OR-ed set of LED constants.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
+   */
+  void turn_on_leds(uint16_t leds) {
+    led_state_ = led_state_ | 0b0000110000000000 | leds;
+  }
+
+  /**
+   * Turn off one or more LEDs (leaving the state of the other LEDs intact).
+   * The input value is a bitwise OR-ed set of LED constants.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
+   */
+  void turn_off_leds(uint16_t leds) {
+    led_state_ = (led_state_ | 0b0000110000000000) & ~leds;
+  }
+
+  /**
+   * Updates the state of the LEDs according to the provided input.
+   * The input value is a bitwise OR-ed set of LED constants, representing the
+   * LEDs that must be turned on. All other LEDs are turned off.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
+   */
+  void set_leds(uint16_t leds) {
+    turn_off_leds(LED_ALL);
+    turn_on_leds(leds);
+  }
+
+  /**
+   * Activate the LEDs according to the currently stored LED state. This method
+   * will be called automatically by the main loop. You can call this method,
+   * in case you need to update the LED state right away.
+   */
+  void update_leds() {
+    led_msg_[2] = led_state_ >> 8;
+    led_msg_[3] = led_state_ & 0xff;
+    write_bytes_raw(led_msg_, MSG_LEN);
+    last_led_state_ = led_state_;
   }
 
   /**
    * Sets the front panel illumination to the provided level (0.0 - 1.0).
    *
+   * This implements the behavior of the original firmware for representing
+   * the lamp's brightness.
+   *
    * Level 0.0 means: turn off the front panel illumination.
    * The other levels are translated to one of the available levels,
    * represented by the level indicator (i.e. the illumination of the
-   * slider bar.)
+   * slider bar.) The power and color button are also turned on.
    */
   void set_light_level(float level) {
-    if (level == 0.0f)
-      write_bytes_raw(TURN_OFF, MSG_LEN);
-    else if (level < 0.15)
-      write_bytes_raw(SET_LEVEL_1, MSG_LEN);
-    else if (level < 0.25)
-      write_bytes_raw(SET_LEVEL_2, MSG_LEN);
-    else if (level < 0.35)
-      write_bytes_raw(SET_LEVEL_3, MSG_LEN);
-    else if (level < 0.45)
-      write_bytes_raw(SET_LEVEL_4, MSG_LEN);
-    else if (level < 0.55)
-      write_bytes_raw(SET_LEVEL_5, MSG_LEN);
-    else if (level < 0.65)
-      write_bytes_raw(SET_LEVEL_6, MSG_LEN);
-    else if (level < 0.75)
-      write_bytes_raw(SET_LEVEL_7, MSG_LEN);
-    else if (level < 0.85)
-      write_bytes_raw(SET_LEVEL_8, MSG_LEN);
-    else if (level < 0.95)
-      write_bytes_raw(SET_LEVEL_9, MSG_LEN);
-    else
-      write_bytes_raw(SET_LEVEL_10, MSG_LEN);
+    turn_off_leds(LED_ALL);
+    if (level == 0.00f) return;
+    turn_on_leds(LED_POWER | LED_COLOR | LED_1);
+    if (level >= 0.15f) turn_on_leds(LED_2);
+    if (level >= 0.25f) turn_on_leds(LED_3);
+    if (level >= 0.35f) turn_on_leds(LED_4);
+    if (level >= 0.45f) turn_on_leds(LED_5);
+    if (level >= 0.55f) turn_on_leds(LED_6);
+    if (level >= 0.65f) turn_on_leds(LED_7);
+    if (level >= 0.75f) turn_on_leds(LED_8);
+    if (level >= 0.85f) turn_on_leds(LED_9);
+    if (level >= 0.95f) turn_on_leds(LED_10);
   }
 
  protected:
@@ -253,6 +303,10 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   volatile int event_id_ = 0;
   int last_event_id_ = 0;
   CallbackManager<void(EVENT)> event_callback_{};
+
+  uint16_t led_state_ = 0;
+  uint16_t last_led_state_ = 0;
+  MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
 };
 
 /**

@@ -13,7 +13,6 @@ from esphome.const import (
 
 CODEOWNERS = ["@mmakaay"]
 
-CONF_HUB_ID = "xiaomi_bslamp2_hub_id"
 CONF_RED_ID = "red_id"
 CONF_GREEN_ID = "green_id"
 CONF_BLUE_ID = "blue_id"
@@ -25,8 +24,8 @@ CONF_MASTER2_ID = "master2_id"
 CONF_FP_I2C_ID = "front_panel_i2c_id"
 CONF_LIGHT_HAL_ID = "light_hal_id"
 CONF_FRONT_PANEL_HAL_ID = "front_panel_hal_id"
-
 CONF_ON_BRIGHTNESS = "on_brightness"
+CONF_LEDS = "leds"
 
 AUTO_LOAD = ["ledc", "output", "i2c"]
 
@@ -34,6 +33,24 @@ xiaomi_ns = cg.esphome_ns.namespace("xiaomi")
 bslamp2_ns = xiaomi_ns.namespace("bslamp2")
 LightHAL = bslamp2_ns.class_("LightHAL", cg.Component)
 FrontPanelHAL = bslamp2_ns.class_("FrontPanelHAL", cg.Component, I2CDevice)
+
+FrontPanelLEDs = bslamp2_ns.enum("FrontPanelLEDs")
+FRONT_PANEL_LED_OPTIONS = {
+    "NONE": FrontPanelLEDs.LED_NONE,
+    "ALL": FrontPanelLEDs.LED_ALL,
+    "POWER": FrontPanelLEDs.LED_POWER,
+    "COLOR": FrontPanelLEDs.LED_COLOR,
+    "1": FrontPanelLEDs.LED_1,
+    "2": FrontPanelLEDs.LED_2,
+    "3": FrontPanelLEDs.LED_3,
+    "4": FrontPanelLEDs.LED_4,
+    "5": FrontPanelLEDs.LED_5,
+    "6": FrontPanelLEDs.LED_6,
+    "7": FrontPanelLEDs.LED_7,
+    "8": FrontPanelLEDs.LED_8,
+    "9": FrontPanelLEDs.LED_9,
+    "10": FrontPanelLEDs.LED_10,
+}
 
 CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     # RGBWW Light
