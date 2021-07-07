@@ -409,7 +409,7 @@ equivalent to the one above.
             - 3
 ```
  
-and
+This can also be written as:
 
 ```yaml
     on_...:
@@ -417,7 +417,7 @@ and
         - front_panel.set_leds: [ POWER, COLOR, 1, 2, 3 ]
 ```
 
-If only one let is specified, you can also omit the list;
+If only one LED is specified, you are allowed to omit the list;
 
 ```yaml
     on_...:
