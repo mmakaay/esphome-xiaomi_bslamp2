@@ -22,19 +22,20 @@ using EVENT = uint16_t;
 // LED_1 is the slider LED closest to the power button.
 // LED_10 is the one closest to the color button.
 enum FrontPanelLEDs {
-  LED_NONE  = 0,
-  LED_POWER = 1 << 14,
-  LED_COLOR = 1 << 12,
-  LED_1     = 1 << 9,
-  LED_2     = 1 << 8,
-  LED_3     = 1 << 7,
-  LED_4     = 1 << 6,
-  LED_5     = 1 << 5,
-  LED_6     = 1 << 4,
-  LED_7     = 1 << 3,
-  LED_8     = 1 << 2,
-  LED_9     = 1 << 1,
+  LED_ALL   = 32768 + 8192 + 1023,
+  LED_POWER = 32768,
+  LED_COLOR = 8192,
+  LED_1     = 512,
+  LED_2     = 256,
+  LED_3     = 128,
+  LED_4     = 64,
+  LED_5     = 32,
+  LED_6     = 16,
+  LED_7     = 8,
+  LED_8     = 4,
+  LED_9     = 2,
   LED_10    = 1,
+  LED_NONE  = 0,
 };
 
 // This I2C command is used during front panel event handling.
@@ -229,6 +230,8 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   /**
    * Turn on one or more LEDs (leaving the state of the other LEDs intact).
    * The input value is a bitwise OR-ed set of LED constants.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
    */
   void turn_on_leds(uint16_t leds) {
     led_state_ = led_state_ | 0b0000110000000000 | leds;
@@ -237,6 +240,8 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   /**
    * Turn off one or more LEDs (leaving the state of the other LEDs intact).
    * The input value is a bitwise OR-ed set of LED constants.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
    */
   void turn_off_leds(uint16_t leds) {
     led_state_ = (led_state_ | 0b0000110000000000) & ~leds;
@@ -246,11 +251,19 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * Updates the state of the LEDs according to the provided input.
    * The input value is a bitwise OR-ed set of LED constants, representing the
    * LEDs that must be turned on. All other LEDs are turned off.
+   * Only after a call to update_leds() (handled by default from the main loop),
+   * the new state will be activated.
    */
   void set_leds(uint16_t leds) {
-    led_state_ = 0b0000110000000000 | leds;
+    turn_off_leds(LED_ALL);
+    turn_on_leds(leds);
   }
 
+  /**
+   * Activate the LEDs according to the currently stored LED state. This method
+   * will be called automatically by the main loop. You can call this method,
+   * in case you need to update the LED state right away.
+   */
   void update_leds() {
     led_msg_[2] = led_state_ >> 8;
     led_msg_[3] = led_state_ & 0xff;
@@ -270,29 +283,18 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * slider bar.) The power and color button are also turned on.
    */
   void set_light_level(float level) {
-    const LED base = LED_POWER | LED_COLOR | LED_1;
-    if (level == 0.0f)
-      set_leds(LED_NONE);
-    else if (level < 0.15)
-      set_leds(base);
-    else if (level < 0.25)
-      set_leds(base|LED_2);
-    else if (level < 0.35)
-      set_leds(base|LED_2|LED_3);
-    else if (level < 0.45)
-      set_leds(base|LED_2|LED_3|LED_4);
-    else if (level < 0.55)
-      set_leds(base|LED_2|LED_3|LED_4|LED_5);
-    else if (level < 0.65)
-      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6);
-    else if (level < 0.75)
-      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7);
-    else if (level < 0.85)
-      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8);
-    else if (level < 0.95)
-      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9);
-    else
-      set_leds(base|LED_2|LED_3|LED_4|LED_5|LED_6|LED_7|LED_8|LED_9|LED_10);
+    turn_off_leds(LED_ALL);
+    if (level == 0.00f) return;
+    turn_on_leds(LED_POWER | LED_COLOR | LED_1);
+    if (level >= 0.15f) turn_on_leds(LED_2);
+    if (level >= 0.25f) turn_on_leds(LED_3);
+    if (level >= 0.35f) turn_on_leds(LED_4);
+    if (level >= 0.45f) turn_on_leds(LED_5);
+    if (level >= 0.55f) turn_on_leds(LED_6);
+    if (level >= 0.65f) turn_on_leds(LED_7);
+    if (level >= 0.75f) turn_on_leds(LED_8);
+    if (level >= 0.85f) turn_on_leds(LED_9);
+    if (level >= 0.95f) turn_on_leds(LED_10);
   }
 
  protected:
@@ -302,9 +304,9 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   int last_event_id_ = 0;
   CallbackManager<void(EVENT)> event_callback_{};
 
-  MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
   uint16_t led_state_ = 0;
   uint16_t last_led_state_ = 0;
+  MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
 };
 
 /**
