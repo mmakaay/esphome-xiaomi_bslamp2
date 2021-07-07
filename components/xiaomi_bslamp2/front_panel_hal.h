@@ -22,9 +22,9 @@ using EVENT = uint16_t;
 // LED_1 is the slider LED closest to the power button.
 // LED_10 is the one closest to the color button.
 enum FrontPanelLEDs {
-  LED_ALL   = 32768 + 8192 + 1023,
-  LED_POWER = 32768,
-  LED_COLOR = 8192,
+  LED_ALL   = 16384 + 4096 + 1023,
+  LED_POWER = 16384,
+  LED_COLOR = 4096,
   LED_1     = 512,
   LED_2     = 256,
   LED_3     = 128,

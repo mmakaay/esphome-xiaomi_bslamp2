@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Note**: This release requires ESPHome v1.19.0 or newer.
 
+### Added
+- It is now possible to address the LEDs in the front panel of the device individually.
+  There are 12 LEDs in total: the power button, the color button and 10 LEDs that are
+  used by the original firmware to represent the lamp's current brightness setting.
+  The `output` component for the lamp was updated to provide access to the individual LEDs. 
+  Check out the [documentation guide](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/main/doc/configuration.md) 
+  for details on how to control the individual LEDs.
+
 ### Changed
 - Made it possible to use lambdas with the `preset.activate` automation. This makes it
   possible to link the action to an api service, which exposes the preset functionality

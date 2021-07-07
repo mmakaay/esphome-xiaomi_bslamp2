@@ -14,6 +14,7 @@ AUTO_LOAD = ["xiaomi_bslamp2"]
 XiaomiBslamp2FrontPanelOutput = bslamp2_ns.class_(
     "XiaomiBslamp2FrontPanelOutput", output.FloatOutput, cg.Component)
 SetLEDsAction = bslamp2_ns.class_("SetLEDsAction", automation.Action)
+UpdateLEDsAction = bslamp2_ns.class_("UpdateLEDsAction", automation.Action)
 
 CONFIG_SCHEMA = output.FLOAT_OUTPUT_SCHEMA.extend(
     {
@@ -36,6 +37,10 @@ def maybe_simple_leds_value(schema):
             return schema(value)
         return schema({ "leds": value })
     return validator
+
+FRONT_PANEL_SCHEMA = cv.Schema({
+    cv.GenerateID(CONF_ID): cv.use_id(XiaomiBslamp2FrontPanelOutput),
+})
 
 FRONT_PANEL_LED_SCHEMA = cv.Schema(
     maybe_simple_leds_value(cv.Schema({
@@ -81,4 +86,10 @@ async def turn_off_leds_to_code(config, action_id, template_arg, args):
     value = cg.RawExpression("|".join(map(str, bits)))
     cg.add(action_var.set_mode(0))
     cg.add(action_var.set_leds(value))
+    return action_var
+
+@automation.register_action("front_panel.update_leds", UpdateLEDsAction, FRONT_PANEL_SCHEMA)
+async def update_leds_to_code(config, action_id, template_arg, args):
+    output_var = await cg.get_variable(config[CONF_ID]) 
+    action_var = cg.new_Pvariable(action_id, template_arg, output_var)
     return action_var

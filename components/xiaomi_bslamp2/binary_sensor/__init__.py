@@ -33,6 +33,7 @@ def validate_binary_sensor(conf):
     if CONF_PART in conf and CONF_FOR in conf:
         raise cv.Invalid("Specify only one of [part] or [for]")
     if CONF_PART in conf and not CONF_FOR in conf:
+        # Backward compatibility.
         conf[CONF_FOR] = conf[CONF_PART]
     if CONF_FOR not in conf:
         raise cv.Invalid("'for' is a required option for [binary_sensor.xiaomi_bslamp2]")

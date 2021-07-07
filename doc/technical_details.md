@@ -170,8 +170,8 @@ The commands that are used by the original firmware are these:
 *Note: The `READY FOR EVENT` command is only used when a new event is provided by the front panel.
 Information about this command can be found in the next section.*
 
-Further experimentation has uncovered that the LEDs of the front panel (power, color, level 1 - 10)
-can be enabled individually. The original firmware does not use this, but I built support for it
+Further experimentation has uncovered that the LEDs of the front panel can be controlled
+individually. The original firmware does not use this feature, but I built support for it
 into the custom firmware, because it opens up some nice possibilities.
 
 How this works, is that the general format of the "set LEDs" command is: `02 03 XX XX 64 00 00`.
@@ -192,6 +192,9 @@ constructed by bitwise OR-ing the following LED bit values:
 | LED 8         | 00001100 00000100 |
 | LED 9         | 00001100 00000010 |
 | LED 10        | 00001100 00000001 |
+
+LED 1 is the one closest to the power button.
+LED 10 is the one closest to the color button.
 
 **Reading events from the front panel**
 

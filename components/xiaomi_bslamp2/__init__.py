@@ -37,6 +37,7 @@ FrontPanelHAL = bslamp2_ns.class_("FrontPanelHAL", cg.Component, I2CDevice)
 FrontPanelLEDs = bslamp2_ns.enum("FrontPanelLEDs")
 FRONT_PANEL_LED_OPTIONS = {
     "NONE": FrontPanelLEDs.LED_NONE,
+    "ALL": FrontPanelLEDs.LED_ALL,
     "POWER": FrontPanelLEDs.LED_POWER,
     "COLOR": FrontPanelLEDs.LED_COLOR,
     "1": FrontPanelLEDs.LED_1,

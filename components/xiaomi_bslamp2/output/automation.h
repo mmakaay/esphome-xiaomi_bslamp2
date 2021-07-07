@@ -37,6 +37,18 @@ template<typename... Ts> class SetLEDsAction : public Action<Ts...> {
   XiaomiBslamp2FrontPanelOutput *parent_;
 };
 
+template<typename... Ts> class UpdateLEDsAction : public Action<Ts...> {
+ public:
+  explicit UpdateLEDsAction(XiaomiBslamp2FrontPanelOutput *parent) : parent_(parent) {}
+
+  void play(Ts... x) override {
+    parent_->update_leds();
+  }
+
+ protected:
+  XiaomiBslamp2FrontPanelOutput *parent_;
+};
+
 }  // namespace bslamp2
 }  // namespace xiaomi
 }  // namespace esphome
