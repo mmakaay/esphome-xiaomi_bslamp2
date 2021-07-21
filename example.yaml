@@ -75,9 +75,8 @@ ota:
           transition_length: 0s
   on_progress:
     then:
-      - output.set_level:
-          id: ${id_front_panel_illumination}
-          level: !lambda return (x / 100.0f);
+      - front_panel.set_level: !lambda return (x / 100.0f);
+      - front_panel.update_leds:
   on_end:
     then:
       - light.disco_on:

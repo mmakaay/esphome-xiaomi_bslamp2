@@ -37,6 +37,21 @@ template<typename... Ts> class SetLEDsAction : public Action<Ts...> {
   XiaomiBslamp2FrontPanelOutput *parent_;
 };
 
+template<typename... Ts> class SetLevelAction : public Action<Ts...> {
+ public:
+  explicit SetLevelAction(XiaomiBslamp2FrontPanelOutput *parent) : parent_(parent) {}
+
+  TEMPLATABLE_VALUE(float, level)
+
+  void play(Ts... x) override {
+    parent_->set_level(this->level_.value(x...));
+    parent_->update_leds();
+  }
+
+ protected:
+  XiaomiBslamp2FrontPanelOutput *parent_;
+};
+
 template<typename... Ts> class UpdateLEDsAction : public Action<Ts...> {
  public:
   explicit UpdateLEDsAction(XiaomiBslamp2FrontPanelOutput *parent) : parent_(parent) {}
