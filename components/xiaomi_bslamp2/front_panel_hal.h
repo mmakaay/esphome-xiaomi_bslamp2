@@ -22,20 +22,21 @@ using EVENT = uint16_t;
 // LED_1 is the slider LED closest to the power button.
 // LED_10 is the one closest to the color button.
 enum FrontPanelLEDs {
-  LED_ALL   = 16384 + 4096 + 1023,
-  LED_POWER = 16384,
-  LED_COLOR = 4096,
-  LED_1     = 512,
-  LED_2     = 256,
-  LED_3     = 128,
-  LED_4     = 64,
-  LED_5     = 32,
-  LED_6     = 16,
-  LED_7     = 8,
-  LED_8     = 4,
-  LED_9     = 2,
-  LED_10    = 1,
-  LED_NONE  = 0,
+  LED_ALL        = 16384 + 4096 + 1023,
+  LED_ALL_SLIDER = 512 + 256 + 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1,
+  LED_POWER      = 16384,
+  LED_COLOR      = 4096,
+  LED_1          = 512,
+  LED_2          = 256,
+  LED_3          = 128,
+  LED_4          = 64,
+  LED_5          = 32,
+  LED_6          = 16,
+  LED_7          = 8,
+  LED_8          = 4,
+  LED_9          = 2,
+  LED_10         = 1,
+  LED_NONE       = 0,
 };
 
 // This I2C command is used during front panel event handling.
@@ -272,20 +273,18 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   }
 
   /**
-   * Sets the front panel illumination to the provided level (0.0 - 1.0).
+   * Sets the front panel slider illumination to the provided level,
+   * based on a float input (0.0 - 1.0).
    *
    * This implements the behavior of the original firmware for representing
    * the lamp's brightness.
    *
-   * Level 0.0 means: turn off the front panel illumination.
-   * The other levels are translated to one of the available levels,
-   * represented by the level indicator (i.e. the illumination of the
-   * slider bar.) The power and color button are also turned on.
+   * Level 0.0 means: turn off the slider illumination.
+   * The other levels are translated to one of the available levels.
    */
-  void set_light_level(float level) {
-    turn_off_leds(LED_ALL);
+  void set_slider_level(float level) {
+    turn_off_leds(LED_ALL_SLIDER);
     if (level == 0.00f) return;
-    turn_on_leds(LED_POWER | LED_COLOR | LED_1);
     if (level >= 0.15f) turn_on_leds(LED_2);
     if (level >= 0.25f) turn_on_leds(LED_3);
     if (level >= 0.35f) turn_on_leds(LED_4);

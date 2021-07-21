@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0]
 
-**Note**: This release requires ESPHome v1.19.0 or newer.
+**Note**: This release requires ESPHome v1.20.0 or newer.
 
 ### Added
 - It is now possible to address the LEDs in the front panel of the device individually.
@@ -14,7 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   used by the original firmware to represent the lamp's current brightness setting.
   The `output` component for the lamp was updated to provide access to the individual LEDs. 
   Check out the [documentation guide](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/main/doc/configuration.md) 
-  for details on how to control the individual LEDs.
+  for details on how to control these.
+  Thanks to @Stewie3112 for the feature request that triggered this development!
+- Implemented support for visual feedback during the OTA update process in the
+  `example.yaml` file: the light becomes blue during flahsing, the brightness slider
+  represents the progress, on failure the light flashes red and on success the
+  light flashes green.
 
 ### Changed
 - Made it possible to use lambdas with the `preset.activate` automation. This makes it

@@ -20,7 +20,16 @@ class XiaomiBslamp2FrontPanelOutput : public output::FloatOutput, public Compone
   }
 
   void write_state(float level) {
-    front_panel_->set_light_level(level);
+    if (level > 0) {
+      turn_on_leds(LED_POWER | LED_COLOR);
+      set_level(level);
+    } else {
+      turn_off_leds(LED_ALL);
+    }
+  }
+
+  void set_level(float level) {
+    front_panel_->set_slider_level(level);
   }
 
   void set_leds(uint16_t leds) {

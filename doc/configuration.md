@@ -435,6 +435,17 @@ The LEDs to affect are specified in the same wat as above for `front_panel.set_l
 This action turns off the provided LEDs, and leaves the rest of the LEDs as-is.
 The LEDs to affect are specified in the same wat as above for `front_panel.set_leds`.
 
+#### `front_panel.set_level` Action
+
+This action works like the `output.set_level` action, but it only updates the
+LEDs of the slider. The LEDs for the power and color button are left as-is.
+
+```yaml
+    on_...:
+      then:
+        - front_panel.set_leds: 0.5
+```
+
 #### `front_panel.update_leds` Action
 
 The previous actions only modify the required state for the front panel LEDs.
