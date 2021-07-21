@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The `output` component for the lamp was updated to provide access to the individual LEDs. 
   Check out the [documentation guide](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/main/doc/configuration.md) 
   for details on how to control these.
+  Thanks to @Stewie3112 for the feature request that triggered this development!
 - Implemented support for visual feedback during the OTA update process in the
-  `example.yaml` file: the light becomes blue during flahsing, the brightness bar
+  `example.yaml` file: the light becomes blue during flahsing, the brightness slider
   represents the progress, on failure the light flashes red and on success the
   light flashes green.
 
