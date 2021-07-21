@@ -285,15 +285,16 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   void set_slider_level(float level) {
     turn_off_leds(LED_ALL_SLIDER);
     if (level == 0.00f) return;
-    if (level >= 0.15f) turn_on_leds(LED_2);
-    if (level >= 0.25f) turn_on_leds(LED_3);
-    if (level >= 0.35f) turn_on_leds(LED_4);
-    if (level >= 0.45f) turn_on_leds(LED_5);
-    if (level >= 0.55f) turn_on_leds(LED_6);
-    if (level >= 0.65f) turn_on_leds(LED_7);
-    if (level >= 0.75f) turn_on_leds(LED_8);
-    if (level >= 0.85f) turn_on_leds(LED_9);
-    if (level >= 0.95f) turn_on_leds(LED_10);
+    if (level > 0.00f) turn_on_leds(LED_1);
+    if (level > 0.15f) turn_on_leds(LED_2);
+    if (level > 0.25f) turn_on_leds(LED_3);
+    if (level > 0.35f) turn_on_leds(LED_4);
+    if (level > 0.45f) turn_on_leds(LED_5);
+    if (level > 0.55f) turn_on_leds(LED_6);
+    if (level > 0.65f) turn_on_leds(LED_7);
+    if (level > 0.75f) turn_on_leds(LED_8);
+    if (level > 0.85f) turn_on_leds(LED_9);
+    if (level > 0.95f) turn_on_leds(LED_10);
   }
 
  protected:
