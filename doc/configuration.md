@@ -443,7 +443,7 @@ LEDs of the slider. The LEDs for the power and color button are left as-is.
 ```yaml
     on_...:
       then:
-        - front_panel.set_leds: 0.5
+        - front_panel.set_level: 0.5
 ```
 
 #### `front_panel.update_leds` Action
