@@ -28,11 +28,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
    */
   light::LightTraits get_traits() override {
     auto traits = light::LightTraits();
-    traits.set_supports_rgb(true);
-    traits.set_supports_color_temperature(true);
-    traits.set_supports_brightness(true);
-    traits.set_supports_rgb_white_value(false);
-    traits.set_supports_color_interlock(true);
+    traits.set_supported_color_modes({light::ColorMode::RGB, light::ColorMode::COLOR_TEMPERATURE});
     traits.set_min_mireds(MIRED_MIN);
     traits.set_max_mireds(MIRED_MAX);
     return traits;
