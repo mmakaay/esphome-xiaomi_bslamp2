@@ -178,10 +178,10 @@ USED_PRESETS = []
 def register_preset_action(value):
     if "group" in value and not isinstance(value["group"], Lambda):
         if "preset" in value and not isinstance(value["preset"], Lambda):
-            preset_id = [value['group'], value['preset']]
+            preset_data = [value['group'], value['preset']]
         else:
-            preset_id = [value["group"], None]
-        USED_PRESETS.append(preset_id)
+            preset_data = [value["group"], None]
+        USED_PRESETS.append(preset_data)
     return value
 
 @automation.register_action(
