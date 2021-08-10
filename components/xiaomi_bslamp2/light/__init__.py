@@ -213,6 +213,8 @@ def light_output_to_code(config):
     yield light.register_light(light_output_var, config)
     light_hal_var = yield cg.get_variable(config[CONF_LIGHT_HAL_ID])
     cg.add(light_output_var.set_parent(light_hal_var))
+    if hasattr(light, "types") and hasattr(light.types, "COLOR_MODES"):
+        cg.add_define('HAS_COLOR_MODES')
 
 @coroutine
 def on_brightness_to_code(config):
