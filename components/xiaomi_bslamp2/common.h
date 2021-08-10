@@ -1,5 +1,7 @@
 #pragma once
 
+#include "esphome/core/defines.h"
+
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {

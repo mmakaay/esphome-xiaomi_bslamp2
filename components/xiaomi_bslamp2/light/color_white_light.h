@@ -80,9 +80,15 @@ class ColorWhiteLight : public GPIOOutputs {
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_WHITE;
 
+#ifdef HAS_COLOR_MODES
     if (v.get_color_mode() != light::ColorMode::COLOR_TEMPERATURE) {
       return false;
     }
+#else
+    if (v.get_white() == 0.0f) {
+      return false;
+    }
+#endif
 
     auto temperature = clamp_temperature_(v.get_color_temperature());
     auto brightness = clamp_brightness_(v.get_brightness());
