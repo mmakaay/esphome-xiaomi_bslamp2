@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0-RC1]
 
 **Note**: This release requires ESPHome v1.21.0 and Home Assistant 2021.8.0 or newer.
+The code will compile with ESPHome v1.20.0, but the lamp will not be controllable
+through the Home Assistant GUI when using Home Assistant 2021.8.0 or newer.
+Only turn on/off and brightness will be available.
 
 ### Changed
 - The code has been made compatible with the new color mode support in Home Assistant.
