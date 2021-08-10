@@ -2,7 +2,7 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import light
 from esphome import automation
-from esphome.core import coroutine
+from esphome.core import coroutine, Lambda
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_COLOR_TEMPERATURE,
     CONF_STATE, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
@@ -39,10 +39,10 @@ PRESETS_SCHEMA = cv.Schema({
     })
 })
 
-def validate_preset(conf):
-    has_rgb = CONF_RED in conf or CONF_GREEN in conf or CONF_BLUE in conf
-    has_white = CONF_COLOR_TEMPERATURE in conf
-    has_effect = CONF_EFFECT in conf
+def validate_preset(config):
+    has_rgb = CONF_RED in config or CONF_GREEN in config or CONF_BLUE in config
+    has_white = CONF_COLOR_TEMPERATURE in config
+    has_effect = CONF_EFFECT in config
 
     # Check mutual exclusivity of preset options.
     if (has_rgb + has_white + has_effect) > 1:
@@ -50,19 +50,19 @@ def validate_preset(conf):
 
     # Check the color temperature value range.
     if has_white:
-        if conf[CONF_COLOR_TEMPERATURE] < MIRED_MIN or conf[CONF_COLOR_TEMPERATURE] > MIRED_MAX:
+        if config[CONF_COLOR_TEMPERATURE] < MIRED_MIN or config[CONF_COLOR_TEMPERATURE] > MIRED_MAX:
             raise cv.Invalid(f"The color temperature must be in the range {MIRED_MIN} - {MIRED_MAX}")
 
     # When defining an RGB color, it is allowed to omit RGB components that have value 0.
     if has_rgb:
-        if CONF_RED not in conf:
-            conf[CONF_RED] = 0
-        if CONF_GREEN not in conf:
-            conf[CONF_GREEN] = 0
-        if CONF_BLUE not in conf:
-            conf[CONF_BLUE] = 0
+        if CONF_RED not in config:
+            config[CONF_RED] = 0
+        if CONF_GREEN not in config:
+            config[CONF_GREEN] = 0
+        if CONF_BLUE not in config:
+            config[CONF_BLUE] = 0
 
-    return conf
+    return config
 
 PRESET_SCHEMA = cv.All(
     cv.Schema(
@@ -111,18 +111,18 @@ def maybe_simple_preset_action(schema):
         if isinstance(value, dict):
             return schema(value)
         value = value.lower()
-        conf = {}
+        config = {}
         if value == "next_group":
-            conf[CONF_NEXT] = CONF_GROUP
+            config[CONF_NEXT] = CONF_GROUP
         elif value == "next_preset":
-            conf[CONF_NEXT] = CONF_PRESET
+            config[CONF_NEXT] = CONF_PRESET
         elif "." not in value:
-            conf[CONF_GROUP] = value
+            config[CONF_GROUP] = value
         else:
             group, preset = value.split(".", 2)
-            conf[CONF_GROUP] = group
-            conf[CONF_PRESET] = preset
-        return schema(conf)
+            config[CONF_GROUP] = group
+            config[CONF_PRESET] = preset
+        return schema(config)
 
     return validator
 
@@ -173,10 +173,21 @@ def disco_action_off_to_code(config, action_id, template_arg, args):
     cg.add(var.set_disco_state(False))
     yield var
 
+USED_PRESETS = []
+
+def register_preset_action(value):
+    if "group" in value and not isinstance(value["group"], Lambda):
+        if "preset" in value and not isinstance(value["preset"], Lambda):
+            preset_id = [value['group'], value['preset']]
+        else:
+            preset_id = [value["group"], None]
+        USED_PRESETS.append(preset_id)
+    return value
+
 @automation.register_action(
     "preset.activate",
     ActivatePresetAction,
-    cv.Schema(
+    cv.All(
         maybe_simple_preset_action(cv.Any(
             cv.Schema({
                 cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
@@ -187,8 +198,9 @@ def disco_action_off_to_code(config, action_id, template_arg, args):
                 cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
                 cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True)
             })
-        ))
-    )
+        )),
+        register_preset_action
+    ),
 )
 def preset_activate_to_code(config, action_id, template_arg, args):
     presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
@@ -219,9 +231,9 @@ def light_output_to_code(config):
 @coroutine
 def on_brightness_to_code(config):
     light_output_var = yield cg.get_variable(config[CONF_OUTPUT_ID])
-    for conf in config.get(CONF_ON_BRIGHTNESS, []):
-        trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID], light_output_var)
-        yield automation.build_automation(trigger, [(float, "x")], conf)
+    for config in config.get(CONF_ON_BRIGHTNESS, []):
+        trigger = cg.new_Pvariable(config[CONF_TRIGGER_ID], light_output_var)
+        yield automation.build_automation(trigger, [(float, "x")], config)
 
 @coroutine
 def preset_to_code(config, preset_group, preset_name):
@@ -260,3 +272,15 @@ def to_code(config):
     yield light_output_to_code(config)
     yield on_brightness_to_code(config)
     yield presets_to_code(config)
+
+def validate(config):
+    valid_presets = config.get(CONF_PRESETS, {});
+    for group, preset in USED_PRESETS:
+        if group not in valid_presets:
+            raise cv.Invalid(f"Invalid light preset group '{group}' used")
+        if preset is not None and preset not in valid_presets[group]:
+            raise cv.Invalid(f"Invalid light preset '{group}.{preset}' used")
+    return config
+
+FINAL_VALIDATE_SCHEMA = cv.Schema(validate);
+
