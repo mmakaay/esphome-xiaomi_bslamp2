@@ -24,22 +24,12 @@ struct MyLightStateRTCState {
 /**
  * A custom LightState class for the Xiaomi Bedside Lamp 2.
  *
- * This class is used by the ColorTransitionHandler class to inspect if
- * an ongoing light color transition is active in the LightState object.
- *
- * It is also used by the DiscoAction to apply immediate light output
+ * It is used by the DiscoAction to apply immediate light output
  * updates, without saving or publishing the new state.
  */
-class XiaomiBslamp2LightState : public light::LightState, public LightStateTransformerInspector, public LightStateDiscoSupport {
+class XiaomiBslamp2LightState : public light::LightState, public LightStateDiscoSupport {
  public:
-  XiaomiBslamp2LightState(const std::string &name, XiaomiBslamp2LightOutput *output) : light::LightState(name, output) {
-    output->set_transformer_inspector(this);
-  }
-
-  bool is_active() { return transformer_ != nullptr; }
-  bool is_transition() { return transformer_->is_transition(); }
-  light::LightColorValues get_end_values() { return transformer_->get_end_values(); }
-  float get_progress() { return transformer_->get_progress(); }
+  XiaomiBslamp2LightState(const std::string &name, XiaomiBslamp2LightOutput *output) : light::LightState(name, output) { }
 
   void disco_stop() {
     MyLightStateRTCState recovered{};

@@ -3,7 +3,7 @@
 #include "../common.h"
 #include "../light_hal.h"
 #include "color_instant_handler.h"
-#include "color_transition_handler.h"
+#include "light_transformer.h"
 #include "esphome/components/ledc/ledc_output.h"
 
 namespace esphome {
@@ -42,6 +42,10 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
     return traits;
   }
 
+  std::unique_ptr<light::LightTransformer> create_default_transition() override {
+    return make_unique<XiaomiBslamp2LightTransitionTransformer>(light_);
+  }
+
   void add_on_light_mode_callback(std::function<void(std::string)> &&callback) {
     light_mode_callback_.add(std::move(callback));
   }
@@ -60,17 +64,17 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
     // transitioning to an end color. The transition handler will do its
     // own inspection to see if a transition is currently active or not.
     // Based on the outcome, use either the instant or transition handler.
-    GPIOOutputs *delegate;
-    if (transition_handler_->set_light_color_values(values)) {
-      delegate = transition_handler_;
-      light_mode_callback_.call(delegate->light_mode);
-      state_callback_.call(transition_handler_->get_end_values());
-    } else {
-      instant_handler_->set_light_color_values(values);
-      delegate = instant_handler_;
-      light_mode_callback_.call(delegate->light_mode);
-      state_callback_.call(values);
-    }
+    //GPIOOutputs *delegate;
+    //if (transition_handler_->set_light_color_values(values)) {
+    //  delegate = transition_handler_;
+    //  light_mode_callback_.call(delegate->light_mode);
+    //  state_callback_.call(transition_handler_->get_end_values());
+    //} else {
+    instant_handler_->set_light_color_values(values);
+    //delegate = instant_handler_;
+    light_mode_callback_.call(instant_handler_->light_mode);
+    state_callback_.call(values);
+    //}
 
     // Note: one might think that it is more logical to turn on the LED
     // circuitry master switch after setting the individual channels,
@@ -81,7 +85,9 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
       light_->turn_on();
 
     // Apply the current GPIO output levels from the selected handler.
-    light_->set_rgbw(delegate->red, delegate->green, delegate->blue, delegate->white);
+    light_->set_rgbw(
+      instant_handler_->red, instant_handler_->green, instant_handler_->blue,
+      instant_handler_->white);
 
     if (values.get_state() == 0)
       light_->turn_off();
@@ -89,21 +95,9 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 
  protected:
   LightHAL *light_;
-  ColorTransitionHandler *transition_handler_;
   ColorInstantHandler *instant_handler_ = new ColorInstantHandler();
   CallbackManager<void(std::string)> light_mode_callback_{};
   CallbackManager<void(light::LightColorValues)> state_callback_{};
-
-  friend class XiaomiBslamp2LightState;
-
-  /**
-   * Called by the XiaomiBslamp2LightState class, to set the object that can be
-   * used to access the protected LightTransformer data from the LightState
-   * object.
-   */
-  void set_transformer_inspector(LightStateTransformerInspector *exposer) {
-    transition_handler_ = new ColorTransitionHandler(exposer);
-  }
 };
 
 }  // namespace bslamp2
