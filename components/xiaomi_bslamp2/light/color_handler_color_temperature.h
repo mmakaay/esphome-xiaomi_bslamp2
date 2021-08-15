@@ -86,7 +86,7 @@ class ColorHandlerColorTemperature : public ColorHandler {
     }
 #else
     if (v.get_white() == 0.0f) {
-      return false
+      return false;
     }
 #endif
 
