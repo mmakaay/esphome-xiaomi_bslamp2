@@ -29,15 +29,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
    */
   light::LightTraits get_traits() override {
     auto traits = light::LightTraits();
-#ifdef HAS_COLOR_MODES
     traits.set_supported_color_modes({light::ColorMode::RGB, light::ColorMode::COLOR_TEMPERATURE});
-#else
-    traits.set_supports_rgb(true);
-    traits.set_supports_color_temperature(true);
-    traits.set_supports_brightness(true);
-    traits.set_supports_rgb_white_value(false);
-    traits.set_supports_color_interlock(true);
-#endif
     traits.set_min_mireds(MIRED_MIN);
     traits.set_max_mireds(MIRED_MAX);
     return traits;
@@ -73,10 +65,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
     if (values.get_state() != 0)
       light_->turn_on();
 
-    // Apply the current GPIO output levels from the selected handler.
-    light_->set_rgbw(
-      color_handler_chain->red, color_handler_chain->green, color_handler_chain->blue,
-      color_handler_chain->white);
+    // Apply the GPIO output levels as defined by the color handler.
+    light_->set_state(color_handler_chain);
 
     if (values.get_state() == 0)
       light_->turn_off();

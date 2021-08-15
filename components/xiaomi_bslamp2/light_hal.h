@@ -45,11 +45,17 @@ class LightHAL : Component, public GPIOOutputValues {
   void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1_pin_ = pin; }
   void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2_pin_ = pin; }
 
+  /**
+   * Turn on the master switch for the LEDs.
+   */
   void turn_on() {
     master1_pin_->turn_on();
     master2_pin_->turn_on();
   }
-
+ 
+  /**
+   * Turn off the master switch for the LEDs.
+   */
   void turn_off() {
     master1_pin_->turn_off();
     master2_pin_->turn_off();

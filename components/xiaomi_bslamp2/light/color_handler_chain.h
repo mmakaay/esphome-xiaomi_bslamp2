@@ -15,9 +15,8 @@ namespace xiaomi {
 namespace bslamp2 {
 
 /**
- * This class translates LightColorValues into GPIO duty cycles that
- * can be used for representing a requested light color on the
- * physical device.
+ * This class translates LightColorValues into GPIO duty cycles that can be
+ * used for representing a requested light color on the physical device.
  *
  * The code handles all known light modes for the device:
  *
@@ -29,10 +28,10 @@ namespace bslamp2 {
 class ColorHandlerChain : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
-    // The actual implementation of the various light modes is in
-    // separated targeted classes. These classes are called here
-    // in a chain of command-like pattern, to let the first one
-    // that can handle the light settings do the honours.
+    // The actual implementation of the various light modes is in separate
+    // targeted classes. These classes are called here in a chain of
+    // command-like pattern, to let the first one that can handle the light
+    // settings do the honours.
     if (off_light_->set_light_color_values(v))
       off_light_->copy_to(this);
     else if (night_light_->set_light_color_values(v))

@@ -36,11 +36,7 @@ class ColorHandlerNightLight : public ColorHandler {
     // This night light mode is activated when white light is selected.
     // Based on measurements using the original device firmware, so it
     // matches the night light of the original firmware.
-#ifdef HAS_COLOR_MODES
     if (v.get_color_mode() == light::ColorMode::COLOR_TEMPERATURE) {
-#else
-    if (v.get_white() > 0.0f) {
-#endif
       red = 0.968f;
       green = 0.968f;
       blue = 0.972f;
