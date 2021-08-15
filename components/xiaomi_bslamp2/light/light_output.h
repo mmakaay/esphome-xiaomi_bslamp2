@@ -2,8 +2,9 @@
 
 #include "../common.h"
 #include "../light_hal.h"
-#include "color_instant_handler.h"
+#include "color_handler_chain.h"
 #include "light_transformer.h"
+#include "esphome/core/component.h"
 #include "esphome/components/ledc/ledc_output.h"
 
 namespace esphome {
@@ -60,21 +61,9 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
   void write_state(light::LightState *state) {
     auto values = state->current_values;
 
-    // The color must either be set instantly, or the color is
-    // transitioning to an end color. The transition handler will do its
-    // own inspection to see if a transition is currently active or not.
-    // Based on the outcome, use either the instant or transition handler.
-    //GPIOOutputs *delegate;
-    //if (transition_handler_->set_light_color_values(values)) {
-    //  delegate = transition_handler_;
-    //  light_mode_callback_.call(delegate->light_mode);
-    //  state_callback_.call(transition_handler_->get_end_values());
-    //} else {
-    instant_handler_->set_light_color_values(values);
-    //delegate = instant_handler_;
-    light_mode_callback_.call(instant_handler_->light_mode);
+    color_handler_chain->set_light_color_values(values);
+    light_mode_callback_.call(color_handler_chain->light_mode);
     state_callback_.call(values);
-    //}
 
     // Note: one might think that it is more logical to turn on the LED
     // circuitry master switch after setting the individual channels,
@@ -86,8 +75,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 
     // Apply the current GPIO output levels from the selected handler.
     light_->set_rgbw(
-      instant_handler_->red, instant_handler_->green, instant_handler_->blue,
-      instant_handler_->white);
+      color_handler_chain->red, color_handler_chain->green, color_handler_chain->blue,
+      color_handler_chain->white);
 
     if (values.get_state() == 0)
       light_->turn_off();
@@ -95,7 +84,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 
  protected:
   LightHAL *light_;
-  ColorInstantHandler *instant_handler_ = new ColorInstantHandler();
+  ColorHandler *color_handler_chain = new ColorHandlerChain();
   CallbackManager<void(std::string)> light_mode_callback_{};
   CallbackManager<void(light::LightColorValues)> state_callback_{};
 };

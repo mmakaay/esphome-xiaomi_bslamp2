@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../common.h"
-#include "gpio_outputs.h"
-#include "light_modes.h"
+#include "../light_hal.h"
+#include "color_handler.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -22,7 +22,7 @@ namespace bslamp2 {
  * light mode toggle, then this still could be implemented through the
  * device's yaml configuration.
  */
-class ColorNightLight : public GPIOOutputs {
+class ColorHandlerNightLight : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_NIGHT;
@@ -36,7 +36,11 @@ class ColorNightLight : public GPIOOutputs {
     // This night light mode is activated when white light is selected.
     // Based on measurements using the original device firmware, so it
     // matches the night light of the original firmware.
-    if (v.get_white() > 0) {
+#ifdef HAS_COLOR_MODES
+    if (v.get_color_mode() == light::ColorMode::COLOR_TEMPERATURE) {
+#else
+    if (v.get_white() > 0.0f) {
+#endif
       red = 0.968f;
       green = 0.968f;
       blue = 0.972f;
