@@ -3,17 +3,18 @@
 # --------------------------------------------------------------------------
 
 substitutions:
-  name: bedside_lamp
+  name: bedside-lamp
   friendly_name: Bedside Lamp
   transition_length: 500ms
 
-  # Derive component identifiers, based on the name.
-  id_light: ${name}
-  id_light_mode: ${name}_light_mode
-  id_power_button: ${name}_power_button
-  id_color_button: ${name}_color_button
-  id_slider_level: ${name}_slider_level
-  id_front_panel_illumination: ${name}_front_panel_illumination
+  # Component identifiers.
+  prefix: bedside_lamp
+  id_light: ${prefix}
+  id_light_mode: ${prefix}_light_mode
+  id_power_button: ${prefix}_power_button
+  id_color_button: ${prefix}_color_button
+  id_slider_level: ${prefix}_slider_level
+  id_front_panel_illumination: ${prefix}_front_panel_illumination
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
@@ -38,9 +39,6 @@ api:
   # the RGBWW LEDs will turn off during the reboot, causing the light to
   # flicker.
   reboot_timeout: 0s
-
-api:
-  password: !secret api_password
 
   # If you want to use light presets (see below) from Home Assistant,
   # then you can expose the required functionality as a service here.
@@ -190,7 +188,7 @@ light:
 # for the lamp in Home Assistant.
 text_sensor:
   - platform: xiaomi_bslamp2
-    name: ${name} Light Mode
+    name: ${friendly_name} Light Mode
     id: ${id_light_mode}
 
 # This float output controls the front panel illumination + level indicator.
