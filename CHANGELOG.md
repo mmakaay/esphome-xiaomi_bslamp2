@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The code has been made compatible with the new color mode support in Home Assistant
   and ESPHome. 
+- The `example.yaml` has been updated to not make use of underscores in hostnames.
+  Using an underscore in the name yields a warning during the firmware compilation,
+  because hostnames should only contain letters, numbers and dashes "-".
 - My project will follow the Home Assistant / ESPHome versioning scheme from now on
   (<year>.<month>.<patch>), because the ESPHome project adopted this versioning
   scheme too.
