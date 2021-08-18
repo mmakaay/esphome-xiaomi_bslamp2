@@ -65,3 +65,11 @@ been introduced.
 ## Step 3: Release the new version
 
 Only after performing these tests successfully, the new version can be released.
+
+Before release, check if the minimum version requirement for ESPHome is documented
+correctly in the following files:
+
+  * doc/installation.md
+  * README.md
+  * CHANGELOG.md
+

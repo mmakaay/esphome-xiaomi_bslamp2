@@ -8,39 +8,86 @@ namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
-class LightHAL : Component {
- public:
-  void set_red_pin(ledc::LEDCOutput *pin) { red_ = pin; }
-  void set_green_pin(ledc::LEDCOutput *pin) { green_ = pin; }
-  void set_blue_pin(ledc::LEDCOutput *pin) { blue_ = pin; }
-  void set_white_pin(ledc::LEDCOutput *pin) { white_ = pin; }
-  void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1_ = pin; }
-  void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2_ = pin; }
+static const std::string LIGHT_MODE_UNKNOWN{"unknown"};
+static const std::string LIGHT_MODE_OFF{"off"};
+static const std::string LIGHT_MODE_RGB{"rgb"};
+static const std::string LIGHT_MODE_WHITE{"white"};
+static const std::string LIGHT_MODE_NIGHT{"night"};
 
-  void turn_on() {
-    master1_->turn_on();
-    master2_->turn_on();
+class GPIOOutputValues {
+ public:
+  float red = 0.0f;
+  float green = 0.0f;
+  float blue = 0.0f;
+  float white = 0.0f;
+  std::string light_mode = LIGHT_MODE_OFF;
+
+  /**
+   * Copies the current output values to another GPIOOutputValues object.
+   */
+  void copy_to(GPIOOutputValues *other) {
+    other->red = red;
+    other->green = green;
+    other->blue = blue;
+    other->white = white;
+    other->light_mode = light_mode;
   }
 
+  void log(const char *prefix) { ESP_LOGD(TAG, "%s: RGB=[%f,%f,%f], white=%f", prefix, red, green, blue, white); }
+};
+
+class LightHAL : Component, public GPIOOutputValues {
+ public:
+  void set_red_pin(ledc::LEDCOutput *pin) { red_pin_ = pin; }
+  void set_green_pin(ledc::LEDCOutput *pin) { green_pin_ = pin; }
+  void set_blue_pin(ledc::LEDCOutput *pin) { blue_pin_ = pin; }
+  void set_white_pin(ledc::LEDCOutput *pin) { white_pin_ = pin; }
+  void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1_pin_ = pin; }
+  void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2_pin_ = pin; }
+
+  /**
+   * Turn on the master switch for the LEDs.
+   */
+  void turn_on() {
+    master1_pin_->turn_on();
+    master2_pin_->turn_on();
+  }
+ 
+  /**
+   * Turn off the master switch for the LEDs.
+   */
   void turn_off() {
-    master1_->turn_off();
-    master2_->turn_off();
+    master1_pin_->turn_off();
+    master2_pin_->turn_off();
+  }
+
+  void set_state(GPIOOutputValues *new_state) {
+    new_state->copy_to(this);
+    red_pin_->set_level(this->red);
+    green_pin_->set_level(this->green);
+    blue_pin_->set_level(this->blue);
+    white_pin_->set_level(this->white);
   }
 
   void set_rgbw(float r, float g, float b, float w) {
-    red_->set_level(r);
-    green_->set_level(g);
-    blue_->set_level(b);
-    white_->set_level(w);
+    red_pin_->set_level(r);
+    green_pin_->set_level(g);
+    blue_pin_->set_level(b);
+    white_pin_->set_level(w);
+
+    this->red = r;
+    this->green = g;
+    this->blue = b;
+    this->white = w;
   }
 
  protected:
-  ledc::LEDCOutput *red_;
-  ledc::LEDCOutput *green_;
-  ledc::LEDCOutput *blue_;
-  ledc::LEDCOutput *white_;
-  gpio::GPIOBinaryOutput *master1_;
-  gpio::GPIOBinaryOutput *master2_;
+  ledc::LEDCOutput *red_pin_;
+  ledc::LEDCOutput *green_pin_;
+  ledc::LEDCOutput *blue_pin_;
+  ledc::LEDCOutput *white_pin_;
+  gpio::GPIOBinaryOutput *master1_pin_;
+  gpio::GPIOBinaryOutput *master2_pin_;
 };
 
 }  // namespace bslamp2

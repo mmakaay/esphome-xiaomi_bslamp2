@@ -4,20 +4,19 @@
 #include <stdexcept>
 
 #include "../common.h"
-#include "color_night_light.h"
-#include "color_off.h"
-#include "color_rgb_light.h"
-#include "color_white_light.h"
-#include "gpio_outputs.h"
+#include "color_handler.h"
+#include "color_handler_off.h"
+#include "color_handler_rgb.h"
+#include "color_handler_color_temperature.h"
+#include "color_handler_night_light.h"
 
 namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
 /**
- * This class translates LightColorValues into GPIO duty cycles that
- * can be used for representing a requested light color on the
- * physical device.
+ * This class translates LightColorValues into GPIO duty cycles that can be
+ * used for representing a requested light color on the physical device.
  *
  * The code handles all known light modes for the device:
  *
@@ -26,13 +25,13 @@ namespace bslamp2 {
  * - white light: based on color temperature + brightness
  * - RGB light: based on RGB values + brightness
  */
-class ColorInstantHandler : public GPIOOutputs {
+class ColorHandlerChain : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
-    // The actual implementation of the various light modes is in
-    // separated targeted classes. These classes are called here
-    // in a chain of command-like pattern, to let the first one
-    // that can handle the light settings do the honours.
+    // The actual implementation of the various light modes is in separate
+    // targeted classes. These classes are called here in a chain of
+    // command-like pattern, to let the first one that can handle the light
+    // settings do the honours.
     if (off_light_->set_light_color_values(v))
       off_light_->copy_to(this);
     else if (night_light_->set_light_color_values(v))
@@ -42,7 +41,7 @@ class ColorInstantHandler : public GPIOOutputs {
     else if (rgb_light_->set_light_color_values(v))
       rgb_light_->copy_to(this);
     else {
-      ESP_LOGE(TAG, "Light color error: (None of the GPIOOutputs classes handles the requested light state; defaulting to 'off'");
+      ESP_LOGE(TAG, "Light color error: (None of the ColorHandler classes handles the requested light state; defaulting to 'off'");
       off_light_->copy_to(this);
     }
 
@@ -50,10 +49,10 @@ class ColorInstantHandler : public GPIOOutputs {
   }
 
  protected:
-  GPIOOutputs *off_light_ = new ColorOff();
-  GPIOOutputs *rgb_light_ = new ColorRGBLight();
-  GPIOOutputs *white_light_ = new ColorWhiteLight();
-  GPIOOutputs *night_light_ = new ColorNightLight();
+  ColorHandler *off_light_ = new ColorHandlerOff();
+  ColorHandler *rgb_light_ = new ColorHandlerRGB();
+  ColorHandler *white_light_ = new ColorHandlerColorTemperature();
+  ColorHandler *night_light_ = new ColorHandlerNightLight();
 };
 
 }  // namespace bslamp2

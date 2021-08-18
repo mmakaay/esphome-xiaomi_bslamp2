@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../common.h"
-#include "gpio_outputs.h"
-#include "light_modes.h"
+#include "../light_hal.h"
+#include "color_handler.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -11,7 +11,7 @@ namespace bslamp2 {
 /**
  * This class can handle the GPIO outputs in case the light of turned off.
  */
-class ColorOff : public GPIOOutputs {
+class ColorHandlerOff : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_OFF;

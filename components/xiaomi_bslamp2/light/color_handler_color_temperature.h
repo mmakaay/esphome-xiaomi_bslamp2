@@ -4,8 +4,8 @@
 #include <stdexcept>
 
 #include "../common.h"
-#include "light_modes.h"
-#include "gpio_outputs.h"
+#include "../light_hal.h"
+#include "color_handler.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -75,20 +75,14 @@ static const RGBWLevelsTable rgbw_levels_100_ {{
  * This class can handle the GPIO outputs for the white light mode,
  * based on color temperature + brightness.
  */
-class ColorWhiteLight : public GPIOOutputs {
+class ColorHandlerColorTemperature : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_WHITE;
 
-#ifdef HAS_COLOR_MODES
     if (v.get_color_mode() != light::ColorMode::COLOR_TEMPERATURE) {
       return false;
     }
-#else
-    if (v.get_white() == 0.0f) {
-      return false;
-    }
-#endif
 
     auto temperature = clamp_temperature_(v.get_color_temperature());
     auto brightness = clamp_brightness_(v.get_brightness());

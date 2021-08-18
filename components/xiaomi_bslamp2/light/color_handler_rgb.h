@@ -4,8 +4,8 @@
 #include <cmath>
 
 #include "../common.h"
-#include "gpio_outputs.h"
-#include "light_modes.h"
+#include "../light_hal.h"
+#include "color_handler.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -247,20 +247,14 @@ static const RGBCircle rgb_circle_ {{
  * This class can handle the GPIO outputs for the RGB light mode,
  * based on RGB color values + brightness.
  */
-class ColorRGBLight : public GPIOOutputs {
+class ColorHandlerRGB : public ColorHandler {
  public:
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_RGB;
 
-#ifdef HAS_COLOR_MODES
     if (v.get_color_mode() != light::ColorMode::RGB) {
       return false;
     }
-#else
-    if (v.get_white() > 0.0f) {
-      return false;
-    }
-#endif
 
     // Determine the ring level for the color. This is a value between 0
     // and 7, determining in what ring of the RGB circle the requested
