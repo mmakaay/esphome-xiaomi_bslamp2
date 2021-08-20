@@ -9,7 +9,7 @@ namespace xiaomi {
 namespace bslamp2 {
 
 /**
- * This class can handle the GPIO outputs in case the light of turned off.
+ * This class can handle the GPIO outputs in case the light is turned off.
  */
 class ColorHandlerOff : public ColorHandler {
  public:
