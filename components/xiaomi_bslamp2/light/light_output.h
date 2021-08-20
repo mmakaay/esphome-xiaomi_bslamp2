@@ -36,7 +36,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
   }
 
   std::unique_ptr<light::LightTransformer> create_default_transition() override {
-    return make_unique<XiaomiBslamp2LightTransitionTransformer>(light_);
+    return make_unique<XiaomiBslamp2LightTransitionTransformer>(
+      light_, light_mode_callback_, state_callback_);
   }
 
   void add_on_light_mode_callback(std::function<void(std::string)> &&callback) {

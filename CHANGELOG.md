@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2021.8.1]
+
+**Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.
+
+### Changed
+- Fixed transitioning from the off to on state. Thanks to @marcel1988 for informing
+  me about his non-functional wake-up light script. Before this fix, the light would
+  stay off during the full transformation, only to turn on at the very end.
+- The `on_brightness` trigger is now also called at the start of a transition.
+  This fixes a problem with the brightness slider illumination not following along
+  when you slide your finger over it.
+- Suppressing a transition time for transitioning to a night light color is now
+  only instant when starting from a night light setting. Before this change, moving
+  from for example 80% brightness to 1% brightness (i.e. night light), would be
+  instant. Now an actual transformation is done.
+
 ## [2021.8.0]
 
 **Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.

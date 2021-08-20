@@ -51,6 +51,7 @@ class LightHAL : Component, public GPIOOutputValues {
   void turn_on() {
     master1_pin_->turn_on();
     master2_pin_->turn_on();
+    is_on_ = true;
   }
  
   /**
@@ -59,6 +60,14 @@ class LightHAL : Component, public GPIOOutputValues {
   void turn_off() {
     master1_pin_->turn_off();
     master2_pin_->turn_off();
+    is_on_ = false;
+  }
+
+  /**
+   * Check if the light is turned on.
+   */
+  bool is_on() {
+    return is_on_;
   }
 
   void set_state(GPIOOutputValues *new_state) {
@@ -81,7 +90,12 @@ class LightHAL : Component, public GPIOOutputValues {
     this->white = w;
   }
 
+  void set_light_mode(std::string light_mode) {
+    this->light_mode = light_mode;
+  }
+
  protected:
+  bool is_on_{false};
   ledc::LEDCOutput *red_pin_;
   ledc::LEDCOutput *green_pin_;
   ledc::LEDCOutput *blue_pin_;
