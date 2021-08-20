@@ -56,10 +56,15 @@ been introduced.
 * Go to Home Assistant and check:
   * if you can turn on/off the lamp
   * if you can select colors from the RGB color model
-  * if you can select colors from the white light color temperature model
+  * if you can select colors from the Color Temperature model
   * if you can set the brightness of the lamp
   * if selecting the lowest possible brightness results in the lamp
     switching to "night light" mode
+  * if a transition from off to on with a long transition time works (e.g. 10s)
+  * if a transition from on to off with a long transition time works
+  * if a transition from night light to some bright light (e.g. 10s) can be
+    interrupted by a transition back to night light (e.g. after 5 seconds),
+    resulting in a transition back (not an instant drop to night light)
 
 
 ## Step 3: Release the new version
