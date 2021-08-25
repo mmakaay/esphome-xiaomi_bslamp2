@@ -4,7 +4,6 @@ from esphome import pins
 from esphome.components.ledc.output import LEDCOutput
 from esphome.components.gpio.output import GPIOBinaryOutput
 from esphome.components.i2c import I2CComponent, I2CDevice
-from esphome.core import coroutine
 from esphome.core import CORE
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_TRIGGER_PIN,

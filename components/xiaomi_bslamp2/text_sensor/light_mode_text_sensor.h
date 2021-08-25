@@ -1,6 +1,7 @@
 #pragma once
 
 #include "esphome/components/text_sensor/text_sensor.h"
+#include "../light_hal.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -14,7 +15,7 @@ namespace bslamp2 {
  */
 class XiaomiBslamp2LightModeTextSensor : public text_sensor::TextSensor, public Component {
  public:
-  void set_parent(XiaomiBslamp2LightOutput *light) { light_ = light; }
+  void set_parent(LightHAL *light) { light_ = light; }
 
   void setup() {
     light_->add_on_light_mode_callback([this](std::string light_mode) {
@@ -26,7 +27,7 @@ class XiaomiBslamp2LightModeTextSensor : public text_sensor::TextSensor, public 
   }
 
  protected:
-  XiaomiBslamp2LightOutput *light_;
+  LightHAL *light_;
   std::string last_light_mode_ = LIGHT_MODE_UNKNOWN;
 };
 

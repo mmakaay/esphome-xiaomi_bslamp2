@@ -45,6 +45,14 @@ class LightHAL : Component, public GPIOOutputValues {
   void set_master1_pin(gpio::GPIOBinaryOutput *pin) { master1_pin_ = pin; }
   void set_master2_pin(gpio::GPIOBinaryOutput *pin) { master2_pin_ = pin; }
 
+  void add_on_light_mode_callback(std::function<void(std::string)> &&callback) {
+    light_mode_callback_.add(std::move(callback));
+  }
+
+  void add_on_state_callback(std::function<void(light::LightColorValues)> &&callback) {
+    state_callback_.add(std::move(callback));
+  }
+
   /**
    * Turn on the master switch for the LEDs.
    */
@@ -94,6 +102,14 @@ class LightHAL : Component, public GPIOOutputValues {
     this->light_mode = light_mode;
   }
 
+  void do_light_mode_callback(std::string light_mode) {
+      light_mode_callback_.call(light_mode);
+  }
+
+  void do_state_callback(light::LightColorValues values) {
+      state_callback_.call(values);
+  }
+
  protected:
   bool is_on_{false};
   ledc::LEDCOutput *red_pin_;
@@ -102,6 +118,8 @@ class LightHAL : Component, public GPIOOutputValues {
   ledc::LEDCOutput *white_pin_;
   gpio::GPIOBinaryOutput *master1_pin_;
   gpio::GPIOBinaryOutput *master2_pin_;
+  CallbackManager<void(std::string)> light_mode_callback_{};
+  CallbackManager<void(light::LightColorValues)> state_callback_{};
 };
 
 }  // namespace bslamp2

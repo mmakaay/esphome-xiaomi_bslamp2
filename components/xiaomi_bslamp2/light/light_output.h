@@ -3,7 +3,7 @@
 #include "../common.h"
 #include "../light_hal.h"
 #include "color_handler_chain.h"
-#include "light_transformer.h"
+#include "light_transition.h"
 #include "esphome/core/component.h"
 #include "esphome/components/ledc/ledc_output.h"
 
@@ -35,19 +35,6 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
     return traits;
   }
 
-  std::unique_ptr<light::LightTransformer> create_default_transition() override {
-    return make_unique<XiaomiBslamp2LightTransitionTransformer>(
-      light_, light_mode_callback_, state_callback_);
-  }
-
-  void add_on_light_mode_callback(std::function<void(std::string)> &&callback) {
-    light_mode_callback_.add(std::move(callback));
-  }
-
-  void add_on_state_callback(std::function<void(light::LightColorValues)> &&callback) {
-    state_callback_.add(std::move(callback));
-  }
-
   /**
    * Applies a requested light state to the physicial GPIO outputs.
    */
@@ -55,8 +42,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
     auto values = state->current_values;
 
     color_handler_chain->set_light_color_values(values);
-    light_mode_callback_.call(color_handler_chain->light_mode);
-    state_callback_.call(values);
+    light_->do_light_mode_callback(color_handler_chain->light_mode);
+    light_->do_state_callback(values);
 
     // Note: one might think that it is more logical to turn on the LED
     // circuitry master switch after setting the individual channels,
@@ -76,8 +63,6 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
  protected:
   LightHAL *light_;
   ColorHandler *color_handler_chain = new ColorHandlerChain();
-  CallbackManager<void(std::string)> light_mode_callback_{};
-  CallbackManager<void(light::LightColorValues)> state_callback_{};
 };
 
 }  // namespace bslamp2
