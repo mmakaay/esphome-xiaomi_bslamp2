@@ -47,13 +47,13 @@ class Preset : public Component {
 
  protected:
   light::LightState *light_state_;
-  optional<uint32_t> transition_length_;
-  optional<float> brightness_;
-  optional<float> red_;
-  optional<float> green_;
-  optional<float> blue_;
-  optional<float> color_temperature_;
-  optional<std::string> effect_;
+  optional<uint32_t> transition_length_{};
+  optional<float> brightness_{};
+  optional<float> red_{};
+  optional<float> green_{};
+  optional<float> blue_{};
+  optional<float> color_temperature_{};
+  optional<std::string> effect_{};
 };
 
 class PresetGroup {

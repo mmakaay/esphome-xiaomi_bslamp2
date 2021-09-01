@@ -29,7 +29,7 @@ class BrightnessTrigger : public Trigger<float> {
   }
 
  protected:
-  float last_brightness_ = -1.0f;
+  float last_brightness_{-1.0f};
 };
 
 template<typename... Ts> class DiscoAction : public Action<Ts...> {

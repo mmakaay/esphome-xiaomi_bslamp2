@@ -20,13 +20,8 @@ class XiaomiBslamp2LightTransition : public light::LightTransition {
       light::LightTransition(name),
       light_(light) { }
 
-  // TODO deprecate or compile for 2018.8.* only.
-  bool is_finished() {
-      return is_completed();
-  }
-
   bool is_completed() override {
-      return force_finish_ || get_progress_() >= 1.0f;
+      return force_completed_ || get_progress_() >= 1.0f;
   }
 
   void start() override {
@@ -60,9 +55,9 @@ class XiaomiBslamp2LightTransition : public light::LightTransition {
     // transitions at the low levels as used for the night light.
     if (end_->light_mode == LIGHT_MODE_NIGHT && start_->light_mode == LIGHT_MODE_NIGHT) {
       light_->set_state(end_);
-      force_finish_ = true;
+      force_completed_ = true;
     }
-    // Otherwise perform a standard transformation.
+    // Otherwise perform a standard transition.
     else {
       auto smoothed = smoothed_progress_(get_progress_());
       light_->set_rgbw(
@@ -75,7 +70,7 @@ class XiaomiBslamp2LightTransition : public light::LightTransition {
       }
     }
 
-    if (is_finished()) {
+    if (is_completed()) {
       light_->set_light_mode(end_->light_mode);
       if (end_->light_mode == LIGHT_MODE_OFF) {
           light_->turn_off();
@@ -89,7 +84,7 @@ class XiaomiBslamp2LightTransition : public light::LightTransition {
 
  protected:
   LightHAL *light_;
-  bool force_finish_{false};
+  bool force_completed_{false};
   GPIOOutputValues *start_ = new GPIOOutputValues();
   ColorHandler *end_ = new ColorHandlerChain();
 
