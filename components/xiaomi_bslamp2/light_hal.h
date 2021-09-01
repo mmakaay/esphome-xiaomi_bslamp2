@@ -36,7 +36,7 @@ class GPIOOutputValues {
   void log(const char *prefix) { ESP_LOGD(TAG, "%s: RGB=[%f,%f,%f], white=%f", prefix, red, green, blue, white); }
 };
 
-class LightHAL : Component, public GPIOOutputValues {
+class LightHAL : public Component, public GPIOOutputValues {
  public:
   void set_red_pin(ledc::LEDCOutput *pin) { red_pin_ = pin; }
   void set_green_pin(ledc::LEDCOutput *pin) { green_pin_ = pin; }
