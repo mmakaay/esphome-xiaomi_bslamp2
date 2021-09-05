@@ -2,11 +2,12 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import light
 from esphome import automation
-from esphome.core import coroutine, Lambda
+from esphome.core import Lambda
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_COLOR_TEMPERATURE,
     CONF_STATE, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
-    CONF_TRANSITION_LENGTH, CONF_BRIGHTNESS, CONF_EFFECT, CONF_FLASH_LENGTH
+    CONF_TRANSITION_LENGTH, CONF_BRIGHTNESS, CONF_EFFECT, CONF_FLASH_LENGTH,
+    CONF_TRANSITIONS, CONF_NAME
 )
 from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
@@ -27,10 +28,12 @@ MIRED_MAX = 588
 
 XiaomiBslamp2LightState = bslamp2_ns.class_("XiaomiBslamp2LightState", light.LightState)
 XiaomiBslamp2LightOutput = bslamp2_ns.class_("XiaomiBslamp2LightOutput", light.LightOutput)
+XiaomiBslamp2LightTransition = bslamp2_ns.class_("XiaomiBslamp2LightTransition", light.LightTransition)
 PresetsContainer = bslamp2_ns.class_("PresetsContainer", cg.Component)
 Preset = bslamp2_ns.class_("Preset", cg.Component)
 BrightnessTrigger = bslamp2_ns.class_("BrightnessTrigger", automation.Trigger.template())
 ActivatePresetAction = bslamp2_ns.class_("ActivatePresetAction", automation.Action)
+DiscoAction = bslamp2_ns.class_("DiscoAction", automation.Action)
 DiscoAction = bslamp2_ns.class_("DiscoAction", automation.Action)
 
 PRESETS_SCHEMA = cv.Schema({
@@ -86,6 +89,9 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
         cv.GenerateID(CONF_ID): cv.declare_id(XiaomiBslamp2LightState),
         cv.GenerateID(CONF_LIGHT_HAL_ID): cv.use_id(LightHAL),
         cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(XiaomiBslamp2LightOutput),
+        cv.Optional(
+            CONF_TRANSITIONS, default=["bslamp2"]
+        ): light.transitions.validate_transitions(XiaomiBslamp2LightOutput),
         cv.Optional(CONF_ON_BRIGHTNESS): automation.validate_automation(
             {
                 cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(BrightnessTrigger),
@@ -129,49 +135,49 @@ def maybe_simple_preset_action(schema):
 @automation.register_action(
     "light.disco_on", DiscoAction, light.automation.LIGHT_TURN_ON_ACTION_SCHEMA 
 )
-def disco_action_on_to_code(config, action_id, template_arg, args):
-    light_var = yield cg.get_variable(config[CONF_ID])
+async def disco_action_on_to_code(config, action_id, template_arg, args):
+    light_var = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
 
     if CONF_STATE in config:
-        template_ = yield cg.templatable(config[CONF_STATE], args, bool)
+        template_ = await cg.templatable(config[CONF_STATE], args, bool)
         cg.add(var.set_state(template_))
     if CONF_TRANSITION_LENGTH in config:
-        template_ = yield cg.templatable(
+        template_ = await cg.templatable(
             config[CONF_TRANSITION_LENGTH], args, cg.uint32
         )
         cg.add(var.set_transition_length(template_))
     if CONF_FLASH_LENGTH in config:
-        template_ = yield cg.templatable(config[CONF_FLASH_LENGTH], args, cg.uint32)
+        template_ = await cg.templatable(config[CONF_FLASH_LENGTH], args, cg.uint32)
         cg.add(var.set_flash_length(template_))
     if CONF_BRIGHTNESS in config:
-        template_ = yield cg.templatable(config[CONF_BRIGHTNESS], args, float)
+        template_ = await cg.templatable(config[CONF_BRIGHTNESS], args, float)
         cg.add(var.set_brightness(template_))
     if CONF_RED in config:
-        template_ = yield cg.templatable(config[CONF_RED], args, float)
+        template_ = await cg.templatable(config[CONF_RED], args, float)
         cg.add(var.set_red(template_))
     if CONF_GREEN in config:
-        template_ = yield cg.templatable(config[CONF_GREEN], args, float)
+        template_ = await cg.templatable(config[CONF_GREEN], args, float)
         cg.add(var.set_green(template_))
     if CONF_BLUE in config:
-        template_ = yield cg.templatable(config[CONF_BLUE], args, float)
+        template_ = await cg.templatable(config[CONF_BLUE], args, float)
         cg.add(var.set_blue(template_))
     if CONF_COLOR_TEMPERATURE in config:
-        template_ = yield cg.templatable(config[CONF_COLOR_TEMPERATURE], args, float)
+        template_ = await cg.templatable(config[CONF_COLOR_TEMPERATURE], args, float)
         cg.add(var.set_color_temperature(template_))
     if CONF_EFFECT in config:
-        template_ = yield cg.templatable(config[CONF_EFFECT], args, cg.std_string)
+        template_ = await cg.templatable(config[CONF_EFFECT], args, cg.std_string)
         cg.add(var.set_effect(template_))
-    yield var
+    return var
 
 @automation.register_action(
     "light.disco_off", DiscoAction, light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA 
 )
-def disco_action_off_to_code(config, action_id, template_arg, args):
-    light_var = yield cg.get_variable(config[CONF_ID])
+async def disco_action_off_to_code(config, action_id, template_arg, args):
+    light_var = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
     cg.add(var.set_disco_state(False))
-    yield var
+    return var
 
 USED_PRESETS = []
 
@@ -202,40 +208,54 @@ def register_preset_action(value):
         register_preset_action
     ),
 )
-def preset_activate_to_code(config, action_id, template_arg, args):
-    presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
+async def preset_activate_to_code(config, action_id, template_arg, args):
+    presets_var = await cg.get_variable(config[CONF_PRESETS_ID]) 
     action_var = cg.new_Pvariable(action_id, template_arg, presets_var)
     if CONF_NEXT in config:
         cg.add(action_var.set_operation(f"next_{config[CONF_NEXT]}"))
     elif CONF_PRESET in config:
         cg.add(action_var.set_operation("activate_preset"))
-        group_template_ = yield cg.templatable(config[CONF_GROUP], args, cg.std_string)
+        group_template_ = await cg.templatable(config[CONF_GROUP], args, cg.std_string)
         cg.add(action_var.set_group(group_template_))
-        preset_template_ = yield cg.templatable(config[CONF_PRESET], args, cg.std_string)
+        preset_template_ = await cg.templatable(config[CONF_PRESET], args, cg.std_string)
         cg.add(action_var.set_preset(preset_template_))
     else:
         cg.add(action_var.set_operation("activate_group"))
-        group_template_ = yield cg.templatable(config[CONF_GROUP], args, cg.std_string)
+        group_template_ = await cg.templatable(config[CONF_GROUP], args, cg.std_string)
         cg.add(action_var.set_group(group_template_))
-    yield action_var
+    return action_var
 
-@coroutine
-def light_output_to_code(config):
+@light.transitions.register_output_transition(
+    XiaomiBslamp2LightOutput,
+    "bslamp2",
+    XiaomiBslamp2LightTransition,
+    "bslamp2",
+    {
+        cv.GenerateID(CONF_LIGHT_HAL_ID): cv.use_id(LightHAL),
+    },
+)
+async def bslamp2_transition_to_code(config, transition_id):
+    light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
+    return cg.new_Pvariable(
+        transition_id,
+        config[CONF_NAME],
+        light_hal_var
+    )
+
+async def light_output_to_code(config):
     light_output_var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
-    yield light.register_light(light_output_var, config)
-    light_hal_var = yield cg.get_variable(config[CONF_LIGHT_HAL_ID])
+    await light.register_light(light_output_var, config)
+    light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
     cg.add(light_output_var.set_parent(light_hal_var))
 
-@coroutine
-def on_brightness_to_code(config):
-    light_output_var = yield cg.get_variable(config[CONF_OUTPUT_ID])
+async def on_brightness_to_code(config):
+    light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
     for config in config.get(CONF_ON_BRIGHTNESS, []):
-        trigger = cg.new_Pvariable(config[CONF_TRIGGER_ID], light_output_var)
-        yield automation.build_automation(trigger, [(float, "x")], config)
+        trigger = cg.new_Pvariable(config[CONF_TRIGGER_ID], light_hal_var)
+        await automation.build_automation(trigger, [(float, "x")], config)
 
-@coroutine
-def preset_to_code(config, preset_group, preset_name):
-    light_var = yield cg.get_variable(config[CONF_ID])
+async def preset_to_code(config, preset_group, preset_name):
+    light_var = await cg.get_variable(config[CONF_ID])
     preset_var = cg.new_Pvariable(
         config[CONF_PRESET_ID], light_var, preset_group, preset_name)
     if CONF_TRANSITION_LENGTH in config:
@@ -254,22 +274,21 @@ def preset_to_code(config, preset_group, preset_name):
         cg.add(preset_var.set_effect(config[CONF_EFFECT]))
     else:
         cg.add(preset_var.set_effect("None"))
-    yield cg.register_component(preset_var, config)
+    return await cg.register_component(preset_var, config)
 
-@coroutine
-def presets_to_code(config):
+async def presets_to_code(config):
     presets_var = cg.new_Pvariable(config[CONF_PRESETS_ID])
-    yield cg.register_component(presets_var, config)
+    await cg.register_component(presets_var, config)
 
     for preset_group, presets in config.get(CONF_PRESETS, {}).items():
         for preset_name, preset_config in presets.items():
-            preset = yield preset_to_code(preset_config, preset_group, preset_name)
+            preset = await preset_to_code(preset_config, preset_group, preset_name)
             cg.add(presets_var.add_preset(preset))
 
-def to_code(config):
-    yield light_output_to_code(config)
-    yield on_brightness_to_code(config)
-    yield presets_to_code(config)
+async def to_code(config):
+    await light_output_to_code(config)
+    await on_brightness_to_code(config)
+    await presets_to_code(config)
 
 def validate(config):
     valid_presets = config.get(CONF_PRESETS, {});

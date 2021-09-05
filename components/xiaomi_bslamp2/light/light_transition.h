@@ -3,7 +3,8 @@
 #include "../common.h"
 #include "../light_hal.h" 
 #include "color_handler_chain.h"
-#include "esphome/components/light/light_transformer.h"
+#include "esphome/components/light/light_transition.h"
+#include "esphome/components/light/transitions.h"
 #include "esphome/components/light/light_color_values.h"
 
 namespace esphome {
@@ -11,20 +12,16 @@ namespace xiaomi {
 namespace bslamp2 {
 
 /**
- * A LightTransitionTransformer class for the Xiaomi Mijia Bedside Lamp 2.
+ * A LightTransition class for the Xiaomi Mijia Bedside Lamp 2.
  */
-class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTransformer {
+class XiaomiBslamp2LightTransition : public light::LightTransition {
  public:
-  explicit XiaomiBslamp2LightTransitionTransformer(
-    LightHAL *light,
-    CallbackManager<void(std::string)> light_mode_callback,
-    CallbackManager<void(light::LightColorValues)> state_callback) :
-      light_(light),
-      light_mode_callback_(light_mode_callback),
-      state_callback_(state_callback) { }
+  explicit XiaomiBslamp2LightTransition(std::string name, LightHAL *light) :
+      light::LightTransition(name),
+      light_(light) { }
 
-  bool is_finished() override {
-      return force_finish_ || get_progress_() >= 1.0f;
+  bool is_completed() override {
+      return force_completed_ || get_progress_() >= 1.0f;
   }
 
   void start() override {
@@ -47,9 +44,9 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
 
     // Run callbacks. These are normally called from the LightOutput, but
     // since I don't call LightOutput::write_state() from this transformer's
-    // code, these callbacks must be called from this transformer instead.
-    light_mode_callback_.call(end_->light_mode);
-    state_callback_.call(target_values_);
+    // code, these callbacks must be called from this transformer as well.
+    light_->do_light_mode_callback(end_->light_mode);
+    light_->do_state_callback(target_values_);
   }
 
   optional<light::LightColorValues> apply() override { 
@@ -58,11 +55,11 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
     // transitions at the low levels as used for the night light.
     if (end_->light_mode == LIGHT_MODE_NIGHT && start_->light_mode == LIGHT_MODE_NIGHT) {
       light_->set_state(end_);
-      force_finish_ = true;
+      force_completed_ = true;
     }
-    // Otherwise perform a standard transformation.
+    // Otherwise perform a standard transition.
     else {
-      auto smoothed = light::LightTransitionTransformer::smoothed_progress(get_progress_());
+      auto smoothed = smoothed_progress_(get_progress_());
       light_->set_rgbw(
         esphome::lerp(smoothed, start_->red, end_->red),
         esphome::lerp(smoothed, start_->green, end_->green),
@@ -73,7 +70,7 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
       }
     }
 
-    if (is_finished()) {
+    if (is_completed()) {
       light_->set_light_mode(end_->light_mode);
       if (end_->light_mode == LIGHT_MODE_OFF) {
           light_->turn_off();
@@ -87,11 +84,14 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
 
  protected:
   LightHAL *light_;
-  bool force_finish_{false};
+  bool force_completed_{false};
   GPIOOutputValues *start_ = new GPIOOutputValues();
   ColorHandler *end_ = new ColorHandlerChain();
-  CallbackManager<void(std::string)> light_mode_callback_{};
-  CallbackManager<void(light::LightColorValues)> state_callback_{};
+
+ protected: 
+  static float smoothed_progress_(float x) {
+    return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f);
+  }
 };
 
 }  // namespace bslamp2

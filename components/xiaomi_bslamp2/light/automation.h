@@ -3,6 +3,7 @@
 #include "esphome/core/automation.h"
 #include "esphome/core/component.h"
 #include "interfaces.h"
+#include "../light_hal.h"
 #include "light_output.h"
 #include "light_state.h"
 #include "presets.h"
@@ -14,7 +15,7 @@ namespace bslamp2 {
 
 class BrightnessTrigger : public Trigger<float> {
  public:
-  explicit BrightnessTrigger(XiaomiBslamp2LightOutput *parent) {
+  explicit BrightnessTrigger(LightHAL *parent) {
     parent->add_on_state_callback([this](light::LightColorValues values) {
       auto new_brightness = values.get_brightness();
       if (values.get_state() == 0)
@@ -28,7 +29,7 @@ class BrightnessTrigger : public Trigger<float> {
   }
 
  protected:
-  float last_brightness_ = -1.0f;
+  float last_brightness_{-1.0f};
 };
 
 template<typename... Ts> class DiscoAction : public Action<Ts...> {

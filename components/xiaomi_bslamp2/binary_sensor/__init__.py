@@ -54,11 +54,11 @@ CONFIG_SCHEMA = cv.All(
     validate_binary_sensor,
 )
 
-def to_code(config):
+async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
-    yield cg.register_component(var, config)
-    yield binary_sensor.register_binary_sensor(var, config)
+    await cg.register_component(var, config)
+    await binary_sensor.register_binary_sensor(var, config)
 
-    front_panel_hal_var = yield cg.get_variable(config[CONF_FRONT_PANEL_HAL_ID])
+    front_panel_hal_var = await cg.get_variable(config[CONF_FRONT_PANEL_HAL_ID])
     cg.add(var.set_parent(front_panel_hal_var))
     cg.add(var.set_for(config[CONF_FOR]))
