@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Fixed a compilation issue with ESPHome 2021.9.0. 
+- Added `refresh: 60s` to the `external_components` definition in `example.yaml`,
+  to make use that the code is updated when using a non-release ref (e.g. `main`
+  instead of `2021.9.0`).
 
 ## [2021.8.1]
 

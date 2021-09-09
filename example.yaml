@@ -115,6 +115,7 @@ external_components:
       type: git
       url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
       ref: main
+      refresh: 60s
 
 # A special platform package is used for enabling unicore and disabling the
 # efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
