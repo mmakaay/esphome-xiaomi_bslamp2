@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2021.9.1]
+
+**Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.
+
+### Changed
+- Fixed a memory leak, causing the lamp to disconnect occasionally when doing a lot of
+  color transformations (e.g. when running the `Random` light effect).
+
 ## [2021.9.0]
 
 **Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.
