@@ -3,7 +3,7 @@
 #include "common.h"
 #include "esphome/components/i2c/i2c.h"
 #include "esphome/core/component.h"
-#include "esphome/core/esphal.h"
+#include "esphome/core/log.h"
 #include <array>
 #include <cmath>
 
@@ -100,7 +100,7 @@ class FrontPanelEventParser {
 
     // All events use the prefix [04:04:01:00].
     if (m[0] != 0x04 || m[1] != 0x04 || m[2] != 0x01 || m[3] != 0x00) {
-      return error_(ev, m, "prefix is not 04:04:01:00");
+      return this->error_(ev, m, "prefix is not 04:04:01:00");
     }
 
     // The next byte determines the part that is touched.
@@ -114,23 +114,23 @@ class FrontPanelEventParser {
         else if (m[5] == 0x02 && m[6] == (0x03 + m[4]))
           ev |= FLAG_TYPE_RELEASE;
         else
-          return error_(ev, m, "invalid event type for button");
+          return this->error_(ev, m, "invalid event type for button");
         break;
       case 0x03:  // slider touch
       case 0x04:  // slider release
         ev |= FLAG_PART_SLIDER;
         ev |= (m[4] == 0x03 ? FLAG_TYPE_TOUCH : FLAG_TYPE_RELEASE);
         if ((m[6] - m[5] - m[4] - 0x01) != 0)
-          return error_(ev, m, "invalid slider level crc");
+          return this->error_(ev, m, "invalid slider level crc");
         else if (m[5] > 0x16 || m[5] < 0x01)
-          return error_(ev, m, "out of bounds slider value");
+          return this->error_(ev, m, "out of bounds slider value");
         else {
           auto level = 0x17 - m[5];
           ev |= (level << FLAG_LEVEL_SHIFT);
         }
         break;
       default:
-        return error_(ev, m, "invalid part id");
+        return this->error_(ev, m, "invalid part id");
         return ev;
     }
 
@@ -148,8 +148,8 @@ class FrontPanelEventParser {
     ESP_LOGE(TAG, "Front panel I2C event error:");
     ESP_LOGE(TAG, "  Error: %s", msg);
     ESP_LOGE(TAG, "  Event: [%02x:%02x:%02x:%02x:%02x:%02x:%02x]", m[0], m[1], m[2], m[3], m[4], m[5], m[6]);
-    ESP_LOGE(TAG, "  Parsed part: %s", format_part(ev));
-    ESP_LOGE(TAG, "  Parsed event type: %s", format_event_type(ev));
+    ESP_LOGE(TAG, "  Parsed part: %s", this->format_part_(ev));
+    ESP_LOGE(TAG, "  Parsed event type: %s", this->format_event_type_(ev));
     if (has_(ev, FLAG_PART_MASK, FLAG_PART_SLIDER)) {
       auto level = (ev & FLAG_LEVEL_MASK) >> FLAG_LEVEL_SHIFT;
       if (level > 0) {
@@ -160,7 +160,7 @@ class FrontPanelEventParser {
     return ev;
   }
 
-  const char *format_part(EVENT ev) {
+  const char *format_part_(EVENT ev) {
     if (has_(ev, FLAG_PART_MASK, FLAG_PART_POWER))
       return "power button";
     if (has_(ev, FLAG_PART_MASK, FLAG_PART_COLOR))
@@ -170,7 +170,7 @@ class FrontPanelEventParser {
     return "n/a";
   }
 
-  const char *format_event_type(EVENT ev) {
+  const char *format_event_type_(EVENT ev) {
     if (has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_TOUCH))
       return "touch";
     if (has_(ev, FLAG_TYPE_MASK, FLAG_TYPE_RELEASE))
@@ -178,6 +178,24 @@ class FrontPanelEventParser {
     return "n/a";
   }
 };
+
+struct FrontPanelTriggerStore {
+  ISRInternalGPIOPin pin;
+  volatile int event_id{0};
+  static void gpio_intr(FrontPanelTriggerStore *store);
+};
+
+/**
+ * This ISR is used to handle IRQ triggers from the front panel.
+ *
+ * The front panel pulls the trigger pin low for a short period of time
+ * when a new event is available. All we do here to handle the interrupt,
+ * is increment a simple event id counter. The main loop of the component
+ * will take care of actually reading and processing the event.
+ */
+void IRAM_ATTR HOT FrontPanelTriggerStore::gpio_intr(FrontPanelTriggerStore *store) {
+  store->event_id++;
+}
 
 /**
  * This is a hardware abstraction layer that communicates with with front
@@ -194,37 +212,53 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
    * Set the GPIO pin that is used by the front panel to notify the ESP
    * that a touch/release event can be read using I2C.
    */
-  void set_trigger_pin(GPIOPin *pin) { trigger_pin_ = pin; }
+  void set_trigger_pin(InternalGPIOPin *pin) {
+    trigger_pin_ = pin;
+  }
 
-  void add_on_event_callback(std::function<void(EVENT)> &&callback) { event_callback_.add(std::move(callback)); }
+  void add_on_event_callback(std::function<void(EVENT)> &&callback) {
+    event_callback_.add(std::move(callback));
+  }
 
   void setup() {
     ESP_LOGCONFIG(TAG, "Setting up I2C trigger pin interrupt...");
-    trigger_pin_->setup();
-    trigger_pin_->attach_interrupt(FrontPanelHAL::isr, this, FALLING);
+    this->trigger_pin_->setup();
+    this->store_.pin = this->trigger_pin_->to_isr();
+    this->trigger_pin_->attach_interrupt(
+      FrontPanelTriggerStore::gpio_intr,
+      &this->store_,
+      gpio::INTERRUPT_FALLING_EDGE);
   }
 
   void dump_config() {
     ESP_LOGCONFIG(TAG, "FrontPanelHAL:");
+    LOG_I2C_DEVICE(this);
     LOG_PIN("  I2C interrupt pin: ", trigger_pin_);
   }
 
   void loop() {
     // Read and publish front panel events.
-    auto current_event_id = event_id_;
-    if (current_event_id != last_event_id_) {
-      last_event_id_ = current_event_id;
+    auto current_event_id = this->store_.event_id;
+    if (current_event_id != this->last_event_id_) {
+      this->last_event_id_ = current_event_id;
+      if (this->write(READY_FOR_EV, MSG_LEN) != i2c::ERROR_OK) {
+        ESP_LOGW(TAG, "Writing READY_FOR_EV to front panel failed");
+      }
       MSG message;
-      if (write_bytes_raw(READY_FOR_EV, MSG_LEN) && read_bytes_raw(message, MSG_LEN)) {
-        auto ev = event.parse(message);
-        if (ev & FLAG_OK) {
-          event_callback_.call(ev);
-        }
+      if (this->read(message, MSG_LEN) != i2c::ERROR_OK) {
+        ESP_LOGW(TAG, "Reading message from front panel failed");
+        return;
+      }
+      auto ev = event.parse(message);
+      if (ev & FLAG_OK) {
+        this->event_callback_.call(ev);
+      } else {
+        ESP_LOGW(TAG, "Skipping unsupported message from front panel");
       }
     }
 
     if (led_state_ != last_led_state_) {
-        update_leds();
+      update_leds();
     }
   }
 
@@ -268,7 +302,7 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   void update_leds() {
     led_msg_[2] = led_state_ >> 8;
     led_msg_[3] = led_state_ & 0xff;
-    write_bytes_raw(led_msg_, MSG_LEN);
+    write(led_msg_, MSG_LEN);
     last_led_state_ = led_state_;
   }
 
@@ -298,9 +332,8 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   }
 
  protected:
-  GPIOPin *trigger_pin_;
-  static void isr(FrontPanelHAL *store);
-  volatile int event_id_ = 0;
+  InternalGPIOPin *trigger_pin_;
+  FrontPanelTriggerStore store_{};
   int last_event_id_ = 0;
   CallbackManager<void(EVENT)> event_callback_{};
 
@@ -308,16 +341,6 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   uint16_t last_led_state_ = 0;
   MSG led_msg_ = {0x02, 0x03, 0x00, 0x00, 0x64, 0x00, 0x00};
 };
-
-/**
- * This ISR is used to handle IRQ triggers from the front panel.
- *
- * The front panel pulls the trigger pin low for a short period of time
- * when a new event is available. All we do here to handle the interrupt,
- * is increment a simple event id counter. The main loop of the component
- * will take care of actually reading and processing the event.
- */
-void ICACHE_RAM_ATTR HOT FrontPanelHAL::isr(FrontPanelHAL *store) { store->event_id_++; }
 
 }  // namespace bslamp2
 }  // namespace xiaomi

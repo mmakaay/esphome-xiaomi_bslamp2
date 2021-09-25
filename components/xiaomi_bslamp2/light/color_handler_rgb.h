@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cmath>
+#include <algorithm>
 
 #include "../common.h"
 #include "../light_hal.h"
@@ -259,7 +260,7 @@ class ColorHandlerRGB : public ColorHandler {
     // Determine the ring level for the color. This is a value between 0
     // and 7, determining in what ring of the RGB circle the requested
     // color resides.
-    auto rgb_min = min(min(v.get_red(), v.get_green()), v.get_blue());
+    auto rgb_min = std::min(std::min(v.get_red(), v.get_green()), v.get_blue());
     auto level = 7.0f * rgb_min;
 
     // While the default color circle in Home Assistant presents only a
@@ -343,8 +344,8 @@ class ColorHandlerRGB : public ColorHandler {
    * Returns the position on an RGB ring in degrees (0 - 359).
    */
   float ring_pos_(float red, float green, float blue) {
-    auto rgb_min = min(min(red, green), blue);
-    auto rgb_max = max(max(red, green), blue);
+    auto rgb_min = std::min(std::min(red, green), blue);
+    auto rgb_max = std::max(std::max(red, green), blue);
     auto delta = rgb_max - rgb_min;
     float pos;
     if (delta == 0.0f)
