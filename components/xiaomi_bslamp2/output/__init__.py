@@ -5,11 +5,12 @@ from esphome.const import CONF_ID, CONF_LEVEL
 from esphome import automation
 from .. import (
     bslamp2_ns, CODEOWNERS,
-    CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL, FRONT_PANEL_LED_OPTIONS,
-    CONF_LEDS
+    CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL, FRONT_PANEL_LED_OPTIONS
 )
 
-AUTO_LOAD = ["xiaomi_bslamp2"]
+CONF_LEDS = "leds"
+
+DEPENDENCIES = ["xiaomi_bslamp2"]
 
 XiaomiBslamp2FrontPanelOutput = bslamp2_ns.class_(
     "XiaomiBslamp2FrontPanelOutput", output.FloatOutput, cg.Component)

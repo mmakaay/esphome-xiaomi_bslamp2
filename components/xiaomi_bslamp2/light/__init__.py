@@ -10,17 +10,15 @@ from esphome.const import (
 )
 from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
-AUTO_LOAD = ["xiaomi_bslamp2"]
+DEPENDENCIES = ["xiaomi_bslamp2"]
 
-CONF_MASTER1 = "master1"
-CONF_MASTER2 = "master2"
 CONF_ON_BRIGHTNESS = "on_brightness"
 CONF_PRESET_ID = "preset_id"
 CONF_PRESETS_ID = "presets_id"
+CONF_PRESET = "preset"
 CONF_PRESETS = "presets"
 CONF_NEXT = "next"
 CONF_GROUP = "group"
-CONF_PRESET = "preset"
 
 MIRED_MIN = 153
 MIRED_MAX = 588
