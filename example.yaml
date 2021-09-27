@@ -7,32 +7,25 @@ substitutions:
   friendly_name: Bedside Lamp
   transition_length: 500ms
 
-  # Component identifiers.
-  prefix: bedside_lamp
-  id_light: ${prefix}
-  id_light_mode: ${prefix}_light_mode
-  id_power_button: ${prefix}_power_button
-  id_color_button: ${prefix}_color_button
-  id_slider_level: ${prefix}_slider_level
-  id_front_panel_illumination: ${prefix}_front_panel_illumination
-
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
 # --------------------------------------------------------------------------
+
+# The log level can be raised when needed for debugging the firmware. For
+# production, a low log level is recommended. Mainly because high volume log
+# output might interfere with the API/WiFi connection stability. So when
+# raising the log level, beware that you might see dropped connections from
+# Home Assistant and the network log viewer.
+logger:
+    level: WARN
 
 wifi:
   ssid: "Your-SSID"
   password: "Your-WiFi-Network-Password"
   
-  # Enable fallback hotspot (for captive portal) in case wifi connection fails
-  ap:
-    ssid: "ESPHome $friendly_name"
-    password: "Password-For-Connecting-To-Captive-Portal"
-
-captive_portal:
-
 api:
-  password: "Password-To-Link-HomeAssistant-To-This-Device"
+  password: "Password-For-Linking-HomeAssistant-To-This-Device"
+
   # Disable the reboot timeout. By default, the lamp reboots after 15
   # minutes without any client connections (e.g. when home assistant is off
   # line, or when the WiFi is broken). Reboots are annoying though, because
@@ -40,7 +33,7 @@ api:
   # flicker.
   reboot_timeout: 0s
 
-  # If you want to use light presets (see below) from Home Assistant,
+  # If you want to control light presets (see below) from Home Assistant,
   # then you can expose the required functionality as a service here.
   # This is an example of how you could expose the activation of a preset.
   services:
@@ -65,7 +58,7 @@ ota:
   on_begin:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 0%
           green: 0%
           blue: 100%
@@ -78,7 +71,7 @@ ota:
   on_end:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 0%
           green: 100%
           blue: 0%
@@ -87,27 +80,21 @@ ota:
   on_error:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 100%
           green: 0%
           blue: 0%
           brightness: 2%
       - delay: 1s
       - light.disco_off:
-          id: ${id_light}
-
-# The log level can be raised when needed for debugging the firmware. For
-# production, a low log level is recommended. Mainly because high volume log
-# output might interfere with the API/WiFi connection stability. So when
-# raising the log level, beware that you might see dropped connections from
-# Home Assistant and the network log viewer.
-logger:
-    level: WARN
+          id: my_light
 
 # --------------------------------------------------------------------------
 # Configuration specific for the Xiaomi Mijia Bedside Lamp 2.
-# This is just an example. You can of course modify it for your own needs.
 # --------------------------------------------------------------------------
+
+esphome:
+  name: ${name}
 
 # Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
 external_components:
@@ -120,19 +107,72 @@ external_components:
 # A special platform package is used for enabling unicore and disabling the
 # efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
 # chip that is used in the lamp.
-esphome:
-  name: ${name}
-  platform: ESP32
+esp32:
   board: esp32doit-devkit-v1
-  platformio_options:
-    platform: espressif32@3.2.0
-    platform_packages: |-
-      framework-arduinoespressif32 @ https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc#v1.0.6
+  framework:
+    type: arduino
+    platform_version: 3.3.2
+    version: https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc#v1.0.6
+    version_hint: 1.0.6
+
+# The I2C bus that is used for communicating to the front panel.
+i2c:
+  id: front_panel_i2c
+  sda: GPIO21
+  scl: GPIO19
+  scan: true
+
+# Outputs for driving the LEDs of the lamp.
+output:
+  - platform: ledc
+    id: output_red
+    pin: GPIO13
+    frequency: 3000
+  - platform: ledc
+    id: output_green
+    pin: GPIO14
+    frequency: 3000
+  - platform: ledc
+    id: output_blue
+    pin: GPIO5
+    frequency: 3000
+  - platform: ledc
+    id: output_white
+    pin: GPIO12
+    frequency: 10000
+  - platform: gpio
+    id: output_master1
+    pin: GPIO33
+  - platform: gpio
+    id: output_master2
+    pin: GPIO4
+    mode: OUTPUT
+  
+# The main configuration for the lamp. This sets up the two hardware
+# abstraction layers for the light and the front panel. These are
+# used by the other components.
+xiaomi_bslamp2:
+  light:
+    red: output_red
+    green: output_green
+    blue: output_blue
+    white: output_white
+    master1: output_master1
+    master2: output_master2
+  front_panel:
+    i2c: front_panel_i2c 
+    address: 0x2C
+    trigger_pin: GPIO16
+
+# --------------------------------------------------------------------------
+# Configuration of the behaviors for the lamp.
+# This is just an example. You can of course modify it for your own needs.
+# --------------------------------------------------------------------------
 
 # This component controls the LED lights of the lamp.
 light:
   - platform: xiaomi_bslamp2
-    id: ${id_light}
+    id: my_light
     name: ${friendly_name} RGBWW Light
     default_transition_length: ${transition_length}
     # When the brightness is changed, then update the level indicator
@@ -142,15 +182,15 @@ light:
       - if:
           condition:
             text_sensor.state:
-                id: ${id_light_mode}
+                id: my_light_mode
                 state: night
           then:
             - output.set_level:
-                id: ${id_front_panel_illumination}
+                id: my_front_panel_illumination
                 level: 0
           else:
             - output.set_level:
-                id: ${id_front_panel_illumination}
+                id: my_front_panel_illumination
                 level: !lambda return x;
     # You can use any effects that you like. These are just examples.
     effects:
@@ -190,14 +230,14 @@ light:
 text_sensor:
   - platform: xiaomi_bslamp2
     name: ${friendly_name} Light Mode
-    id: ${id_light_mode}
+    id: my_light_mode
 
 # This float output controls the front panel illumination + level indicator.
 # Value 0.0 turns off the illumination. Other values (up to 1.0) turn on
 # the illumination and set the level indicator to the requested level.
 output:
   - platform: xiaomi_bslamp2
-    id: ${id_front_panel_illumination}
+    id: my_front_panel_illumination
 
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "for"
@@ -206,24 +246,24 @@ binary_sensor:
   # When tapping the power button, toggle the light.
   # When holding the power button, turn on night light mode.
   - platform: xiaomi_bslamp2
-    id: ${id_power_button}
+    id: my_power_button
     for: POWER_BUTTON
     on_multi_click:
     - timing:
         - ON for at most 0.8s
       then:
-        - light.toggle: ${id_light}
+        - light.toggle: my_light
     - timing:
         - ON for at least 0.8s
       then:
         - light.turn_on:
-            id: ${id_light}
+            id: my_light
             brightness: 1%
 
   # When tapping the color button, acivate the next preset.
   # When holding the color button, activate the next preset group.
   - platform: xiaomi_bslamp2
-    id: ${id_color_button}
+    id: my_color_button
     for: COLOR_BUTTON
     on_multi_click:
       - timing:
@@ -247,11 +287,11 @@ sensor:
   # been handled above (by holding the power button). Therefore, brightness
   # starts from 0.02 here, to not trigger night mode using the slider.
   - platform: xiaomi_bslamp2
-    id: ${id_slider_level}
+    id: my_slider_level
     range_from: 0.02
     on_value:
       then:
         - light.turn_on:
-            id: ${id_light}
+            id: my_light
             brightness: !lambda return x;
 
