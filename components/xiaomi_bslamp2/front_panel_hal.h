@@ -180,7 +180,6 @@ class FrontPanelEventParser {
 };
 
 struct FrontPanelTriggerStore {
-  ISRInternalGPIOPin pin;
   volatile int event_id{0};
   static void gpio_intr(FrontPanelTriggerStore *store);
 };
@@ -223,7 +222,6 @@ class FrontPanelHAL : public Component, public i2c::I2CDevice {
   void setup() {
     ESP_LOGCONFIG(TAG, "Setting up I2C trigger pin interrupt...");
     this->trigger_pin_->setup();
-    this->store_.pin = this->trigger_pin_->to_isr();
     this->trigger_pin_->attach_interrupt(
       FrontPanelTriggerStore::gpio_intr,
       &this->store_,
