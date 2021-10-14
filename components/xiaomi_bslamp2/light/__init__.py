@@ -2,7 +2,7 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import light
 from esphome import automation
-from esphome.core import coroutine, Lambda
+from esphome.core import Lambda
 from esphome.const import (
     CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_COLOR_TEMPERATURE,
     CONF_STATE, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
@@ -217,23 +217,20 @@ def preset_activate_to_code(config, action_id, template_arg, args):
         cg.add(action_var.set_group(group_template_))
     yield action_var
 
-@coroutine
-def light_output_to_code(config):
+async def light_output_to_code(config):
     light_output_var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
-    yield light.register_light(light_output_var, config)
-    light_hal_var = yield cg.get_variable(config[CONF_LIGHT_HAL_ID])
+    await light.register_light(light_output_var, config)
+    light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
     cg.add(light_output_var.set_parent(light_hal_var))
 
-@coroutine
-def on_brightness_to_code(config):
-    light_output_var = yield cg.get_variable(config[CONF_OUTPUT_ID])
+async def on_brightness_to_code(config):
+    light_output_var = await cg.get_variable(config[CONF_OUTPUT_ID])
     for config in config.get(CONF_ON_BRIGHTNESS, []):
         trigger = cg.new_Pvariable(config[CONF_TRIGGER_ID], light_output_var)
-        yield automation.build_automation(trigger, [(float, "x")], config)
+        await automation.build_automation(trigger, [(float, "x")], config)
 
-@coroutine
-def preset_to_code(config, preset_group, preset_name):
-    light_var = yield cg.get_variable(config[CONF_ID])
+async def preset_to_code(config, preset_group, preset_name):
+    light_var = await cg.get_variable(config[CONF_ID])
     preset_var = cg.new_Pvariable(
         config[CONF_PRESET_ID], light_var, preset_group, preset_name)
     if CONF_TRANSITION_LENGTH in config:
@@ -252,22 +249,21 @@ def preset_to_code(config, preset_group, preset_name):
         cg.add(preset_var.set_effect(config[CONF_EFFECT]))
     else:
         cg.add(preset_var.set_effect("None"))
-    yield cg.register_component(preset_var, config)
+    return await cg.register_component(preset_var, config)
 
-@coroutine
-def presets_to_code(config):
+async def presets_to_code(config):
     presets_var = cg.new_Pvariable(config[CONF_PRESETS_ID])
-    yield cg.register_component(presets_var, config)
+    await cg.register_component(presets_var, config)
 
     for preset_group, presets in config.get(CONF_PRESETS, {}).items():
         for preset_name, preset_config in presets.items():
-            preset = yield preset_to_code(preset_config, preset_group, preset_name)
+            preset = await preset_to_code(preset_config, preset_group, preset_name)
             cg.add(presets_var.add_preset(preset))
 
-def to_code(config):
-    yield light_output_to_code(config)
-    yield on_brightness_to_code(config)
-    yield presets_to_code(config)
+async def to_code(config):
+    await light_output_to_code(config)
+    await on_brightness_to_code(config)
+    await presets_to_code(config)
 
 def validate(config):
     valid_presets = config.get(CONF_PRESETS, {});
