@@ -29,7 +29,7 @@ struct MyLightStateRTCState {
  */
 class XiaomiBslamp2LightState : public light::LightState, public LightStateDiscoSupport {
  public:
-  XiaomiBslamp2LightState(const std::string &name, XiaomiBslamp2LightOutput *output) : light::LightState(name, output) { }
+  XiaomiBslamp2LightState(XiaomiBslamp2LightOutput *output) : light::LightState(output) { }
 
   void disco_stop() {
     MyLightStateRTCState recovered{};
