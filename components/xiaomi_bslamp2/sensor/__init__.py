@@ -7,7 +7,7 @@ from .. import (
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
 )
 
-AUTO_LOAD = ["xiaomi_bslamp2"]
+DEPENDENCIES = ["xiaomi_bslamp2"]
 
 XiaomiBslamp2SliderSensor = bslamp2_ns.class_(
     "XiaomiBslamp2SliderSensor", sensor.Sensor, cg.Component)

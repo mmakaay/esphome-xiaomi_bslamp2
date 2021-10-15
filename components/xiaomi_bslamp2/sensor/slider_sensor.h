@@ -4,6 +4,7 @@
 #include "../front_panel_hal.h"
 #include "esphome/components/sensor/sensor.h"
 #include <cmath>
+#include <algorithm>
 
 namespace esphome {
 namespace xiaomi {
@@ -37,7 +38,7 @@ class XiaomiBslamp2SliderSensor : public sensor::Sensor, public Component {
         // look like this one was ever meant to be used, or that
         // the design was faulty on this. Therefore, level 1 is
         // ignored. The resulting range of levels is 0-19.
-        float corrected_level = max(0.0f, level - 2.0f);
+        float corrected_level = std::max(0.0f, level - 2.0f);
 
         float final_level = range_from_ + (slope_ * corrected_level);
 

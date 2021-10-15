@@ -8,7 +8,7 @@ from .. import (
     CONF_FRONT_PANEL_HAL_ID, FrontPanelHAL
 )
 
-AUTO_LOAD = ["xiaomi_bslamp2"]
+DEPENDENCIES = ["xiaomi_bslamp2"]
 
 CONF_PART = "part"
 
