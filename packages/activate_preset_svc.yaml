@@ -1,0 +1,13 @@
+# If you want to control light presets from Home Assistant, then you can
+# make use of the following service.
+
+api:
+  services:
+    - service: activate_preset
+      variables:
+        my_group: string
+        my_preset: string
+      then:
+        - preset.activate:
+            group: !lambda 'return my_group;'
+            preset: !lambda 'return my_preset;'
