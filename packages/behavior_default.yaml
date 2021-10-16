@@ -1,0 +1,163 @@
+# A global variable to keep track of the brightness level. This one is
+# used by the update_front_panel script to represent the brightness level
+# using the front panel illumination.
+#
+# This variable is used instead of querying the light component directly,
+# because that brightness level may vary during a light transition. The
+# behavior that I want: when you touch the front panel slider at 75%, then
+# the illumination rises directly to that level, while the light might do
+# a smooth transition.
+globals:
+  - id: current_brightness
+    type: float
+    initial_value: "0.0"
+
+# This script updates the front panel illumination.
+script:
+  - id: update_front_panel
+    mode: restart
+    then:
+      - front_panel.turn_off_leds: ALL
+      # In rgb or white light mode, turn on the front panel illumination,
+      # and show the current brightness level.
+      - if:
+          condition:
+            or:
+              - text_sensor.state:
+                  id: my_light_mode
+                  state: rgb
+              - text_sensor.state:
+                  id: my_light_mode
+                  state: white
+          then:
+            - front_panel.turn_on_leds: [ POWER, COLOR ]
+            - front_panel.set_level: !lambda return id(current_brightness);
+      # In night light mode, turn off the front panel illumination, except
+      # for the power button.
+      - if:
+          condition:
+            - text_sensor.state:
+                id: my_light_mode
+                state: night
+          then:
+            - front_panel.turn_on_leds: [ POWER ]
+      - front_panel.update_leds:
+
+# This component controls the LED lights of the lamp.
+light:
+  - platform: xiaomi_bslamp2
+    id: my_light
+    name: ${light_name}
+    default_transition_length: ${default_transition_length}
+
+    # When the brightness changes, update the front panel illumination.
+    on_brightness:
+      then:
+        - globals.set:
+            id: current_brightness
+            value: !lambda return x;
+        - script.execute: update_front_panel
+
+    # You can use any effects that you like. These are just examples.
+    effects:
+      - random:
+          name: "Slow Random"
+          transition_length: 30s
+          update_interval: 30s
+      - random:
+          name: "Fast Random"
+          transition_length: 3s
+          update_interval: 3s
+
+    # You can define one or more groups of presets. These presets can
+    # be activated using various "preset.activate" action options.
+    # The presets can for example be used to mimic the behavior of the
+    # original firmware (tapping the color button = go to next preset,
+    # holding the color button = switch between RGB and white light mode).
+    # These bindings have been setup below, using the binary_sensor for
+    # the color button.
+    presets:
+      rgb:
+        red:         { red: 100%, green: 0%,   blue: 0%   }
+        green:       { red: 0%,   green: 100%, blue: 0%   }
+        blue:        { red: 0%,   green: 0%,   blue: 100% }
+        yellow:      { red: 100%, green: 100%, blue: 0%   }
+        purple:      { red: 100%, green: 0%,   blue: 100% }
+        randomize:   { effect: Fast Random                }
+      white:
+        cold:        { color_temperature: 153 mireds      }
+        chilly:      { color_temperature: 275 mireds      }
+        luke:        { color_temperature: 400 mireds      }
+        warm:        { color_temperature: 588 mireds      }
+
+# This text sensor propagates the currently active light mode.
+# The possible light modes are: "off", "rgb", "white" and "night".
+text_sensor:
+  - platform: xiaomi_bslamp2
+    name: ${light_mode_text_sensor_name}
+    id: my_light_mode
+
+# This float output can be used to control the front panel illumination +
+# level indicator LEDs. Value 0.0 turns off the illumination. Other values
+# (up to 1.0) turn on the illumination and set the level indicator to the
+# requested level.
+output:
+  - platform: xiaomi_bslamp2
+    id: my_front_panel_illumination
+
+# Binary sensors can be created for handling front panel touch / release
+# events. To specify what part of the front panel to look at, the "for"
+# parameter can be set to: "POWER_BUTTON", "COLOR_BUTTON" or "SLIDER".
+binary_sensor:
+  # When tapping the power button, toggle the light.
+  # When holding the power button, turn on night light mode.
+  - platform: xiaomi_bslamp2
+    id: my_power_button
+    for: POWER_BUTTON
+    on_multi_click:
+    - timing:
+        - ON for at most 0.8s
+      then:
+        - light.toggle: my_light
+    - timing:
+        - ON for at least 0.8s
+      then:
+        - light.turn_on:
+            id: my_light
+            brightness: 1%
+
+  # When tapping the color button, activate the next preset.
+  # When holding the color button, activate the next preset group.
+  - platform: xiaomi_bslamp2
+    id: my_color_button
+    for: COLOR_BUTTON
+    on_multi_click:
+      - timing:
+          - ON for at most 0.6s
+        then:
+          - preset.activate:
+              next: preset
+      - timing:
+          - ON for at least 0.6s
+        then:
+          - preset.activate:
+              next: group
+
+# This sensor component publishes touch events for the front panel slider.
+# The published value represents the level at which the slider was touched.
+# By default, values range from 0.01 to 1.00 (in 20 steps). This range can
+# be modified using the "range_from" and "range_to" parameters.
+sensor:
+  # When the slider is touched, update the brightness.
+  # Brightness 0.01 initiates the light night mode, which has already
+  # been handled above (by holding the power button). Therefore, brightness
+  # starts from 0.02 here, to not trigger night mode using the slider.
+  - platform: xiaomi_bslamp2
+    id: my_slider_level
+    range_from: 0.02
+    on_value:
+      then:
+        - light.turn_on:
+            id: my_light
+            brightness: !lambda return x;
+
