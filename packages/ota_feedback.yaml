@@ -8,7 +8,7 @@ ota:
   on_begin:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 0%
           green: 0%
           blue: 100%
@@ -23,7 +23,7 @@ ota:
   on_end:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 0%
           green: 100%
           blue: 0%
@@ -33,11 +33,11 @@ ota:
   on_error:
     then:
       - light.disco_on:
-          id: ${id_light}
+          id: my_light
           red: 100%
           green: 0%
           blue: 0%
           brightness: 2%
       - delay: 1s
       - light.disco_off:
-          id: ${id_light}
+          id: my_light

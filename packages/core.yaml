@@ -1,5 +1,6 @@
 # --------------------------------------------------------------------------
-# Xiaomi Mija Bedside Lamp 2 core configuration
+# Substitutions as used by the configuration packages
+# These can be overriden from the main device configuration file.
 # --------------------------------------------------------------------------
 
 substitutions:
@@ -8,6 +9,10 @@ substitutions:
   light_name: ${friendly_name} RGBWW Light
   light_mode_text_sensor_name: ${friendly_name} Light Mode
   default_transition_length: 800ms
+
+# --------------------------------------------------------------------------
+# Core setup
+# --------------------------------------------------------------------------
 
 esphome:
   name: ${name}
@@ -35,7 +40,7 @@ api:
   reboot_timeout: 0s
 
 # ----------------------------------------------------------------------
-# Hardware configuration
+# Hardware setup
 # ----------------------------------------------------------------------
 
 i2c:
