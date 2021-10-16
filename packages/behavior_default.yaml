@@ -1,3 +1,17 @@
+# ------------------------------------------------------------------------
+# Behavior: default
+#
+# * Presets that resemble the original Xiaomi firmware
+#   (one group of RGB colors, one group of white light colors)
+# * Tapping the power button, toggles the light
+# * Holding the power button, turns on night light mode
+# * Tapping the color button, activates the next preset
+# * Holding the color button, activates the next preset group
+# * Touching the slider sets the brightness level and turns on the lamp
+# * When the light is on, the front panel illumination is on
+# * When the night light is on, only the power button is illuminated
+# ------------------------------------------------------------------------
+
 # A global variable to keep track of the brightness level. This one is
 # used by the update_front_panel script to represent the brightness level
 # using the front panel illumination.
