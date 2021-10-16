@@ -90,21 +90,6 @@ light:
         luke:        { color_temperature: 400 mireds      }
         warm:        { color_temperature: 588 mireds      }
 
-# This text sensor propagates the currently active light mode.
-# The possible light modes are: "off", "rgb", "white" and "night".
-text_sensor:
-  - platform: xiaomi_bslamp2
-    name: ${light_mode_text_sensor_name}
-    id: my_light_mode
-
-# This float output can be used to control the front panel illumination +
-# level indicator LEDs. Value 0.0 turns off the illumination. Other values
-# (up to 1.0) turn on the illumination and set the level indicator to the
-# requested level.
-output:
-  - platform: xiaomi_bslamp2
-    id: my_front_panel_illumination
-
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "for"
 # parameter can be set to: "POWER_BUTTON", "COLOR_BUTTON" or "SLIDER".
@@ -161,3 +146,9 @@ sensor:
             id: my_light
             brightness: !lambda return x;
 
+# This text sensor propagates the currently active light mode.
+# The possible light modes are: "off", "rgb", "white" and "night".
+text_sensor:
+  - platform: xiaomi_bslamp2
+    name: ${light_mode_text_sensor_name}
+    id: my_light_mode

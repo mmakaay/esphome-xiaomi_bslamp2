@@ -99,3 +99,11 @@ xiaomi_bslamp2:
     i2c: front_panel_i2c 
     address: 0x2C
     trigger_pin: GPIO16
+
+# This float output can be used to control the front panel illumination +
+# level indicator LEDs. Value 0.0 turns off the illumination. Other values
+# (up to 1.0) turn on the illumination and set the level indicator to the
+# requested level.
+output:
+  - platform: xiaomi_bslamp2
+    id: my_front_panel_illumination
