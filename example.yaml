@@ -1,13 +1,16 @@
 # --------------------------------------------------------------------------
 # Substitutions
+#
+# These are substitutions as used by the configuration packages from below.
+# You can uncomment and update the ones that you want to modify.
 # --------------------------------------------------------------------------
 
 substitutions:
-  name: bedside-lamp
-  friendly_name: Bedside Lamp
-  light_name: ${friendly_name} RGBWW Light
-  light_mode_text_sensor_name: ${friendly_name} Light Mode
-  default_transition_length: 800ms
+  #name: bedside-lamp
+  #friendly_name: Bedside Lamp
+  #light_name: ${friendly_name} RGBWW Light
+  #light_mode_text_sensor_name: ${friendly_name} Light Mode
+  #default_transition_length: 800ms
 
 # --------------------------------------------------------------------------
 # Load configuration packages
