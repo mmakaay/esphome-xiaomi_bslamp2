@@ -3,9 +3,10 @@
 # Configuration guide
 
 I think, the best starting point for creating your own yaml configuration, is to look at the
-[`example.yaml`](../example.yaml) file from the project documentation. This configuration was written
-with the functionality of the original firmware in mind and it makes use of all available options.
-This configuration guide can be used to fill in the blanks.
+[`example.yaml`](../example.yaml) file and the [configuration packages](../packages).
+These configuration files were written with the functionality of the original firmware in
+mind and it makes use of all available options. This configuration guide can be used to fill
+in the blanks.
 
 The `xiaomi_bslamp2` platform provides various components that expose the core functionalities of
 the lamp. In the following table, you can find what components are used for exposing what physical

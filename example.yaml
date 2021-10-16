@@ -1,297 +1,52 @@
 # --------------------------------------------------------------------------
-# A few practical configuration substitutions.
+# Substitutions
 # --------------------------------------------------------------------------
 
 substitutions:
   name: bedside-lamp
   friendly_name: Bedside Lamp
-  transition_length: 500ms
+  light_name: ${friendly_name} RGBWW Light
+  light_mode_text_sensor_name: ${friendly_name} Light Mode
+  default_transition_length: 800ms
+
+# --------------------------------------------------------------------------
+# Load configuration packages
+#
+# These provide a convenient way to compose your device configuration from
+# some functional building blocks. Pick and mix the blocks that you need.
+#
+# For customization you can override options in your config or you can
+# copy the contents of these packages directly in your config file as
+# an example for your own customizations.
+#
+# Available packages are:
+# - core.yaml                : core components & hardware setup
+# - behavior_default.yaml    : default device behavior
+# - ota_feedback.yaml        : enable visual feedback during OTA updates
+# - activate_preset_svc.yaml : 'activate_preset' service for Home Assistant
+# --------------------------------------------------------------------------
+
+packages:
+  bslamp2:
+    url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
+    ref: dev
+    files:
+      - packages/core.yaml
+      - packages/behavior_default.yaml
+      - packages/ota_feedback.yaml
+      - packages/activate_preset_svc.yaml
+    refresh: 0s
 
 # --------------------------------------------------------------------------
 # Use your own preferences for these components.
 # --------------------------------------------------------------------------
 
-# The log level can be raised when needed for debugging the firmware. For
-# production, a low log level is recommended. Mainly because high volume log
-# output might interfere with the API/WiFi connection stability. So when
-# raising the log level, beware that you might see dropped connections from
-# Home Assistant and the network log viewer.
-logger:
-    level: WARN
-
 wifi:
-  ssid: "Your-SSID"
-  password: "Your-WiFi-Network-Password"
-  
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
 api:
-  password: "Password-For-Linking-HomeAssistant-To-This-Device"
-
-  # Disable the reboot timeout. By default, the lamp reboots after 15
-  # minutes without any client connections (e.g. when home assistant is off
-  # line, or when the WiFi is broken). Reboots are annoying though, because
-  # the RGBWW LEDs will turn off during the reboot, causing the light to
-  # flicker.
-  reboot_timeout: 0s
-
-  # If you want to control light presets (see below) from Home Assistant,
-  # then you can expose the required functionality as a service here.
-  # This is an example of how you could expose the activation of a preset.
-  services:
-    - service: activate_preset
-      variables:
-        my_group: string
-        my_preset: string
-      then:
-        - preset.activate:
-            group: !lambda 'return my_group;'
-            preset: !lambda 'return my_preset;'
+  password: !secret api_password
 
 ota:
-  password: "Password-For-Flashing-This-Device-Over-The-Air"
-
-  # These OTA triggers are used to provide some visual feedback during the OTA
-  # flashing process. The light is turned blue when the upgrade starts, the
-  # brightness indicator will represent the update progress (fills up from 0%
-  # to 100%), the light will flash red when the upgrade fails or green when the
-  # upgrade succeeds.
-  # You can safely remove these if you don't want the visual feedback.
-  on_begin:
-    then:
-      - light.disco_on:
-          id: my_light
-          red: 0%
-          green: 0%
-          blue: 100%
-          brightness: 2%
-          transition_length: 0s
-  on_progress:
-    then:
-      - front_panel.set_level: !lambda return (x / 100.0f);
-      - front_panel.update_leds:
-  on_end:
-    then:
-      - light.disco_on:
-          id: my_light
-          red: 0%
-          green: 100%
-          blue: 0%
-          brightness: 2%
-          transition_length: 0s
-  on_error:
-    then:
-      - light.disco_on:
-          id: my_light
-          red: 100%
-          green: 0%
-          blue: 0%
-          brightness: 2%
-      - delay: 1s
-      - light.disco_off:
-          id: my_light
-
-# --------------------------------------------------------------------------
-# Configuration specific for the Xiaomi Mijia Bedside Lamp 2.
-# --------------------------------------------------------------------------
-
-esphome:
-  name: ${name}
-
-# Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
-external_components:
-  - source:
-      type: git
-      url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
-      ref: main
-    refresh: 60s
-
-# A special platform package is used for enabling unicore and disabling the
-# efuse mac crc check. These two changes are required for the ESP32-WROOM-32D
-# chip that is used in the lamp.
-esp32:
-  board: esp32doit-devkit-v1
-  framework:
-    type: arduino
-    platform_version: 3.3.2
-    version: https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc#v1.0.6
-    version_hint: 1.0.6
-
-# The I2C bus that is used for communicating to the front panel.
-i2c:
-  id: front_panel_i2c
-  sda: GPIO21
-  scl: GPIO19
-  scan: true
-
-# Outputs for driving the LEDs of the lamp.
-output:
-  - platform: ledc
-    id: output_red
-    pin: GPIO13
-    frequency: 3000
-  - platform: ledc
-    id: output_green
-    pin: GPIO14
-    frequency: 3000
-  - platform: ledc
-    id: output_blue
-    pin: GPIO5
-    frequency: 3000
-  - platform: ledc
-    id: output_white
-    pin: GPIO12
-    frequency: 10000
-  - platform: gpio
-    id: output_master1
-    pin: GPIO33
-  - platform: gpio
-    id: output_master2
-    pin: GPIO4
-    mode: OUTPUT
-  
-# The main configuration for the lamp. This sets up the two hardware
-# abstraction layers for the light and the front panel. These are
-# used by the other components.
-xiaomi_bslamp2:
-  light:
-    red: output_red
-    green: output_green
-    blue: output_blue
-    white: output_white
-    master1: output_master1
-    master2: output_master2
-  front_panel:
-    i2c: front_panel_i2c 
-    address: 0x2C
-    trigger_pin: GPIO16
-
-# --------------------------------------------------------------------------
-# Configuration of the behaviors for the lamp.
-# This is just an example. You can of course modify it for your own needs.
-# --------------------------------------------------------------------------
-
-# This component controls the LED lights of the lamp.
-light:
-  - platform: xiaomi_bslamp2
-    id: my_light
-    name: ${friendly_name} RGBWW Light
-    default_transition_length: ${transition_length}
-    # When the brightness is changed, then update the level indicator
-    # on the front panel accordingly. In night light mode, turn off
-    # the front panel illumination.
-    on_brightness:
-      - if:
-          condition:
-            text_sensor.state:
-                id: my_light_mode
-                state: night
-          then:
-            - output.set_level:
-                id: my_front_panel_illumination
-                level: 0
-          else:
-            - output.set_level:
-                id: my_front_panel_illumination
-                level: !lambda return x;
-    # You can use any effects that you like. These are just examples.
-    effects:
-      - random:
-          name: "Slow Random"
-          transition_length: 30s
-          update_interval: 30s
-      - random:
-          name: "Fast Random"
-          transition_length: 3s
-          update_interval: 3s
-    # You can define one or more groups of presets. These presets can
-    # be activated using various "preset.activate" action options.
-    # The presets can for example be used to mimic the behavior of the
-    # original firmware (tapping the color button = go to next preset,
-    # holding the color button = switch between RGB and white light mode).
-    # These bindings have been setup below, using the binary_sensor for
-    # the color button.
-    presets:
-      rgb:
-        red:         { red: 100%, green: 0%,   blue: 0%   }
-        green:       { red: 0%,   green: 100%, blue: 0%   }
-        blue:        { red: 0%,   green: 0%,   blue: 100% }
-        yellow:      { red: 100%, green: 100%, blue: 0%   }
-        purple:      { red: 100%, green: 0%,   blue: 100% }
-        randomize:   { effect: Fast Random                }
-      white:
-        cold:        { color_temperature: 153 mireds      }
-        chilly:      { color_temperature: 275 mireds      }
-        luke:        { color_temperature: 400 mireds      }
-        warm:        { color_temperature: 588 mireds      }
-
-# This text sensor propagates the currently active light mode.
-# The possible light modes are: "off", "rgb", "white" and "night".
-# By setting the name, the text_sensor will show up as an entity
-# for the lamp in Home Assistant.
-text_sensor:
-  - platform: xiaomi_bslamp2
-    name: ${friendly_name} Light Mode
-    id: my_light_mode
-
-# This float output controls the front panel illumination + level indicator.
-# Value 0.0 turns off the illumination. Other values (up to 1.0) turn on
-# the illumination and set the level indicator to the requested level.
-output:
-  - platform: xiaomi_bslamp2
-    id: my_front_panel_illumination
-
-# Binary sensors can be created for handling front panel touch / release
-# events. To specify what part of the front panel to look at, the "for"
-# parameter can be set to: "POWER_BUTTON", "COLOR_BUTTON" or "SLIDER".
-binary_sensor:
-  # When tapping the power button, toggle the light.
-  # When holding the power button, turn on night light mode.
-  - platform: xiaomi_bslamp2
-    id: my_power_button
-    for: POWER_BUTTON
-    on_multi_click:
-    - timing:
-        - ON for at most 0.8s
-      then:
-        - light.toggle: my_light
-    - timing:
-        - ON for at least 0.8s
-      then:
-        - light.turn_on:
-            id: my_light
-            brightness: 1%
-
-  # When tapping the color button, acivate the next preset.
-  # When holding the color button, activate the next preset group.
-  - platform: xiaomi_bslamp2
-    id: my_color_button
-    for: COLOR_BUTTON
-    on_multi_click:
-      - timing:
-          - ON for at most 0.6s
-        then:
-          - preset.activate:
-              next: preset
-      - timing:
-          - ON for at least 0.6s
-        then:
-          - preset.activate:
-              next: group
-
-# This sensor component publishes touch events for the front panel slider.
-# The published value represents the level at which the slider was touched.
-# By default, values range from 0.01 to 1.00 (in 20 steps). This range can
-# be modified using the "range_from" and "range_to" parameters.
-sensor:
-  # When the slider is touched, update the brightness.
-  # Brightness 0.01 initiates the light night mode, which has already
-  # been handled above (by holding the power button). Therefore, brightness
-  # starts from 0.02 here, to not trigger night mode using the slider.
-  - platform: xiaomi_bslamp2
-    id: my_slider_level
-    range_from: 0.02
-    on_value:
-      then:
-        - light.turn_on:
-            id: my_light
-            brightness: !lambda return x;
-
+  password: !secret ota_password
