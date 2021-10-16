@@ -39,6 +39,14 @@ external_components:
 api:
   reboot_timeout: 0s
 
+# The log level can be raised when needed for debugging the firmware. For
+# production, a low log level is recommended. Mainly because high volume log
+# output might interfere with the API/WiFi connection stability. So when
+# raising the log level, beware that you might see dropped connections from
+# Home Assistant and the network log viewer.
+logger:
+  log_level: DEBUG
+
 # ----------------------------------------------------------------------
 # Hardware setup
 # ----------------------------------------------------------------------
