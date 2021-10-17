@@ -28,7 +28,10 @@ esp32:
 
 # Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
 external_components:
-  - source: github://mmakaay/esphome-xiaomi_bslamp2@dev
+  - source:
+      type: git
+      url: github://mmakaay/esphome-xiaomi_bslamp2
+      ref: dev
     refresh: 60s
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
