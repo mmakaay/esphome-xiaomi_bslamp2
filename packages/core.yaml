@@ -30,7 +30,7 @@ esp32:
 external_components:
   - source:
       type: git
-      url: github://mmakaay/esphome-xiaomi_bslamp2
+      url: https://mmakaay/esphome-xiaomi_bslamp2
       ref: dev
     refresh: 60s
 
