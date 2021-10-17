@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------
 
 substitutions:
-  version: dev
   name: bedside-lamp
   friendly_name: Bedside Lamp
   light_name: ${friendly_name} RGBWW Light
@@ -29,7 +28,7 @@ esp32:
 
 # Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
 external_components:
-  - source: github://mmakaay/esphome-xiaomi_bslamp2@${version}
+  - source: github://mmakaay/esphome-xiaomi_bslamp2@dev
     refresh: 60s
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
