@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 
 substitutions:
-  version: dev
   #name: bedside-lamp
   #friendly_name: Bedside Lamp
   #light_name: ${friendly_name} RGBWW Light
@@ -33,7 +32,7 @@ substitutions:
 packages:
   bslamp2:
     url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
-    ref: ${version}
+    ref: dev
     files:
       - packages/core.yaml
       - packages/behavior_default.yaml
