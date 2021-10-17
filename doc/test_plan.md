@@ -1,4 +1,4 @@
-# Testplan
+# Test plan
 
 This is the test plan that I follow for every release. I use it to ensure that no regression has
 been introduced.
@@ -70,11 +70,4 @@ been introduced.
 ## Step 3: Release the new version
 
 Only after performing these tests successfully, the new version can be released.
-
-Before release, check if the minimum version requirement for ESPHome is documented
-correctly in the following files:
-
-  * doc/installation.md
-  * README.md
-  * CHANGELOG.md
-
+Release steps are documented in [`releaseplan.md`](releaseplan.md).
