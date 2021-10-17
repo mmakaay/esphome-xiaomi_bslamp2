@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2021.10.0]
+
+**Note**: This release requires ESPHome 2021.10.0 and Home Assistant 2021.8.0 or newer.
+
+### Changed
+- Due to changes in ESPHome, the configuration for the lamp has changed.
+  This means that existing configuration files have to be updated accordingly.
+  To make configuration as easy as possible, the `example.yaml` configuration
+  now makes use of configuration packages that are stored on GitHub. This
+  reduces the amount of configuration that is required in your own device
+  configuration file, making future configuration changes easier.
+- ESPHome 2021.10.0 has brought us support for using ESP-IDF instead of the
+  Arduino framework. ESP-IDF is the "Espressif IoT Development Framework",
+  which is the native development framework for ESP32 SoCs. I switched to this
+  framework. This made it possible to get the required ESP32 unicore support
+  and to ignore the MAC CRC using a vanilla build. No more need for hacked up
+  platform packages to get things going! <3
+- The code has been made compatible with ESPHome 2021.10.0.
+
 ## [2021.9.1]
 
 **Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.
