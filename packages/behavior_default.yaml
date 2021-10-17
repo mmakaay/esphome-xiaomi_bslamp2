@@ -90,19 +90,19 @@ light:
     # holding the color button = switch between RGB and white light mode).
     # These bindings have been setup below, using the binary_sensor for
     # the color button.
-    presets:
-      rgb:
-        red:         { red: 100%, green: 0%,   blue: 0%   }
-        green:       { red: 0%,   green: 100%, blue: 0%   }
-        blue:        { red: 0%,   green: 0%,   blue: 100% }
-        yellow:      { red: 100%, green: 100%, blue: 0%   }
-        purple:      { red: 100%, green: 0%,   blue: 100% }
-        randomize:   { effect: Fast Random                }
-      white:
-        cold:        { color_temperature: 153 mireds      }
-        chilly:      { color_temperature: 275 mireds      }
-        luke:        { color_temperature: 400 mireds      }
-        warm:        { color_temperature: 588 mireds      }
+#    presets:
+#      rgb:
+#        red:         { red: 100%, green: 0%,   blue: 0%   }
+#        green:       { red: 0%,   green: 100%, blue: 0%   }
+#        blue:        { red: 0%,   green: 0%,   blue: 100% }
+#        yellow:      { red: 100%, green: 100%, blue: 0%   }
+#        purple:      { red: 100%, green: 0%,   blue: 100% }
+#        randomize:   { effect: Fast Random                }
+#      white:
+#        cold:        { color_temperature: 153 mireds      }
+#        chilly:      { color_temperature: 275 mireds      }
+#        luke:        { color_temperature: 400 mireds      }
+#        warm:        { color_temperature: 588 mireds      }
 
 # Binary sensors can be created for handling front panel touch / release
 # events. To specify what part of the front panel to look at, the "for"
