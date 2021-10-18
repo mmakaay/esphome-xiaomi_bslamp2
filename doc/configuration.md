@@ -30,33 +30,16 @@ hardware abstraction layer (HAL) components that are used by the other component
 the GPIO's for the RGBWW leds and one for the I2C communication between the ESP32 and the front
 panel.
 
-I do mention the platform configuration here for completeness sake, but **generally you will not have
-to add the following configuration option to your yaml file**. It is loaded automatically by the
-components that need it, and the GPIO + I2C configurations are fully prepared to work for the
-Bedside Lamp 2 wiring out of the box. Therefore, you will not find this piece of configuration in
-the [`example.yaml`](../example.yaml).
-
-Having said that, here are the configuration options:
+You will not have to add any configuration options for the `xiaomi_bslamp2` to your yaml file.
+The required configuration is fully provided by the configuration package `packages/core.yaml`.
+The GPIO + I2C configurations are prepared to work for the Bedside Lamp 2 wiring out of the box.
 
 ```yaml
 xiaomi_bslamp2:
-  # Options for the RGBWW LEDs HAL.
-  red: "GPIO13"
-  green: "GPIO14"
-  blue: "GPIO5"
-  white: "GPIO12"
-  master_1: "GPIO33"
-  master_2: "GPIO4"
-  
-  # Options for the Front Panel HAL.
-  sda: "GPIO21"
-  scl: "GPIO19"
-  address: 0x2C
-  trigger_pin: "GPIO16"
 ```
 
 The only reason that I can think of for adding this platform configuration to your yaml file, would
-be if you blew one or more or the ESP32 pins, and need to rewire functionality. In other casis,
+be if you blew one or more or the ESP32 pins, and need to rewire functionality. In other cases,
 simply omit the section.
 
 ## Component: light
