@@ -1,4 +1,4 @@
-# ESPHome components for Xiaomi Mijia Bedside Lamp 2
+# ESPHome support for Xiaomi Mijia Bedside Lamp 2
 
 [ [Changelog](CHANGELOG.md) | [License](LICENSE.md) | [Code of conduct](CODE_OF_CONDUCT.md) ]
 
@@ -60,6 +60,13 @@ For those who have experience with flashing ESPHome onto devices:
 * Power up the lamp with `GPIO0` connected to GND to enable flashing mode.
 * Flash `firmware.bin` onto the device, for example using
   [esphome-flasher](https://github.com/esphome/esphome-flasher)..
+  
+## Upgrading
+
+I always try to make it possible to upgrade the lamp firmware without having to do anything special.
+Sometimes, this is not possible. For those cases, the upgrade instruction can be found here:
+
+* [Upgrading to 2021.10.0](doc/upgrading_to_2021.10.0.md)
 
 ## Table of contents
 
