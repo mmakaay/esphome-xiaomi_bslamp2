@@ -6,8 +6,8 @@
 # --------------------------------------------------------------------------
 
 substitutions:
-  #name: bedside-lamp
-  #friendly_name: Bedside Lamp
+  name: bedside-lamp
+  friendly_name: Bedside Lamp
   #light_name: ${friendly_name} RGBWW Light
   #light_mode_text_sensor_name: ${friendly_name} Light Mode
   #default_transition_length: 800ms
