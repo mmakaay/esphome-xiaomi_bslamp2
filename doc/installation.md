@@ -19,6 +19,14 @@ found in the [Configuration guide](configuration.md).
 After these steps you can let ESPHome compile your firmware (`firmware.bin`) file. This firmware
 can then be flashed onto the device.
 
+**Note**: During compilation you might see a warning message from ESPHome, telling you:
+```
+WARNING GPIO4 is a Strapping PIN and should be avoided.
+```
+You can safely ignore this warning. GPIO4 is hard-wired in the lamp's PCB and the original firmware
+uses it as the master switch for turning on and off the LEDs. This way of using the pin does not
+pose any problems for the device.
+
 Like normal with ESPHome, the first time you will have to flash the device using a serial interface.
 After this initial flashing operation, you can flash new versions of the firmware using the OTA
 (Over The Air) method.
