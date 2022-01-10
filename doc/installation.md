@@ -19,6 +19,12 @@ found in the [Configuration guide](configuration.md).
 After these steps you can let ESPHome compile your firmware (`firmware.bin`) file. This firmware
 can then be flashed onto the device.
 
+The compile command for ESPHome is
+```
+esphome compile example.yaml
+```
+The firmware.bin file can be found in `.pioenvs\...\firmware.bin`.
+
 **Note**: During compilation you might see some warning messages from ESPHome, telling you:
 ```
 WARNING GPIO4 is a Strapping PIN and should be avoided.
