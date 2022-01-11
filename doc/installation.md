@@ -19,7 +19,7 @@ found in the [Configuration guide](configuration.md).
 After these steps you can let ESPHome compile your firmware (`firmware.bin`) file. This firmware
 can then be flashed onto the device.
 
-The compile command for ESPHome is
+The [ESPHome compile](https://esphome.io/guides/cli.html#compile-command) command is
 ```
 esphome compile example.yaml
 ```
