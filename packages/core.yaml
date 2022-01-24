@@ -32,7 +32,7 @@ external_components:
       type: git
       url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
       ref: dev
-    refresh: 60s
+    refresh: 100d
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
 # minutes without any client connections (e.g. when home assistant is off
