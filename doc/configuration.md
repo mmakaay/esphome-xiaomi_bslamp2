@@ -248,13 +248,6 @@ preset.activate: white.warm
 When a group or template is specified that does not exist, or if next group/preset is used while no
 presets have been defined at all, then the action will be ignored and an error will be logged.
 
-*Note: This is validation at run time. It would be a lot better to validate the names at compile
-time more strictly, so the firmware will not even compile when invalid names are in use.
-[Issue #15](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/15) was created for
-implementing this. However, a new feature in ESPHome is required to be able to do this
-implementation. Good news is that this is already well on its way.*
-
-
 ## Component: binary_sensor
 
 Binary sensors can be added to the configuration for handling touch/release events for the front
