@@ -48,7 +48,7 @@ api:
 # raising the log level, beware that you might see dropped connections from
 # Home Assistant and the network log viewer.
 logger:
-  level: DEBUG
+  level: WARN
 
 # ----------------------------------------------------------------------
 # Hardware setup
