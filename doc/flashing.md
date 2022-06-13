@@ -71,6 +71,8 @@ adapter. In this example, I have used male wires, so I could plug them into a br
 <img src="images/10_stripped_dupont_wires.jpg" width="200">
 
 Solder the wires to the `RX`, `TX`, `GND` and `GPIO0` debug pads.
+Beware not to use too much solder on the GPIO0 pad, because that might flow onto the pad that is right
+next to it, permanently putting the device in flash mode as a result.
 
 *Note: The board has a debug pad that exposes 3.3V. Do not use this pad to power the board from your
 serial adapter. Always power the lamp using its own power supply.*
