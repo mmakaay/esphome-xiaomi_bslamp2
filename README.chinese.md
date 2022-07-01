@@ -1,78 +1,53 @@
-# ESPHome support for Xiaomi Mijia Bedside Lamp 2
+# 对小米®米家床头灯 2 进行 ESPHome 兼容支持
 
-[ [Changelog](CHANGELOG.md) | [License](LICENSE.md) | [Code of conduct](CODE_OF_CONDUCT.md) ]
+[ [变更记录](CHANGELOG.md) | [许可协议](LICENSE.md) | [行为准则](CODE_OF_CONDUCT.md) ]
 
-The Bedside Lamp 2 is a smart RGBWW LED lamp, produced by Yeelight for the Xiaomi Mijia brand. It
-can be controlled via the WiFi network and from a touch panel on the front of the device. The touch
-panel contains a power button, a button that changes the color of the light and a slider that can be
-used to change the brightness of the light.
+小米®米家床头灯2是一款智能型三色二温(EGBWW) 的 LED 照明灯具，由易来(Yeelight)公司替小米®米家品牌代工。这款灯具可以通过Wi-Fi网络以及该机器前侧的触摸面板来对其进行操控。触摸面板带有电源键、变色键还有一个控制灯光亮度的滑条。
 
-This project provides custom components for ESPHome, which make it possible to fully control every
-aspect of the lamp and to integrate the lamp in your Home Assistant setup.
+本项目为用户提供客制化后的 ESPHome 组件，使得用户对本照明灯具进行全方位的完全控制，并把本照明灯具加入到您的家居助手(Home Assistant)里成为可能。
 
-## Features
+## 功能
 
-* The lamp **integrates easily with Home Assistant** using the ESPHome integration.
+* 本照明灯具 **与家居助手(Home Assistant)集成十分容易** 只需要采用ESPHome加入就可以做到。
 
-* **The lamp no longer phones home to the Mijia Cloud.** Using this firmware, you can rest assured
-  that the network traffic is limited to your own network.  This matches the ideas behind Home
-  Assistant, of providing a local home automation platform, that puts privacy first.
+* **本照明灯具不再会与米家云(Mijia Cloud)进行通信** 采用本固件后，用户可以完全放心，网络传输仅限于使用者的本地网络。这一点也与家居助手(Home Assistant)的理念相吻合，那就是为使用者提供本地家居自动化平台，以个人隐私为重中之重。
 
-* **No more need for the LAN control option** to integrate the lamp with Home Assistant. Especially
-  important, because Xiaomi decided in all their wisdom to remove LAN control from the device,
-  breaking existing integrations.
+* **不用本地局域网控制选项** 就能把照明灯具加入到家居助手(Home Assistant)里。这点非常重要，是因为也不知道小米是犯了什么糊涂穷尽了全体成员的智慧拍脑门子决定要移除本机器的本地局域网控制功能，这样极大地破坏了现有的集成环境。
 
-* **The night light supports multiple colors**. The original firmware only supports a single warm
-  white night light color.
+* **夜灯功能支持多重颜色** 原固件只支持单一的暖白夜灯颜色。
 
-* **Smooth light color transitions**, unlike the current version of the Yeelight integration. The
-  Homekit integration does provide good transitions, but on my system, the color temperature white
-  light mode is missing in the Home Assistant GUI.
+* **平滑的灯光颜色切换** 不像是当前易来(Yeelight)集成版本的那样。Homekit集成的确提供了挺不错的切换，可是在我个人的系统中，在家居助手(Home Assistant)用户界面里缺少色温白光模式。
 
-* **Since the components of the lamp are exposed as ESPHome components, you don't have to stick with
-  the lamp's original behavior.** You can hook up the lamp in your home automation as you see fit.
-  Use the slider to control the volume of your audio set? Long press the power button to put your
-  house in night mode? Use the illumination behind the slider bar to represent the progress of your
-  sour dough bread bulk fermentation?  Go ahead, make it so! :-)
+* **由于本照明灯具的组件是被当做ESPHome组件存在的，用户不需要依照该灯具过去的运行功能来使用** 你可以把本照明灯具依照你的偏好添加到你的家居自动化环境里。使用滑条控制您音响系统的音量你喜欢么？长按电源按键把整个屋子变成夜晚模式可以吗？使用滑条的显示面团发酵进度怎么样？好哇，说走就走！ (^U^)
 
-* **All LEDs that are used for illumination of the front panel (power button, color button and
-  10 LEDs for the brightness slider) can be controlled individually.** This means that you have
-  12 LEDs in total to use as you see fit, instead of sticking with the behavior of the original
-  firmware.
+* **所有照亮前面板的LED(电源键、变色键和滑条的10颗LED)可以一对一控制** 这意味着你有12颗可以依照你的偏好使用的LED，而不需要依照该灯具过去的运行功能来使用。
 
-* **Possibilities to extend the device's functionality through hardware mods.** There are [GPIO pins
-  that are not in use](doc/technical_details.md#esp32-pinout).  If "tinkerer" is your middle name,
-  you can use those pins to come up with your own hardware hacks to extend the device's
-  functionality. 
+* **通过硬件模改以扩展机器功能可能性** 存在[GPIO 针没有被使用](doc.chinese/technical_details.md#esp32-pinout)。如果你的人送外号是“修改狂人”，你可以利用这些针来想出你自己的硬件妙用来扩展机器的功能。
 
-## Quick start guide
+## 快速开始指导
 
-For those who have experience with flashing ESPHome onto devices:
+对刷ESPHome到机器中有经验的人可以来看看：
 
-* Make sure you are using ESPHome 2021.10.0 or newer.
-* Copy [`example.yaml`](example.yaml) to `<CONFIG_DIR>/<NODE_NAME>.yaml`.
-* Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)).
-* Compile the `firmware.bin` file and download it to the device to which you have connected your
-  serial to USB adapter.
-* [Open up the lamp](doc/flashing.md#opening-the-lamp-to-expose-the-pcb) and connect its `TX`, `RX`,
-  `GND` and `GPIO0` debug pads to the serial adapter. Check this [image for the debug pad
-  locations](doc/images/09_debug_pads_for_soldering.jpg).
-* Power up the lamp with `GPIO0` connected to GND to enable flashing mode.
-* Flash `firmware.bin` onto the device, for example using
-  [esphome-flasher](https://github.com/esphome/esphome-flasher)..
+
+* 确保你使用的是ESPHome 2021.10.0或者更加新的版本。
+* 复制[`example.yaml`](example.yaml)到`<CONFIG_DIR>/<NODE_NAME>.yaml`。
+* 根据需求自行修改配置文件(详阅 [配置指导](doc/configuration.md))。
+* 编译`firmware.bin`文件并下载到被你连接到串行转USB适配器的机器里。
+* [拆灯](doc/flashing.md#opening-the-lamp-to-expose-the-pcb) 连接灯具的`TX`, `RX`, `GND` 和 `GPIO0` 调试接点到串行适配器。请看[接点的位置图](doc/images/09_debug_pads_for_soldering.jpg)。
+* 给本照明灯具通电，`GPIO0`要与GND连在一起以启用刷机模式。
+* 把`firmware.bin`刷进机器，例如使用[esphome-flasher](https://github.com/esphome/esphome-flasher)。
   
-## Upgrading
+## 升级
 
-I always try to make it possible to upgrade the lamp firmware without having to do anything special.
-Sometimes, this is not possible. For those cases, the upgrade instruction can be found here:
+我总想让这个机器不用进行其他修改就可以升级固件。但有些时候，根本不可能完成。如果升级失败，升级的说明在这里。
 
-* [Upgrading to 2021.10.0](doc/upgrading_to_2021.10.0.md)
+* [升级到 2021.10.0](doc.chinese/upgrading_to_2021.10.0.md)
 
-## Table of contents
+## 内容一览表
 
-* [Why custom firmware?](doc/why_custom_firmware.md)
-* [Installation guide](doc/installation.md)
-* [Configuration guide](doc/configuration.md)
-* [Flashing guide](doc/flashing.md)
-* [Technical details](doc/technical_details.md)
-* [Sponsoring](doc/sponsoring.md)
+* [何苦要用自制固件？](doc.chinese/why_custom_firmware.md)
+* [安装指导](doc.chinese/installation.md)
+* [配置指导](doc.chinese/configuration.md)
+* [刷机指导](doc.chinese/flashing.md)
+* [技术详情](doc.chinese/technical_details.md)
+* [资助](doc.chinese/sponsoring.md)
