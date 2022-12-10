@@ -31,7 +31,7 @@ esp32:
 external_components:
   - source:
       type: local
-      path: ./esphome-xiaomi_bslamp2/
+      path: ./esphome-xiaomi_bslamp2/components
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
 # minutes without any client connections (e.g. when home assistant is off
