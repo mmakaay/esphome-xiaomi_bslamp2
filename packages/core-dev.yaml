@@ -1,0 +1,109 @@
+# --------------------------------------------------------------------------
+# Substitutions as used by the configuration packages
+# These can be overriden from the main device configuration file.
+# --------------------------------------------------------------------------
+
+substitutions:
+  name: bedside-lamp
+  friendly_name: Bedside Lamp
+  light_name: ${friendly_name} RGBWW Light
+  light_mode_text_sensor_name: ${friendly_name} Light Mode
+  default_transition_length: 800ms
+
+# --------------------------------------------------------------------------
+# Core setup
+# --------------------------------------------------------------------------
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+    advanced:
+      ignore_efuse_mac_crc: true
+
+# Retrieve the code for the xiaomi_bslamp2 platform from a local clone
+# of the github repository, in the same directory as the config file.
+external_components:
+  - source:
+      type: local
+      path: ./esphome-xiaomi_bslamp2/
+
+# Disable the reboot timeout. By default, the lamp reboots after 15
+# minutes without any client connections (e.g. when home assistant is off
+# line, or when the WiFi is broken). Reboots are annoying though, because
+# the RGBWW LEDs will turn off during the reboot, causing the light to
+# flicker.
+api:
+  reboot_timeout: 0s
+
+# The log level can be raised when needed for debugging the firmware. For
+# production, a low log level is recommended. Mainly because high volume log
+# output might interfere with the API/WiFi connection stability. So when
+# raising the log level, beware that you might see dropped connections from
+# Home Assistant and the network log viewer.
+logger:
+  level: WARN
+
+# ----------------------------------------------------------------------
+# Hardware setup
+# ----------------------------------------------------------------------
+
+i2c:
+  id: front_panel_i2c
+  sda: GPIO21
+  scl: GPIO19
+  scan: true
+
+output:
+  - platform: ledc
+    id: output_red
+    pin: GPIO13
+    frequency: 3000
+    channel: 0
+  - platform: ledc
+    id: output_green
+    pin: GPIO14
+    frequency: 3000
+    channel: 1
+  - platform: ledc
+    id: output_blue
+    pin: GPIO5
+    frequency: 3000
+    channel: 2
+  - platform: ledc
+    id: output_white
+    pin: GPIO12
+    frequency: 10000
+    channel: 4
+  - platform: gpio
+    id: output_master1
+    pin: GPIO33
+  - platform: gpio
+    id: output_master2
+    pin:
+      number: GPIO4
+      mode: OUTPUT
+    # This float output can be used to control the front panel illumination +
+    # level indicator LEDs. Value 0.0 turns off the illumination. Other values
+    # (up to 1.0) turn on the illumination and set the level indicator to the
+    # requested level.
+  - platform: xiaomi_bslamp2
+    id: my_front_panel_illumination
+
+xiaomi_bslamp2:
+  light:
+    red: output_red
+    green: output_green
+    blue: output_blue
+    white: output_white
+    master1: output_master1
+    master2: output_master2
+  front_panel:
+    i2c: front_panel_i2c 
+    address: 0x2C
+    trigger_pin: GPIO16
