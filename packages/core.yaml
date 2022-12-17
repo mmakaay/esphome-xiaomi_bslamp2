@@ -38,7 +38,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
-      ref: dev
+      ref: release/2022.12.0
     refresh: 60s
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
