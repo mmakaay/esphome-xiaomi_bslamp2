@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2022.12.0]
+
+**Note**: This release requires ESPHome 2022.12.0 and Home Assistant 2021.8.0 or newer.
+
+### Changed
+- Due to changes in the ESP-IDF framework, and ESPHome 2022.12.0 using the newer version
+  of the framework, flashing the lamp with ESPHome 2022.12.0 could result in a
+  failing device. It would not connect to WiFi anymore and serial logging showed a reboot
+  loop, crashing at the WiFi setup. 
+  This release of the lamp firmware forces the use of the last known working version
+  of the ESP-IDF framework. This is not a final solution, because I don't want to be
+  stuck to old versions for dependencies, but for now this change at least should fix
+  the issue for users that flash their lamps.
+
+**If you already flashed your lamp and it ended up bricked**, then check out this
+information from the related GitHub issue report:
+[https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/104#issuecomment-1356182034](Fix recipe from issue #104)
+
 ## [2021.10.0]
 
 **Note**: This release requires ESPHome 2021.10.0 and Home Assistant 2021.8.0 or newer.

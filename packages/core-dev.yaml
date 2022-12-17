@@ -1,3 +1,12 @@
+# =========================================================================
+# *** If you are not developing the firmware, you can ignore this file ***
+#
+# This configuration package is used by Maurice for development purposes.
+# The main difference with the regular core.yaml package, is that the
+# source code for the bslamp2 component is not a remote GitHub repository,
+# but a local checkout of that repository.
+# ==========================================================================
+
 # --------------------------------------------------------------------------
 # Substitutions as used by the configuration packages
 # These can be overriden from the main device configuration file.
@@ -25,9 +34,16 @@ esp32:
       CONFIG_FREERTOS_UNICORE: y
     advanced:
       ignore_efuse_mac_crc: true
+    # Bugfix for ESPHome 2022.12.0 and up: fallback to older platform
+    # version, to prevent bricked devices. ESPHome uses newer versions
+    # by default.
+    # See also: https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/104
+    version: 4.3.2
+    source: ~3.40302.0
+    platform_version: platformio/espressif32 @ 3.5.0
 
 # Retrieve the code for the xiaomi_bslamp2 platform from a local clone
-# of the github repository, in the same directory as the config file.
+# of the github repository, one directory up from the config file.
 external_components:
   - source:
       type: local
@@ -47,7 +63,7 @@ api:
 # raising the log level, beware that you might see dropped connections from
 # Home Assistant and the network log viewer.
 logger:
-  level: WARN
+  level: INFO
 
 # ----------------------------------------------------------------------
 # Hardware setup
