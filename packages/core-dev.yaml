@@ -32,7 +32,6 @@ esp32:
     type: esp-idf
     sdkconfig_options:
       CONFIG_FREERTOS_UNICORE: y
-      CONFIG_ESP_PHY_CALIBRATION_AND_DATA_STORAGE: n
     advanced:
       ignore_efuse_mac_crc: true
 
