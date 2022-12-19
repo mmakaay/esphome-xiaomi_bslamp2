@@ -4,6 +4,7 @@ from esphome import pins
 from esphome.components.ledc.output import LEDCOutput
 from esphome.components.gpio.output import GPIOBinaryOutput
 from esphome.components.i2c import I2CBus, I2CDevice
+from esphome.components.esp32 import gpio_esp32
 from esphome.const import (
     CONF_LIGHT, CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE,
     CONF_I2C, CONF_ADDRESS, CONF_TRIGGER_PIN, CONF_ID
@@ -99,6 +100,15 @@ async def make_front_panel_hal(config):
     fp_i2c_var = await cg.get_variable(config[CONF_FRONT_PANEL][CONF_I2C])
     cg.add(fp_hal.set_i2c_bus(fp_i2c_var))
     cg.add(fp_hal.set_i2c_address(config[CONF_FRONT_PANEL][CONF_ADDRESS]))
+
+
+# Clear the configuration of strapping pins in ESPHome, to suppress pin
+# usage warnings that often confuse users of this firmware (when there
+# are problems, these often pop up as "is this the issue?").
+# The hardware on the lamp is as-is, and warnings about pins that might
+# better not be used are futile.
+gpio_esp32._ESP32_STRAPPING_PINS = {}
+
 
 async def to_code(config):
     await make_light_hal(config)
