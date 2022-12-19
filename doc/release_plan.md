@@ -14,6 +14,8 @@ The minimum ESPHome version requirement must be documented correctly in the foll
   * doc/installation.md (at the start of the file)
   * README.md (at the start of the quick start guide)
   * CHANGELOG.md (at the start of the log for the released version)
+  * components/xiaomi_bslamp2/__init__.py in the CONFIG_SCHEMA
+    (cv.require_esphome_version(YEAR, MONTH, PATHLEVEL))
 
 **Create version release branch**
 
