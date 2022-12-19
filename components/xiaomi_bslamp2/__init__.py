@@ -40,29 +40,32 @@ FRONT_PANEL_LED_OPTIONS = {
     "10": FrontPanelLEDs.LED_10,
 }
 
-CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
-    # RGBWW Light
-    cv.Required(CONF_LIGHT): cv.Schema(
-        {
-            cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
-            cv.Required(CONF_RED): cv.use_id(LEDCOutput),
-            cv.Required(CONF_GREEN): cv.use_id(LEDCOutput),
-            cv.Required(CONF_BLUE): cv.use_id(LEDCOutput),
-            cv.Required(CONF_WHITE): cv.use_id(LEDCOutput),
-            cv.Required(CONF_MASTER1): cv.use_id(GPIOBinaryOutput),
-            cv.Required(CONF_MASTER2): cv.use_id(GPIOBinaryOutput),
-        }
-    ),
-    # Front panel I2C
-    cv.Required(CONF_FRONT_PANEL): cv.Schema(
-        {
-            cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
-            cv.Required(CONF_I2C): cv.use_id(I2CBus),
-            cv.Required(CONF_ADDRESS): cv.i2c_address,
-            cv.Required(CONF_TRIGGER_PIN): cv.All(pins.internal_gpio_input_pin_schema)
-        }
-    ),
-})
+CONFIG_SCHEMA = cv.All(
+  cv.require_esphome_version(2022, 12, 0),
+  cv.COMPONENT_SCHEMA.extend({
+      # RGBWW Light
+      cv.Required(CONF_LIGHT): cv.Schema(
+          {
+              cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
+              cv.Required(CONF_RED): cv.use_id(LEDCOutput),
+              cv.Required(CONF_GREEN): cv.use_id(LEDCOutput),
+              cv.Required(CONF_BLUE): cv.use_id(LEDCOutput),
+              cv.Required(CONF_WHITE): cv.use_id(LEDCOutput),
+              cv.Required(CONF_MASTER1): cv.use_id(GPIOBinaryOutput),
+              cv.Required(CONF_MASTER2): cv.use_id(GPIOBinaryOutput),
+          }
+      ),
+      # Front panel I2C
+      cv.Required(CONF_FRONT_PANEL): cv.Schema(
+          {
+              cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
+              cv.Required(CONF_I2C): cv.use_id(I2CBus),
+              cv.Required(CONF_ADDRESS): cv.i2c_address,
+              cv.Required(CONF_TRIGGER_PIN): cv.All(pins.internal_gpio_input_pin_schema)
+          }
+      ),
+  })
+)
 
 async def make_light_hal(config):
     light_hal = cg.new_Pvariable(config[CONF_LIGHT][CONF_LIGHT_HAL_ID])
