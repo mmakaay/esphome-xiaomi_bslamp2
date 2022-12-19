@@ -8,6 +8,8 @@ from esphome.const import (
     CONF_LIGHT, CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE,
     CONF_I2C, CONF_ADDRESS, CONF_TRIGGER_PIN, CONF_ID
 )
+from esphome.util import parse_esphome_version
+from voluptuous import Invalid
 
 CODEOWNERS = ["@mmakaay"]
 
@@ -40,29 +42,49 @@ FRONT_PANEL_LED_OPTIONS = {
     "10": FrontPanelLEDs.LED_10,
 }
 
-CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
-    # RGBWW Light
-    cv.Required(CONF_LIGHT): cv.Schema(
-        {
-            cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
-            cv.Required(CONF_RED): cv.use_id(LEDCOutput),
-            cv.Required(CONF_GREEN): cv.use_id(LEDCOutput),
-            cv.Required(CONF_BLUE): cv.use_id(LEDCOutput),
-            cv.Required(CONF_WHITE): cv.use_id(LEDCOutput),
-            cv.Required(CONF_MASTER1): cv.use_id(GPIOBinaryOutput),
-            cv.Required(CONF_MASTER2): cv.use_id(GPIOBinaryOutput),
-        }
-    ),
-    # Front panel I2C
-    cv.Required(CONF_FRONT_PANEL): cv.Schema(
-        {
-            cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
-            cv.Required(CONF_I2C): cv.use_id(I2CBus),
-            cv.Required(CONF_ADDRESS): cv.i2c_address,
-            cv.Required(CONF_TRIGGER_PIN): cv.All(pins.internal_gpio_input_pin_schema)
-        }
-    ),
-})
+
+def check_version_compatibility(config):
+    esphome_version = parse_esphome_version()
+    if esphome_version < (2021, 10, 0):
+        raise Invalid(
+            "This xiaomi_bslamp2 component requires at least ESPHome " +
+            "version 2021.10.0; Please upgrade ESPHome and try again."
+        )
+    if esphome_version >= (2022, 12, 0):
+        raise Invalid(
+            "This xiaomi_bslamp2 component does not work with " +
+            "ESPHome 2022.12.0 or later; Please use a newer version of " +
+            "the component and try again."
+        )
+    return config
+
+
+CONFIG_SCHEMA = cv.All(
+    check_version_compatibility,
+    cv.COMPONENT_SCHEMA.extend({
+        # RGBWW Light
+        cv.Required(CONF_LIGHT): cv.Schema(
+            {
+                cv.GenerateID(CONF_LIGHT_HAL_ID): cv.declare_id(LightHAL),
+                cv.Required(CONF_RED): cv.use_id(LEDCOutput),
+                cv.Required(CONF_GREEN): cv.use_id(LEDCOutput),
+                cv.Required(CONF_BLUE): cv.use_id(LEDCOutput),
+                cv.Required(CONF_WHITE): cv.use_id(LEDCOutput),
+                cv.Required(CONF_MASTER1): cv.use_id(GPIOBinaryOutput),
+                cv.Required(CONF_MASTER2): cv.use_id(GPIOBinaryOutput),
+            }
+        ),
+        # Front panel I2C
+        cv.Required(CONF_FRONT_PANEL): cv.Schema(
+            {
+                cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.declare_id(FrontPanelHAL),
+                cv.Required(CONF_I2C): cv.use_id(I2CBus),
+                cv.Required(CONF_ADDRESS): cv.i2c_address,
+                cv.Required(CONF_TRIGGER_PIN): cv.All(pins.internal_gpio_input_pin_schema)
+            }
+        ),
+    })
+)
 
 async def make_light_hal(config):
     light_hal = cg.new_Pvariable(config[CONF_LIGHT][CONF_LIGHT_HAL_ID])
