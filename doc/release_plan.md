@@ -11,9 +11,13 @@ Make sure all notable changes are recorded in the changelog.
 
 The minimum ESPHome version requirement must be documented correctly in the following files:
 
-  * doc/installation.md (at the start of the file)
-  * README.md (at the start of the quick start guide)
-  * CHANGELOG.md (at the start of the log for the released version)
+  * `doc/installation.md` (at the start of the file)
+  * `README.md` (at the start of the quick start guide)
+  * `CHANGELOG.md` (at the start of the log for the released version)
+  * `components/xiaomi_bslamp2/__init__.py` in the function
+    `check_version_compatibility()`. This function can also be used
+    to check the maximum version of ESPHome that can be used. An example
+    of this use can be found in the `release/2021.10.0` branch.
 
 **Create version release branch**
 

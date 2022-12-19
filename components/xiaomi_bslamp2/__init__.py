@@ -8,6 +8,8 @@ from esphome.const import (
     CONF_LIGHT, CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE,
     CONF_I2C, CONF_ADDRESS, CONF_TRIGGER_PIN, CONF_ID
 )
+from esphome.util import parse_esphome_version
+from voluptuous import Invalid
 
 CODEOWNERS = ["@mmakaay"]
 
@@ -40,8 +42,19 @@ FRONT_PANEL_LED_OPTIONS = {
     "10": FrontPanelLEDs.LED_10,
 }
 
+
+def check_version_compatibility(config):
+    esphome_version = parse_esphome_version()
+    if esphome_version < (2022, 12, 0):
+        raise Invalid(
+            "This xiaomi_bslamp2 component requires at least ESPHome " +
+            "version 2022.12.0; Please upgrade ESPHome and try again."
+        )
+    return config
+
+
 CONFIG_SCHEMA = cv.All(
-  cv.require_esphome_version(2022, 12, 0),
+  check_version_compatibility,
   cv.COMPONENT_SCHEMA.extend({
       # RGBWW Light
       cv.Required(CONF_LIGHT): cv.Schema(
