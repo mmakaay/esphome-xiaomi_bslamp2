@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **If you already flashed your lamp and it ended up bricked, then no worries!**
 Things can be fixed. Check out this information from the related GitHub issue report:
-[https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/104#issuecomment-1356182034](Fix recipe from issue #104)
+[Fix recipe from issue #104](https://github.com/mmakaay/esphome-xiaomi_bslamp2/issues/104#issuecomment-1356182034)
 
 ## [2021.10.0]
 
