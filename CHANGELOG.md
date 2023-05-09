@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [next release]
 
 ### Fixed
+- Compile issues with recent ESPHome versions fixed:
+  - An error about toolchain-riscv32-esp not being found (the PlatformIO tool manager
+    tries to install this one, even though the lamp is an ESP32 device and not riscv).
+  - On systems for which the above toolchain could be found, compilation would fail
+    with an error about `esp_mac.h` not being found.
+
 - ESPHome's compile-time warnings about "GPIO<x> is a Strapping PIN and should
   be avoided" are now being suppressed. These warning are often interpreted
   by users of this firmware as problems. However, the pinouts are dictated by
