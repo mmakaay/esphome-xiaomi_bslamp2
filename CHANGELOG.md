@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2023.4.0]
 
-**Note**: This release requires ESPHome 2023.4.0 and Home Assistant 2021.8.0 or newer.
+**Note**: This release requires ESPHome 2023.4.0 and Home Assistant 2023.2.0 or newer.
 
 ### Fixed
 - Compile issues with recent ESPHome versions fixed:
@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   be avoided" are now being suppressed. These warning are often interpreted
   by users of this firmware as problems. However, the pinouts are dictated by
   the hardware and there are no strapping issues because of how they are used.
+- Updated the documentation for the deprecated API password support (which must now
+  be an API encryption key instead).
 
 ## [2022.12.0]
 
