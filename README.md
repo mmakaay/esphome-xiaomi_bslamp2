@@ -49,7 +49,7 @@ aspect of the lamp and to integrate the lamp in your Home Assistant setup.
 
 For those who have experience with flashing ESPHome onto devices:
 
-* Make sure you are using ESPHome 2022.12.0 or newer.
+* Make sure you are using ESPHome 2023.4.0 or newer.
 * Copy [`example.yaml`](example.yaml) to `<CONFIG_DIR>/<NODE_NAME>.yaml`.
 * Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)).
 * Compile the `firmware.bin` file and download it to the device to which you have connected your

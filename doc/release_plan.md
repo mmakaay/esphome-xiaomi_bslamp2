@@ -1,7 +1,11 @@
 # Release plan
 
-All development is done in the `dev` branch. Once the development branch is
-ready for a new production release, the following steps are followed:
+**All development is done in the `dev` branch**
+
+$ git checkout dev
+
+Once the development branch is ready for a new production release, the following
+steps are followed:
 
 **Update the CHANGELOG.md**
 
@@ -19,11 +23,16 @@ The minimum ESPHome version requirement must be documented correctly in the foll
     to check the maximum version of ESPHome that can be used. An example
     of this use can be found in the `release/2021.10.0` branch.
 
+**Push the dev changes to GitHub**
+
+$ git add ...
+$ git commit -m "Prepare for release"
+$ git push
+
 **Create version release branch**
 
 Branch `dev` to a `release/<version>` branch, e.g. `release/2021.10.0`.
 ```
-$ git checkout dev
 $ git checkout -b release/2021.10.0
 ```
 

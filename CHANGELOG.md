@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [next release]
+## [2023.4.0]
+
+**Note**: This release requires ESPHome 2023.4.0 and Home Assistant 2021.8.0 or newer.
 
 ### Fixed
 - Compile issues with recent ESPHome versions fixed:
@@ -13,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - On systems for which the above toolchain could be found, compilation would fail
     with an error about `esp_mac.h` not being found.
 
+### Changed
 - ESPHome's compile-time warnings about "GPIO<x> is a Strapping PIN and should
   be avoided" are now being suppressed. These warning are often interpreted
   by users of this firmware as problems. However, the pinouts are dictated by
