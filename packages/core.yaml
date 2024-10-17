@@ -24,6 +24,7 @@ esp32:
     sdkconfig_options:
       CONFIG_FREERTOS_UNICORE: y
     advanced:
+      ignore_efuse_custom_mac: true
       ignore_efuse_mac_crc: true
 
 # Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
