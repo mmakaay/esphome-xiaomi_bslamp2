@@ -4,9 +4,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2024.10.0]
+
+**Note**: This release requires ESPHome 2024.10.0 or newer.
+
+### Fixed
+
+- Include `platform: esphome` in the `ota:` section of the example.yaml
+  file.
+- Include `ignore_efuse_custom_mac: true` in the `esp32:` section of the
+  core configuration package.\
+  Thanks to Andy (ezcGman on GitHub) for the PR.
+- Include `friendly_name:` in the `esphome:` section of the core
+  configuration package, so that the set friendly name (as used in the
+  `example.yaml`) shows up in the ESPHome Dashboard and in Home Assistant.\
+  Thanks to Florian (fmauNeko on GitHub) for the PR!
+- Checked and formatted the Python code in the project using `ruff`.
+
+### Changed
+
+- Added support for suppressing warnings about strapping pins by using the
+  ESPHome pin configuration option `ignore_strapping_warning: true`.
+  Previously, a temporary workaround was used because this configuration option
+  was not available at the time. The new option eliminates the need for the
+  earlier hack, providing a cleaner and more straightforward solution.
+
 ## [2023.4.0]
 
-**Note**: This release requires ESPHome 2023.4.0 and Home Assistant 2023.2.0 or newer.
+**Note**: This release requires at least ESPHome 2023.4.0. It will not work
+with ESPHome 2024.10.0 or newer.
 
 ### Fixed
 - Compile issues with recent ESPHome versions fixed:
