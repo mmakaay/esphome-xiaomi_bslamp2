@@ -1,3 +1,10 @@
+[project]
+name = "xiaomi_bslamp2"
+version = "0.0.0-dev"
+description = "ESPHome integration for the Xiaomi Mijia Bedside Lamp v2."
+requires-python = "==3.12.*"
+dependencies = ["ruff"]
+
 [tool.ruff]
 line-length = 120
 indent-width = 4
