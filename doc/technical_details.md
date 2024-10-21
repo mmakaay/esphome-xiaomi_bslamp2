@@ -270,36 +270,34 @@ E (459) cpu_start: Running on single core chip, but application is built with du
 E (459) cpu_start: Please enable CONFIG_FREERTOS_UNICORE option in menuconfig.
 ```
 
-Another issue with a lot of these devices, is that the MAC address that is burnt into EFUSE does not
-match the CRC checksum that is also burnt into EFUSE. Using a generic ESP32 build, you will end up
-with the boot error:
+Another issue with a lot of (maybe all of?) these devices, is that the MAC address that is burnt
+into EFUSE does not match the CRC checksum that is also burnt into EFUSE. Using a generic ESP32
+build, you will end up with the boot error:
 
 ```
 Base MAC address from BLK0 of EFUSE CRC error
 ```
 
-For these reasons, you must build the firmware using a taylored version of arduino-esp32.
-You can make use of the version [created by @pauln](https://github.com/pauln/arduino-esp32)
-or the version [created by @mmakaay](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc).
+Based on [an issue that I reported to Espressif](https://github.com/espressif/esp-idf/issues/10401),
+the ESP-IDF framework code was extended with a `CONFIG_ESP_MAC_IGNORE_MAC_CRC_ERROR`
+build flag, that can be used to ingore the CRC error. The ESPHome project has adopted this
+build flag, by adding an advanced option `ignore_efuse_custom_mac` for the `esp32:` 
+config section, that will enable this ESP-IDF build flag.
 
-To make use of one of these in an ESPHome build, you'll have to provide a platform package
-definition for the PlatformIO build. Here's an example configuration that will work for these Xiaomi
-devices:
+Combining all this makes it possible to build a working firmware using the following
+ESPHome configuration, making use of ESP-IDF as the build framework:
 
 ```yaml
-esphome:
-  name: my_device_name
-  platform: ESP32
+esp32:
   board: esp32doit-devkit-v1
-  platformio_options:
-    platform: espressif32@3.2.0
-    platform_packages: |-
-      framework-arduinoespressif32 @ https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+    advanced:
+      ignore_efuse_custom_mac: true
+      ignore_efuse_mac_crc: true
 ```
-
-If you want to build your own platform package, then you can checkout
-the build scripts [by @mmakaay here](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc-builder).
-
 
 ## Original firmware
 
