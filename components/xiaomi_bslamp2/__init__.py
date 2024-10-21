@@ -50,6 +50,12 @@ def check_version_compatibility(config):
             "This xiaomi_bslamp2 component requires at least ESPHome " +
             "version 2022.12.0; Please upgrade ESPHome and try again."
         )
+    if esphome_version >= (2024, 10, 0):
+        raise Invalid(
+            "This xiaomi_bslamp2 component does not work with " +
+            "ESPHome 2024.10.0 or later; Please use a newer version of " +
+            "the component and try again."
+        )
     return config
 
 
