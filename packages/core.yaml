@@ -75,12 +75,16 @@ output:
     channel: 1
   - platform: ledc
     id: output_blue
-    pin: GPIO5
+    pin:
+      number: GPIO5
+      ignore_strapping_warning: true
     frequency: 3000
     channel: 2
   - platform: ledc
     id: output_white
-    pin: GPIO12
+    pin:
+      number:  GPIO12
+      ignore_strapping_warning: true
     frequency: 10000
     channel: 4
   - platform: gpio

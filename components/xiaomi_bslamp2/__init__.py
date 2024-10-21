@@ -101,15 +101,6 @@ async def make_front_panel_hal(config):
     cg.add(fp_hal.set_i2c_bus(fp_i2c_var))
     cg.add(fp_hal.set_i2c_address(config[CONF_FRONT_PANEL][CONF_ADDRESS]))
 
-
-# Clear the configuration of strapping pins in ESPHome, to suppress pin
-# usage warnings that often confuse users of this firmware (when there
-# are problems, these often pop up as "is this the issue?").
-# The hardware on the lamp is as-is, and warnings about pins that might
-# better not be used are futile.
-gpio_esp32._ESP32_STRAPPING_PINS = {}
-
-
 async def to_code(config):
     await make_light_hal(config)
     await make_front_panel_hal(config)

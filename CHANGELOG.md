@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   file.
 - Include `ignore_efuse_custom_mac: true` in the `esp32:` section of the
   core configuration package.\
-  Thanks to Andy (ezcGman on GitHub) for the PR.
+  Thanks to Andy (ezcGman on GitHub) for the PR!
 - Include `friendly_name:` in the `esphome:` section of the core
   configuration package, so that the set friendly name (as used in the
   `example.yaml`) shows up in the ESPHome Dashboard and in Home Assistant.\
