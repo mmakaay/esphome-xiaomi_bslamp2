@@ -1,0 +1,17 @@
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+ij_continuation_indent_size = 4
+ij_visual_guides = 120
+ij_wrap_on_typing = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

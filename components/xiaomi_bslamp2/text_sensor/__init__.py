@@ -2,8 +2,10 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import text_sensor
 from esphome.const import CONF_ID, CONF_OUTPUT_ID
-from .. import bslamp2_ns, CODEOWNERS
-from ..light import XiaomiBslamp2LightOutput
+from xiaomi_bslamp2 import bslamp2_ns, CODEOWNERS
+from xiaomi_bslamp2.light import XiaomiBslamp2LightOutput
+
+__all__ = ["CODEOWNERS"]
 
 DEPENDENCIES = ["xiaomi_bslamp2"]
 

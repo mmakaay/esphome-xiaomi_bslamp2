@@ -4,11 +4,22 @@ from esphome.components import light
 from esphome import automation
 from esphome.core import Lambda
 from esphome.const import (
-    CONF_RED, CONF_GREEN, CONF_BLUE, CONF_WHITE, CONF_COLOR_TEMPERATURE,
-    CONF_STATE, CONF_OUTPUT_ID, CONF_TRIGGER_ID, CONF_ID,
-    CONF_TRANSITION_LENGTH, CONF_BRIGHTNESS, CONF_EFFECT, CONF_FLASH_LENGTH
+    CONF_RED,
+    CONF_GREEN,
+    CONF_BLUE,
+    CONF_COLOR_TEMPERATURE,
+    CONF_STATE,
+    CONF_OUTPUT_ID,
+    CONF_TRIGGER_ID,
+    CONF_ID,
+    CONF_TRANSITION_LENGTH,
+    CONF_BRIGHTNESS,
+    CONF_EFFECT,
+    CONF_FLASH_LENGTH,
 )
-from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
+from xiaomi_bslamp2 import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
+
+__all__ = ["CODEOWNERS"]
 
 DEPENDENCIES = ["xiaomi_bslamp2"]
 
@@ -31,11 +42,8 @@ BrightnessTrigger = bslamp2_ns.class_("BrightnessTrigger", automation.Trigger.te
 ActivatePresetAction = bslamp2_ns.class_("ActivatePresetAction", automation.Action)
 DiscoAction = bslamp2_ns.class_("DiscoAction", automation.Action)
 
-PRESETS_SCHEMA = cv.Schema({
-    str.lower: cv.Schema({
-        str.lower: light.automation.LIGHT_TURN_ON_ACTION_SCHEMA
-    })
-})
+PRESETS_SCHEMA = cv.Schema({str.lower: cv.Schema({str.lower: light.automation.LIGHT_TURN_ON_ACTION_SCHEMA})})
+
 
 def validate_preset(config):
     has_rgb = CONF_RED in config or CONF_GREEN in config or CONF_BLUE in config
@@ -62,6 +70,7 @@ def validate_preset(config):
 
     return config
 
+
 PRESET_SCHEMA = cv.All(
     cv.Schema(
         {
@@ -76,7 +85,7 @@ PRESET_SCHEMA = cv.All(
             cv.Optional(CONF_TRANSITION_LENGTH): cv.positive_time_period_milliseconds,
         }
     ),
-    validate_preset
+    validate_preset,
 )
 
 CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
@@ -90,19 +99,18 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
             }
         ),
         cv.GenerateID(CONF_PRESETS_ID): cv.declare_id(PresetsContainer),
-        cv.Optional(CONF_PRESETS): cv.Schema({
-            str.lower: cv.Schema({
-                str.lower: PRESET_SCHEMA
-            })
-        }),
+        cv.Optional(CONF_PRESETS): cv.Schema({str.lower: cv.Schema({str.lower: PRESET_SCHEMA})}),
     }
 )
+
 
 def is_preset_group(value):
     return value
 
+
 def is_preset(value):
     return value
+
 
 def maybe_simple_preset_action(schema):
     def validator(value):
@@ -124,9 +132,8 @@ def maybe_simple_preset_action(schema):
 
     return validator
 
-@automation.register_action(
-    "light.disco_on", DiscoAction, light.automation.LIGHT_TURN_ON_ACTION_SCHEMA 
-)
+
+@automation.register_action("light.disco_on", DiscoAction, light.automation.LIGHT_TURN_ON_ACTION_SCHEMA)
 def disco_action_on_to_code(config, action_id, template_arg, args):
     light_var = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
@@ -135,9 +142,7 @@ def disco_action_on_to_code(config, action_id, template_arg, args):
         template_ = yield cg.templatable(config[CONF_STATE], args, bool)
         cg.add(var.set_state(template_))
     if CONF_TRANSITION_LENGTH in config:
-        template_ = yield cg.templatable(
-            config[CONF_TRANSITION_LENGTH], args, cg.uint32
-        )
+        template_ = yield cg.templatable(config[CONF_TRANSITION_LENGTH], args, cg.uint32)
         cg.add(var.set_transition_length(template_))
     if CONF_FLASH_LENGTH in config:
         template_ = yield cg.templatable(config[CONF_FLASH_LENGTH], args, cg.uint32)
@@ -162,46 +167,54 @@ def disco_action_on_to_code(config, action_id, template_arg, args):
         cg.add(var.set_effect(template_))
     yield var
 
-@automation.register_action(
-    "light.disco_off", DiscoAction, light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA 
-)
+
+@automation.register_action("light.disco_off", DiscoAction, light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA)
 def disco_action_off_to_code(config, action_id, template_arg, args):
     light_var = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
     cg.add(var.set_disco_state(False))
     yield var
 
+
 USED_PRESETS = []
+
 
 def register_preset_action(value):
     if "group" in value and not isinstance(value["group"], Lambda):
         if "preset" in value and not isinstance(value["preset"], Lambda):
-            preset_data = [value['group'], value['preset']]
+            preset_data = [value["group"], value["preset"]]
         else:
             preset_data = [value["group"], None]
         USED_PRESETS.append(preset_data)
     return value
 
+
 @automation.register_action(
     "preset.activate",
     ActivatePresetAction,
     cv.All(
-        maybe_simple_preset_action(cv.Any(
-            cv.Schema({
-                cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
-                cv.Required(CONF_GROUP): cv.templatable(cv.string),
-                cv.Optional(CONF_PRESET): cv.templatable(cv.string)
-            }),
-            cv.Schema({
-                cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
-                cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True)
-            })
-        )),
-        register_preset_action
+        maybe_simple_preset_action(
+            cv.Any(
+                cv.Schema(
+                    {
+                        cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+                        cv.Required(CONF_GROUP): cv.templatable(cv.string),
+                        cv.Optional(CONF_PRESET): cv.templatable(cv.string),
+                    }
+                ),
+                cv.Schema(
+                    {
+                        cv.GenerateID(CONF_PRESETS_ID): cv.use_id(PresetsContainer),
+                        cv.Required(CONF_NEXT): cv.one_of(CONF_GROUP, CONF_PRESET, lower=True),
+                    }
+                ),
+            )
+        ),
+        register_preset_action,
     ),
 )
 def preset_activate_to_code(config, action_id, template_arg, args):
-    presets_var = yield cg.get_variable(config[CONF_PRESETS_ID]) 
+    presets_var = yield cg.get_variable(config[CONF_PRESETS_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, presets_var)
     if CONF_NEXT in config:
         cg.add(action_var.set_operation(f"next_{config[CONF_NEXT]}"))
@@ -217,22 +230,24 @@ def preset_activate_to_code(config, action_id, template_arg, args):
         cg.add(action_var.set_group(group_template_))
     yield action_var
 
+
 async def light_output_to_code(config):
     light_output_var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
     await light.register_light(light_output_var, config)
     light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
     cg.add(light_output_var.set_parent(light_hal_var))
 
+
 async def on_brightness_to_code(config):
     light_output_var = await cg.get_variable(config[CONF_OUTPUT_ID])
-    for config in config.get(CONF_ON_BRIGHTNESS, []):
-        trigger = cg.new_Pvariable(config[CONF_TRIGGER_ID], light_output_var)
-        await automation.build_automation(trigger, [(float, "x")], config)
+    for config_ in config.get(CONF_ON_BRIGHTNESS, []):
+        trigger = cg.new_Pvariable(config_[CONF_TRIGGER_ID], light_output_var)
+        await automation.build_automation(trigger, [(float, "x")], config_)
+
 
 async def preset_to_code(config, preset_group, preset_name):
     light_var = await cg.get_variable(config[CONF_ID])
-    preset_var = cg.new_Pvariable(
-        config[CONF_PRESET_ID], light_var, preset_group, preset_name)
+    preset_var = cg.new_Pvariable(config[CONF_PRESET_ID], light_var, preset_group, preset_name)
     if CONF_TRANSITION_LENGTH in config:
         cg.add(preset_var.set_transition_length(config[CONF_TRANSITION_LENGTH]))
     if CONF_BRIGHTNESS in config:
@@ -251,6 +266,7 @@ async def preset_to_code(config, preset_group, preset_name):
         cg.add(preset_var.set_effect("None"))
     return await cg.register_component(preset_var, config)
 
+
 async def presets_to_code(config):
     presets_var = cg.new_Pvariable(config[CONF_PRESETS_ID])
     await cg.register_component(presets_var, config)
@@ -260,13 +276,15 @@ async def presets_to_code(config):
             preset = await preset_to_code(preset_config, preset_group, preset_name)
             cg.add(presets_var.add_preset(preset))
 
+
 async def to_code(config):
     await light_output_to_code(config)
     await on_brightness_to_code(config)
     await presets_to_code(config)
 
+
 def validate(config):
-    valid_presets = config.get(CONF_PRESETS, {});
+    valid_presets = config.get(CONF_PRESETS, {})
     for group, preset in USED_PRESETS:
         if group not in valid_presets:
             raise cv.Invalid(f"Invalid light preset group '{group}' used")
@@ -274,5 +292,5 @@ def validate(config):
             raise cv.Invalid(f"Invalid light preset '{group}.{preset}' used")
     return config
 
-FINAL_VALIDATE_SCHEMA = cv.Schema(validate);
 
+FINAL_VALIDATE_SCHEMA = cv.Schema(validate)
