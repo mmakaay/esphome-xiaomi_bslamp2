@@ -32,27 +32,27 @@ class ColorHandlerChain : public ColorHandler {
     // targeted classes. These classes are called here in a chain of
     // command-like pattern, to let the first one that can handle the light
     // settings do the honours.
-    if (off_light_->set_light_color_values(v))
-      off_light_->copy_to(this);
-    else if (night_light_->set_light_color_values(v))
-      night_light_->copy_to(this);
-    else if (white_light_->set_light_color_values(v))
-      white_light_->copy_to(this);
-    else if (rgb_light_->set_light_color_values(v))
-      rgb_light_->copy_to(this);
+    if (off_light_.set_light_color_values(v))
+      off_light_.copy_to(this);
+    else if (night_light_.set_light_color_values(v))
+      night_light_.copy_to(this);
+    else if (white_light_.set_light_color_values(v))
+      white_light_.copy_to(this);
+    else if (rgb_light_.set_light_color_values(v))
+      rgb_light_.copy_to(this);
     else {
       ESP_LOGE(TAG, "Light color error: (None of the ColorHandler classes handles the requested light state; defaulting to 'off'");
-      off_light_->copy_to(this);
+      off_light_.copy_to(this);
     }
 
     return true;
   }
 
  protected:
-  ColorHandler *off_light_ = new ColorHandlerOff();
-  ColorHandler *rgb_light_ = new ColorHandlerRGB();
-  ColorHandler *white_light_ = new ColorHandlerColorTemperature();
-  ColorHandler *night_light_ = new ColorHandlerNightLight();
+  ColorHandlerOff              off_light_;
+  ColorHandlerRGB              rgb_light_;
+  ColorHandlerColorTemperature white_light_;
+  ColorHandlerNightLight       night_light_;
 };
 
 }  // namespace bslamp2

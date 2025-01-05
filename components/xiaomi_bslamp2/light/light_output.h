@@ -54,8 +54,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
   void write_state(light::LightState *state) {
     auto values = state->current_values;
 
-    color_handler_chain->set_light_color_values(values);
-    light_mode_callback_.call(color_handler_chain->light_mode);
+    color_handler_chain.set_light_color_values(values);
+    light_mode_callback_.call(color_handler_chain.light_mode);
     state_callback_.call(values);
 
     // Note: one might think that it is more logical to turn on the LED
@@ -67,7 +67,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
       light_->turn_on();
 
     // Apply the GPIO output levels as defined by the color handler.
-    light_->set_state(color_handler_chain);
+    light_->set_state(&color_handler_chain);
 
     if (values.get_state() == 0)
       light_->turn_off();
@@ -75,7 +75,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 
  protected:
   LightHAL *light_;
-  ColorHandler *color_handler_chain = new ColorHandlerChain();
+  ColorHandlerChain color_handler_chain;
   CallbackManager<void(std::string)> light_mode_callback_{};
   CallbackManager<void(light::LightColorValues)> state_callback_{};
 };
