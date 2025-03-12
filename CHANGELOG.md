@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025.3.0]
+
+### Fixed
+
+- A memory leak issue in color transitions has been fixed. This issue has been
+  both spotted and solved by GitHub user denisys16. Thanks! The issue resulted
+  in heap memory being leaked on each color transition. Eventually, memory
+  would run out, followed by a firmware crash reboot. This was especially
+  noticable when using the random color effect, since that one performs color
+  transitions all the time.
+
 ## [2025.1.0]
 
 **Note**: This release requires ESPHome 2024.10.0 or newer.
