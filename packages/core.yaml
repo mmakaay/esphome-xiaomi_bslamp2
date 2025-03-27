@@ -17,6 +17,10 @@ substitutions:
 esphome:
   name: ${name}
   friendly_name: ${friendly_name}
+  comment: "Xiaomi Mi Bedside Lamp 2"
+  project:
+      name: "Yeelight Technology.MJCTD02YL"
+      version: "2025.3.0"
 
 esp32:
   board: esp32doit-devkit-v1
