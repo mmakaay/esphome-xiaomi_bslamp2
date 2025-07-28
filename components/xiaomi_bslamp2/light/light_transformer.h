@@ -64,10 +64,10 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
     else {
       auto smoothed = light::LightTransitionTransformer::smoothed_progress(get_progress_());
       light_->set_rgbw(
-        esphome::lerp(smoothed, start_.red, end_.red),
-        esphome::lerp(smoothed, start_.green, end_.green),
-        esphome::lerp(smoothed, start_.blue, end_.blue),
-        esphome::lerp(smoothed, start_.white, end_.white));
+        std::lerp(start_.red, end_.red, smoothed),
+        std::lerp(start_.green, end_.green, smoothed),
+        std::lerp(start_.blue, end_.blue, smoothed),
+        std::lerp(start_.white, end_.white, smoothed));
       if (end_.light_mode != LIGHT_MODE_OFF) {
         light_->turn_on();
       }
