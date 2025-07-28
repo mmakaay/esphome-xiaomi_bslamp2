@@ -46,11 +46,11 @@ class ColorHandlerNightLight : public ColorHandler {
     // specific color, instead of the default. This is a nice extra for
     // this firmware, as the original firmware does not support it.
     else {
-      red = esphome::lerp(v.get_red(), 0.9997f, 0.9680f);
-      green = esphome::lerp(v.get_green(), 0.9997f, 0.9680f);
+      red = std::lerp(0.9997f, 0.9680f, v.get_red());
+      green = std::lerp(0.9997f, 0.9680f, v.get_green());
       auto blue_scale = (v.get_red() + v.get_green()) / 2.0f;
-      auto blue_max = esphome::lerp(blue_scale, 0.9640f, 0.9720f);
-      blue = esphome::lerp(v.get_blue(), 0.9997f, blue_max);
+      auto blue_max = std::lerp(0.9640f, 0.9720f, blue_scale);
+      blue = std::lerp(0.9997f, blue_max, v.get_blue());
       white = 0.0f;
     }
 
