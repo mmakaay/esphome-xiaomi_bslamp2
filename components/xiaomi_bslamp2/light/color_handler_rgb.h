@@ -280,9 +280,9 @@ class ColorHandlerRGB : public ColorHandler {
     // two rings that we were looking at. In this last step, the
     // two values are interpolated based on the ring level.
     auto d = level - level_a;
-    red = esphome::lerp(d, rgb_a_.red, rgb_b_.red);
-    green = esphome::lerp(d, rgb_a_.green, rgb_b_.green);
-    blue = esphome::lerp(d, rgb_a_.blue, rgb_b_.blue);
+    red = std::lerp(rgb_a_.red, rgb_b_.red, d);
+    green = std::lerp(rgb_a_.green, rgb_b_.green, d);
+    blue = std::lerp(rgb_a_.blue, rgb_b_.blue, d);
 
     // The white output channel will always be 0 for RGB.
     white = 0.0f;
@@ -328,12 +328,12 @@ class ColorHandlerRGB : public ColorHandler {
 
     // Interpolate based on the ring position.
     auto d = pos - pos_x;
-    p->low.red = esphome::lerp(d, x.low.red, y.low.red);
-    p->low.green = esphome::lerp(d, x.low.green, y.low.green);
-    p->low.blue = esphome::lerp(d, x.low.blue, y.low.blue);
-    p->high.red = esphome::lerp(d, x.high.red, y.high.red);
-    p->high.green = esphome::lerp(d, x.high.green, y.high.green);
-    p->high.blue = esphome::lerp(d, x.high.blue, y.high.blue);
+    p->low.red = std::lerp(x.low.red, y.low.red, d);
+    p->low.green = std::lerp(x.low.green, y.low.green, d);
+    p->low.blue = std::lerp(x.low.blue, y.low.blue, d);
+    p->high.red = std::lerp(x.high.red, y.high.red, d);
+    p->high.green = std::lerp(x.high.green, y.high.green, d);
+    p->high.blue = std::lerp(x.high.blue, y.high.blue, d);
 
     // Interpolate based on brightness level.
     apply_brightness_(p, brightness, rgb);
@@ -368,9 +368,9 @@ class ColorHandlerRGB : public ColorHandler {
    */
   void apply_brightness_(RGBPoint *p, float brightness, RGB *rgb) {
     auto d = brightness - 0.01f;
-    rgb->red = esphome::lerp(d, p->low.red, p->high.red);
-    rgb->green = esphome::lerp(d, p->low.green, p->high.green);
-    rgb->blue = esphome::lerp(d, p->low.blue, p->high.blue);
+    rgb->red = std::lerp(p->low.red, p->high.red, d);
+    rgb->green = std::lerp(p->low.green, p->high.green, d);
+    rgb->blue = std::lerp(p->low.blue, p->high.blue, d);
   }
 };
 
