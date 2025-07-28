@@ -90,10 +90,10 @@ class ColorHandlerColorTemperature : public ColorHandler {
     auto levels_1 = lookup_in_table_(rgbw_levels_1_, temperature);
     auto levels_100 = lookup_in_table_(rgbw_levels_100_, temperature);
 
-    red = esphome::lerp(brightness, levels_1.red, levels_100.red);
-    green = esphome::lerp(brightness, levels_1.green, levels_100.green);
-    blue = esphome::lerp(brightness, levels_1.blue, levels_100.blue);
-    white = esphome::lerp(brightness, levels_1.white, levels_100.white);
+    red = std::lerp(levels_1.red, levels_100.red, brightness);
+    green = std::lerp(levels_1.green, levels_100.green, brightness);
+    blue = std::lerp(levels_1.blue, levels_100.blue, brightness);
+    white = std::lerp(levels_1.white, levels_100.white, brightness);
 
     return true;
   }
