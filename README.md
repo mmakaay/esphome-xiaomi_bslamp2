@@ -43,13 +43,13 @@ aspect of the lamp and to integrate the lamp in your Home Assistant setup.
 * **Possibilities to extend the device's functionality through hardware mods.** There are [GPIO pins
   that are not in use](doc/technical_details.md#esp32-pinout).  If "tinkerer" is your middle name,
   you can use those pins to come up with your own hardware hacks to extend the device's
-  functionality. 
+  functionality.
 
 ## Quick start guide
 
 For those who have experience with flashing ESPHome onto devices:
 
-* Make sure you are using ESPHome 2024.10.0 or newer.
+* Make sure you are using ESPHome 2025.7.0 or newer.
 * Copy [`example.yaml`](example.yaml) to `<CONFIG_DIR>/<NODE_NAME>.yaml`.
 * Modify the configuration to your needs (see the [configuration guide](doc/configuration.md)).
 * Compile the `firmware.bin` file and download it to the device to which you have connected your
@@ -60,7 +60,7 @@ For those who have experience with flashing ESPHome onto devices:
 * Power up the lamp with `GPIO0` connected to GND to enable flashing mode.
 * Flash `firmware.bin` onto the device, for example using
   [esphome-flasher](https://github.com/esphome/esphome-flasher)..
-  
+
 ## Upgrading
 
 I always try to make it possible to upgrade the lamp firmware without having to do anything special.
