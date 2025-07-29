@@ -15,12 +15,16 @@ XiaomiBslamp2LightModeTextSensor = bslamp2_ns.class_(
     "XiaomiBslamp2LightModeTextSensor", text_sensor.TextSensor, cg.Component
 )
 
-CONFIG_SCHEMA = text_sensor.TEXT_SENSOR_SCHEMA.extend(
-    {
-        cv.GenerateID(): cv.declare_id(XiaomiBslamp2LightModeTextSensor),
-        cv.GenerateID(CONF_OUTPUT_ID): cv.use_id(XiaomiBslamp2LightOutput),
-    }
-).extend(cv.COMPONENT_SCHEMA)
+CONFIG_SCHEMA = (
+    text_sensor.text_sensor_schema()
+    .extend(
+        {
+            cv.GenerateID(): cv.declare_id(XiaomiBslamp2LightModeTextSensor),
+            cv.GenerateID(CONF_OUTPUT_ID): cv.use_id(XiaomiBslamp2LightOutput),
+        }
+    )
+    .extend(cv.COMPONENT_SCHEMA)
+)
 
 
 def to_code(config):
