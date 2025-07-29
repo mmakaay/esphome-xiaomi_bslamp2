@@ -2,7 +2,7 @@
 
 # Installation guide
 
-The code must be compiled into a firmware using ESPHome 2024.10.0 or later. Therefore, a prerequisite
+The code must be compiled into a firmware using ESPHome 2025.7.0 or later. Therefore, a prerequisite
 is that you have ESPHome up and running in some form (command line, docker container, web dashboard,
 possibly from within Home Assistant as an add-on). For information on this, please refer to the
 documentation on the [ESPHome website](https://esphome.io).
@@ -23,7 +23,7 @@ can then be flashed onto the device.
 ```
 WARNING GPIO4 is a Strapping PIN and should be avoided.
 ...
-WARNING GPIO2 is a Strapping PIN and should be avoided. 
+WARNING GPIO2 is a Strapping PIN and should be avoided.
 ```
 You can safely ignore these type of warnings. GPIO4 and GPIO2 are hard-wired in the lamp's PCB.
 The way in which the firmware uses these pins does not pose any problems for the device.

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2025.7.0]
 
+**Note**: This release requires ESPHome 2025.7.0 or newer.
+
 ### Fixed
 
 - Compilation with ESPHome 2025.7.0 failed, because `esphome::lerp()` could no
