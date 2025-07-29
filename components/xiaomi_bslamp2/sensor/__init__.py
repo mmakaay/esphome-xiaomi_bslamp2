@@ -10,15 +10,19 @@ DEPENDENCIES = ["xiaomi_bslamp2"]
 
 XiaomiBslamp2SliderSensor = bslamp2_ns.class_("XiaomiBslamp2SliderSensor", sensor.Sensor, cg.Component)
 
-CONFIG_SCHEMA = sensor.SENSOR_SCHEMA.extend(
-    {
-        cv.GenerateID(): cv.declare_id(XiaomiBslamp2SliderSensor),
-        cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
-        cv.Optional(CONF_FORCE_UPDATE, default=True): cv.boolean,
-        cv.Optional(CONF_RANGE_FROM, default=0.01): cv.float_,
-        cv.Optional(CONF_RANGE_TO, default=1.00): cv.float_,
-    }
-).extend(cv.COMPONENT_SCHEMA)
+CONFIG_SCHEMA = (
+    sensor.sensor_schema()
+    .extend(
+        {
+            cv.GenerateID(): cv.declare_id(XiaomiBslamp2SliderSensor),
+            cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
+            cv.Optional(CONF_FORCE_UPDATE, default=True): cv.boolean,
+            cv.Optional(CONF_RANGE_FROM, default=0.01): cv.float_,
+            cv.Optional(CONF_RANGE_TO, default=1.00): cv.float_,
+        }
+    )
+    .extend(cv.COMPONENT_SCHEMA)
+)
 
 
 def to_code(config):
