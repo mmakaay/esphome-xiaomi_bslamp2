@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025.7.0]
+
+### Fixed
+
+- Compilation with ESPHome 2025.7.0 failed, because `esphome::lerp()` could no
+  longer be used, and had to be replaced with `std::lerp()`.
+  Thanks to BlairC1 on GitHub for providing the fix.
+- Fixed compile time deprecation warnings about SENSOR, TEXT_SENSOR_SCHEMA,
+  BINARY_SENSOR_SCHEMA and SENSOR_SCHEMA.
+
+### Added
+
+- The manufacturer and model strings are now reported by the firmware meta
+  data. This allows [powercacle](https://github.com/bramstroker/homeassistant-powercalc)
+  to discover the device and automatically configure it with the correct
+  power profile.
+  Additionally, a description and version of the ESPHome firmware have been
+  added to the meta data, which results in some more information being exposed
+  in the ESPHome GUI.
+  Thanks to tr4nt0r on GitHub for the contribution.
+
 ## [2025.3.0]
 
 ### Fixed
@@ -124,7 +145,7 @@ Things can be fixed. Check out this information from the related GitHub issue re
 **Note**: This release requires ESPHome 2021.8.0 and Home Assistant 2021.8.0 or newer.
 
 ### Changed
-- Fixed a compilation issue with ESPHome 2021.9.0. 
+- Fixed a compilation issue with ESPHome 2021.9.0.
 - Added `refresh: 60s` to the `external_components` definition in `example.yaml`,
   to make use that the code is updated when using a non-release ref (e.g. `main`
   instead of `2021.9.0`).
@@ -157,7 +178,7 @@ Things can be fixed. Check out this information from the related GitHub issue re
 
 ### Changed
 - The code has been made compatible with the new color mode support in Home Assistant
-  and ESPHome. 
+  and ESPHome.
 - The `example.yaml` has been updated to not make use of underscores in hostnames.
   Using an underscore in the name yields a warning during the firmware compilation,
   because hostnames should only contain letters, numbers and dashes "-".
@@ -173,8 +194,8 @@ Things can be fixed. Check out this information from the related GitHub issue re
 - It is now possible to address the LEDs in the front panel of the device individually.
   There are 12 LEDs in total: the power button, the color button and 10 LEDs that are
   used by the original firmware to represent the lamp's current brightness setting.
-  The `output` component for the lamp was updated to provide access to the individual LEDs. 
-  Check out the [documentation guide](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/main/doc/configuration.md) 
+  The `output` component for the lamp was updated to provide access to the individual LEDs.
+  Check out the [documentation guide](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/main/doc/configuration.md)
   for details on how to control these.
   Thanks to @Stewie3112 for the feature request that triggered this development!
 - Implemented support for visual feedback during the OTA update process in the
@@ -255,4 +276,3 @@ Things can be fixed. Check out this information from the related GitHub issue re
 - Component "binary_sensor" that act as touch/release sensors for power button, color button and slider.
 - Component "sensor" that report the level at which the slider was touched.
 - Component "output" for controlling the front panel light and its level indicator.
-
