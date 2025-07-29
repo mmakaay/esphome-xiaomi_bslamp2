@@ -15,9 +15,9 @@ Make sure all notable changes are recorded in the changelog.
 
 The minimum ESPHome version requirement must be documented correctly in the following files:
 
-  * doc/installation.md (at the start of the file)
-  * README.md (at the start of the quick start guide)
-  * CHANGELOG.md (at the start of the log for the released version)
+  * `doc/installation.md` (at the start of the file)
+  * `README.md` (at the start of the quick start guide)
+  * `CHANGELOG.md` (at the start of the log for the released version)
   * `components/xiaomi_bslamp2/__init__.py` in the function
     `check_version_compatibility()`. This function can also be used
     to check the maximum version of ESPHome that can be used. An example
@@ -25,9 +25,11 @@ The minimum ESPHome version requirement must be documented correctly in the foll
 
 **Push the dev changes to GitHub**
 
+```
 $ git add ...
 $ git commit -m "Prepare for release"
 $ git push
+```
 
 **Create version release branch**
 
@@ -42,6 +44,9 @@ The version of this project (e.g. `2021.10.0`) must be updated in:
 
   * `example.yaml` (the `ref:` for the bslamp2 configuration package)
   * `packages/core.yaml` (the `ref:` for the external component)
+  * `packages/core.yaml` (the `esphome.project.version` value)
+
+The ref values must be `release/<version>`, the version value just `<version>`.
 
 **Push the release to GitHub**
 
