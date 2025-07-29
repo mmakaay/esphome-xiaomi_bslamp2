@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - The manufacturer and model strings are now reported by the firmware meta
-  data. This allows [powercacle](https://github.com/bramstroker/homeassistant-powercalc)
+  data. This allows [powercalc](https://github.com/bramstroker/homeassistant-powercalc)
   to discover the device and automatically configure it with the correct
   power profile.
   Additionally, a description and version of the ESPHome firmware have been
