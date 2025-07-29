@@ -42,17 +42,19 @@ def validate_binary_sensor(conf):
 
 
 CONFIG_SCHEMA = cv.All(
-    binary_sensor.BINARY_SENSOR_SCHEMA.extend(
+    binary_sensor.binary_sensor_schema()
+    .extend(
         {
             cv.GenerateID(): cv.declare_id(XiaomiBslamp2TouchBinarySensor),
             cv.GenerateID(CONF_FRONT_PANEL_HAL_ID): cv.use_id(FrontPanelHAL),
             # This option is not advertised in the documentation. It must be
-            # considered deprecated. I'm not announcing it as such yet. Not sure
-            # if it's useful to do so.
+            # considered deprecated. I'm not announcing it as such yet. Not
+            # sure if it's useful to do so.
             cv.Optional(CONF_PART): validate_for,
             cv.Optional(CONF_FOR): validate_for,
         }
-    ).extend(cv.COMPONENT_SCHEMA),
+    )
+    .extend(cv.COMPONENT_SCHEMA),
     validate_binary_sensor,
 )
 
