@@ -17,7 +17,7 @@ template<typename... Ts> class SetLEDsAction : public Action<Ts...> {
   TEMPLATABLE_VALUE(int, mode)
   TEMPLATABLE_VALUE(uint16_t, leds)
 
-  void play(Ts... x) override {
+  void play(const Ts &...x) override {
     uint16_t mode = this->mode_.value(x...);
     uint16_t value = this->leds_.value(x...);
     switch (mode) {
@@ -43,7 +43,7 @@ template<typename... Ts> class SetLevelAction : public Action<Ts...> {
 
   TEMPLATABLE_VALUE(float, level)
 
-  void play(Ts... x) override {
+  void play(const Ts &...x) override {
     parent_->set_level(this->level_.value(x...));
     parent_->update_leds();
   }
@@ -56,7 +56,7 @@ template<typename... Ts> class UpdateLEDsAction : public Action<Ts...> {
  public:
   explicit UpdateLEDsAction(XiaomiBslamp2FrontPanelOutput *parent) : parent_(parent) {}
 
-  void play(Ts... x) override {
+  void play(const Ts &...x) override {
     parent_->update_leds();
   }
 

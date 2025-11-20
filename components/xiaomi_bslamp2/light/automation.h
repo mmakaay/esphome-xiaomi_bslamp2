@@ -46,7 +46,7 @@ template<typename... Ts> class DiscoAction : public Action<Ts...> {
   TEMPLATABLE_VALUE(float, color_temperature)
   TEMPLATABLE_VALUE(std::string, effect)
 
-  void play(Ts... x) override {
+  void play(const Ts &...x) override {
     if (this->disco_state_.has_value()) {
       auto p = this->disco_state_.optional_value(x...);
       if (!*p) {
@@ -83,7 +83,7 @@ template<typename... Ts> class ActivatePresetAction : public Action<Ts...> {
   TEMPLATABLE_VALUE(std::string, group);
   TEMPLATABLE_VALUE(std::string, preset);
 
-  void play(Ts... x) override {
+  void play(const Ts &...x) override {
     auto operation = this->operation_.value(x...);
 
     if (operation == "next_group") {
