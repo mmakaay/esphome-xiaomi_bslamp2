@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025.11.0]
+
+**Note**: This release requires ESPHome 2025.11.0 or newer.
+
+### Fixed
+
+- Compilation with ESPHome 2025.11.0 failed, because of signature changes in
+  the C++ API of ESPHome.
+  Thanks to GitHub user @zackbcom for providing the fix for this issue!
+
 ## [2025.7.0]
 
 **Note**: This release requires ESPHome 2025.7.0 or newer.
@@ -13,8 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Compilation with ESPHome 2025.7.0 failed, because `esphome::lerp()` could no
   longer be used, and had to be replaced with `std::lerp()`.
   Thanks to BlairC1 on GitHub for providing the fix.
-- Fixed compile time deprecation warnings about SENSOR, TEXT_SENSOR_SCHEMA,
-  BINARY_SENSOR_SCHEMA and SENSOR_SCHEMA.
+- Fixed compile time deprecation warnings about `SENSOR`, `TEXT_SENSOR_SCHEMA`,
+  `BINARY_SENSOR_SCHEMA` and `SENSOR_SCHEMA`.
 
 ### Added
 
