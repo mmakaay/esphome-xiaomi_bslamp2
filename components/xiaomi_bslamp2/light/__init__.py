@@ -133,7 +133,12 @@ def maybe_simple_preset_action(schema):
     return validator
 
 
-@automation.register_action("light.disco_on", DiscoAction, light.automation.LIGHT_TURN_ON_ACTION_SCHEMA)
+@automation.register_action(
+    "light.disco_on",
+    DiscoAction,
+    light.automation.LIGHT_TURN_ON_ACTION_SCHEMA,
+    synchronous=True,
+)
 def disco_action_on_to_code(config, action_id, template_arg, args):
     light_var = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
@@ -168,7 +173,12 @@ def disco_action_on_to_code(config, action_id, template_arg, args):
     yield var
 
 
-@automation.register_action("light.disco_off", DiscoAction, light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA)
+@automation.register_action(
+    "light.disco_off",
+    DiscoAction,
+    light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA,
+    synchronous=True,
+)
 def disco_action_off_to_code(config, action_id, template_arg, args):
     light_var = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
@@ -212,6 +222,7 @@ def register_preset_action(value):
         ),
         register_preset_action,
     ),
+    synchronous=True,
 )
 def preset_activate_to_code(config, action_id, template_arg, args):
     presets_var = yield cg.get_variable(config[CONF_PRESETS_ID])

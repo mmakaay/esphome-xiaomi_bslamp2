@@ -78,7 +78,12 @@ FRONT_PANEL_LED_SCHEMA = cv.Schema(
 )
 
 
-@automation.register_action("front_panel.set_level", SetLevelAction, FRONT_PANEL_LEVEL_SCHEMA)
+@automation.register_action(
+    "front_panel.set_level",
+    SetLevelAction,
+    FRONT_PANEL_LEVEL_SCHEMA,
+    synchronous=True,
+)
 async def set_level_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
@@ -87,7 +92,12 @@ async def set_level_to_code(config, action_id, template_arg, args):
     return action_var
 
 
-@automation.register_action("front_panel.set_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
+@automation.register_action(
+    "front_panel.set_leds",
+    SetLEDsAction,
+    FRONT_PANEL_LED_SCHEMA,
+    synchronous=True,
+)
 async def set_leds_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
@@ -98,7 +108,12 @@ async def set_leds_to_code(config, action_id, template_arg, args):
     return action_var
 
 
-@automation.register_action("front_panel.turn_on_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
+@automation.register_action(
+    "front_panel.turn_on_leds",
+    SetLEDsAction,
+    FRONT_PANEL_LED_SCHEMA,
+    synchronous=True,
+)
 async def turn_on_leds_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
@@ -109,7 +124,12 @@ async def turn_on_leds_to_code(config, action_id, template_arg, args):
     return action_var
 
 
-@automation.register_action("front_panel.turn_off_leds", SetLEDsAction, FRONT_PANEL_LED_SCHEMA)
+@automation.register_action(
+    "front_panel.turn_off_leds",
+    SetLEDsAction,
+    FRONT_PANEL_LED_SCHEMA,
+    synchronous=True,
+)
 async def turn_off_leds_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
@@ -120,7 +140,12 @@ async def turn_off_leds_to_code(config, action_id, template_arg, args):
     return action_var
 
 
-@automation.register_action("front_panel.update_leds", UpdateLEDsAction, FRONT_PANEL_SCHEMA)
+@automation.register_action(
+    "front_panel.update_leds",
+    UpdateLEDsAction,
+    FRONT_PANEL_SCHEMA,
+    synchronous=True,
+)
 async def update_leds_to_code(config, action_id, template_arg, args):
     output_var = await cg.get_variable(config[CONF_ID])
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
