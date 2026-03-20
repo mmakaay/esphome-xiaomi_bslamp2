@@ -20,7 +20,7 @@ esphome:
   comment: Xiaomi Mi Bedside Lamp 2
   project:
       name: Yeelight Technology.MJCTD02YL
-      version: dev
+      version: 2026.3.0
 
 esp32:
   board: esp32doit-devkit-v1
@@ -37,7 +37,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
-      ref: dev
+      ref: release/2026.3.0
     refresh: 60s
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
