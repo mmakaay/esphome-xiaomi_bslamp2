@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2026.3.0]
+
+**Note** This release requires ESPHome 2026.3.0 or newer.
+
+### Fixed
+
+- Fixed compile-time warnings about `register_action('...', ...) is missing the
+  synchronous= parameter`.
+
 ## [2025.11.0]
 
 **Note**: This release requires ESPHome 2025.11.0 or newer.
@@ -23,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Compilation with ESPHome 2025.7.0 failed, because `esphome::lerp()` could no
   longer be used, and had to be replaced with `std::lerp()`.
   Thanks to BlairC1 on GitHub for providing the fix.
-- Fixed compile time deprecation warnings about `SENSOR`, `TEXT_SENSOR_SCHEMA`,
+- Fixed compile-time deprecation warnings about `SENSOR`, `TEXT_SENSOR_SCHEMA`,
   `BINARY_SENSOR_SCHEMA` and `SENSOR_SCHEMA`.
 
 ### Added
@@ -184,7 +193,7 @@ Things can be fixed. Check out this information from the related GitHub issue re
 
 ### Added
 - Preset identifiers (`group` and `preset`) for the `preset.activate` action are now
-  validated at compile time. This prevents us from building a firmware with incorrect
+  validated at compile-time. This prevents us from building a firmware with incorrect
   preset identifiers. Before this change, using an invalid preset name would only
   result in a warning message in the device log, which is only moderately useful.
 
