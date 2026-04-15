@@ -179,11 +179,12 @@ def disco_action_on_to_code(config, action_id, template_arg, args):
     light.automation.LIGHT_TURN_OFF_ACTION_SCHEMA,
     synchronous=True,
 )
-def disco_action_off_to_code(config, action_id, template_arg, args):
-    light_var = yield cg.get_variable(config[CONF_ID])
+async def disco_action_off_to_code(config, action_id, template_arg, args):
+    light_var = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, light_var)
-    cg.add(var.set_disco_state(False))
-    yield var
+    template_ = await cg.templatable(False, args, bool)
+    cg.add(var.set_disco_state(template_))
+    return var
 
 
 USED_PRESETS = []
