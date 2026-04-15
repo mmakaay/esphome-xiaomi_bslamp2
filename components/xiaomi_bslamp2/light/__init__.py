@@ -16,6 +16,7 @@ from esphome.const import (
     CONF_BRIGHTNESS,
     CONF_EFFECT,
     CONF_FLASH_LENGTH,
+    CONF_RESTORE_MODE,
 )
 from .. import bslamp2_ns, CODEOWNERS, CONF_LIGHT_HAL_ID, LightHAL
 
@@ -93,6 +94,9 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
         cv.GenerateID(CONF_ID): cv.declare_id(XiaomiBslamp2LightState),
         cv.GenerateID(CONF_LIGHT_HAL_ID): cv.use_id(LightHAL),
         cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(XiaomiBslamp2LightOutput),
+        cv.Optional(CONF_RESTORE_MODE, default="RESTORE_DEFAULT_OFF"): cv.enum(
+            light.RESTORE_MODES, upper=True, space="_"
+        ),
         cv.Optional(CONF_ON_BRIGHTNESS): automation.validate_automation(
             {
                 cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(BrightnessTrigger),
