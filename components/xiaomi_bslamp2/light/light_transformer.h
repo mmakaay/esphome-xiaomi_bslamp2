@@ -17,8 +17,8 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
  public:
   explicit XiaomiBslamp2LightTransitionTransformer(
     LightHAL *light,
-    CallbackManager<void(std::string)> light_mode_callback,
-    CallbackManager<void(light::LightColorValues)> state_callback) :
+    CallbackManager<void(std::string)> *light_mode_callback,
+    CallbackManager<void(light::LightColorValues)> *state_callback) :
       light_(light),
       light_mode_callback_(light_mode_callback),
       state_callback_(state_callback) { }
@@ -48,8 +48,8 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
     // Run callbacks. These are normally called from the LightOutput, but
     // since I don't call LightOutput::write_state() from this transformer's
     // code, these callbacks must be called from this transformer instead.
-    light_mode_callback_.call(end_.light_mode);
-    state_callback_.call(target_values_);
+    light_mode_callback_->call(end_.light_mode);
+    state_callback_->call(target_values_);
   }
 
   optional<light::LightColorValues> apply() override { 
@@ -90,8 +90,8 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
   bool force_finish_{false};
   GPIOOutputValues start_{};
   ColorHandlerChain end_{};
-  CallbackManager<void(std::string)> light_mode_callback_{};
-  CallbackManager<void(light::LightColorValues)> state_callback_{};
+  CallbackManager<void(std::string)> *light_mode_callback_;
+  CallbackManager<void(light::LightColorValues)> *state_callback_;
 };
 
 }  // namespace bslamp2

@@ -103,8 +103,10 @@ async def set_leds_to_code(config, action_id, template_arg, args):
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
     bits = [FRONT_PANEL_LED_OPTIONS["NONE"]] + [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
     value = cg.RawExpression("|".join(map(str, bits)))
-    cg.add(action_var.set_mode(2))
-    cg.add(action_var.set_leds(value))
+    mode_template = await cg.templatable(2, args, cg.int_)
+    cg.add(action_var.set_mode(mode_template))
+    leds_template = await cg.templatable(value, args, cg.uint16)
+    cg.add(action_var.set_leds(leds_template))
     return action_var
 
 
@@ -119,8 +121,10 @@ async def turn_on_leds_to_code(config, action_id, template_arg, args):
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
     bits = [FRONT_PANEL_LED_OPTIONS["NONE"]] + [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
     value = cg.RawExpression("|".join(map(str, bits)))
-    cg.add(action_var.set_mode(1))
-    cg.add(action_var.set_leds(value))
+    mode_template = await cg.templatable(1, args, cg.int_)
+    cg.add(action_var.set_mode(mode_template))
+    leds_template = await cg.templatable(value, args, cg.uint16)
+    cg.add(action_var.set_leds(leds_template))
     return action_var
 
 
@@ -135,8 +139,10 @@ async def turn_off_leds_to_code(config, action_id, template_arg, args):
     action_var = cg.new_Pvariable(action_id, template_arg, output_var)
     bits = [FRONT_PANEL_LED_OPTIONS["NONE"]] + [FRONT_PANEL_LED_OPTIONS[led] for led in config[CONF_LEDS]]
     value = cg.RawExpression("|".join(map(str, bits)))
-    cg.add(action_var.set_mode(0))
-    cg.add(action_var.set_leds(value))
+    mode_template = await cg.templatable(0, args, cg.int_)
+    cg.add(action_var.set_mode(mode_template))
+    leds_template = await cg.templatable(value, args, cg.uint16)
+    cg.add(action_var.set_leds(leds_template))
     return action_var
 
 
