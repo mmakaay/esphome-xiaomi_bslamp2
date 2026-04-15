@@ -8,19 +8,6 @@ namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
-// Can be replaced with light::LightStateRTCState once pull request
-// https://github.com/esphome/esphome/pull/1735 is merged.
-struct MyLightStateRTCState {
-  bool state{false};
-  float brightness{1.0f};
-  float red{1.0f};
-  float green{1.0f};
-  float blue{1.0f};
-  float white{1.0f};
-  float color_temp{1.0f};
-  uint32_t effect{0};
-};
-
 /**
  * A custom LightState class for the Xiaomi Bedside Lamp 2.
  *
@@ -32,22 +19,26 @@ class XiaomiBslamp2LightState : public light::LightState, public LightStateDisco
   XiaomiBslamp2LightState(XiaomiBslamp2LightOutput *output) : light::LightState(output) { }
 
   void disco_stop() {
-    MyLightStateRTCState recovered{};
+    light::LightStateRTCState recovered{};
     if (this->rtc_.load(&recovered)) {
       auto call = make_disco_call(true);
-	  call.set_state(recovered.state);
-	  call.set_brightness_if_supported(recovered.brightness);
-	  call.set_red_if_supported(recovered.red);
-	  call.set_green_if_supported(recovered.green);
-	  call.set_blue_if_supported(recovered.blue);
-	  call.set_white_if_supported(recovered.white);
-	  call.set_color_temperature_if_supported(recovered.color_temp);
-	  if (recovered.effect != 0) {
-		call.set_effect(recovered.effect);
-	  } else {
-		call.set_transition_length_if_supported(0);
-	  }
-	  call.perform();
+      call.set_state(recovered.state);
+      call.set_brightness_if_supported(recovered.brightness);
+      call.set_color_brightness_if_supported(recovered.color_brightness);
+      call.set_red_if_supported(recovered.red);
+      call.set_green_if_supported(recovered.green);
+      call.set_blue_if_supported(recovered.blue);
+      call.set_white_if_supported(recovered.white);
+      call.set_color_temperature_if_supported(recovered.color_temp);
+      call.set_cold_white_if_supported(recovered.cold_white);
+      call.set_warm_white_if_supported(recovered.warm_white);
+      if (recovered.effect != 0) {
+        call.set_effect(recovered.effect);
+      } else {
+        call.set_transition_length_if_supported(0);
+      }
+      call.set_color_mode_if_supported(recovered.color_mode);
+      call.perform();
     }
   }
 
