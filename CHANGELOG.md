@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2026.4.0]
+
+**Note** This release requires ESPHome 2026.4.0 or newer.
+
+### Fixed
+
+- `CallbackManager` copy constructor was deleted in ESPHome 2026.4.0. Pass
+  CallbackManagers by pointer instead of by value in the light transition
+  transformer.
+
+- The `TEMPLATABLE_VALUE` macro now uses `TemplatableFn` which only accepts
+  function pointers. Wrap raw constants via `cg.templatable()` in the front
+  panel LED action codegen.
+
 ## [2026.3.0]
 
 **Note** This release requires ESPHome 2026.3.0 or newer.
