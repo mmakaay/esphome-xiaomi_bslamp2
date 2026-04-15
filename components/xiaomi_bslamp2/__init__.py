@@ -51,10 +51,10 @@ FRONT_PANEL_LED_OPTIONS = {
 
 def check_version_compatibility(config):
     esphome_version = parse_esphome_version()
-    if esphome_version < (2026, 3, 0):
+    if esphome_version < (2026, 4, 0):
         raise Invalid(
             "This xiaomi_bslamp2 component requires at least ESPHome "
-            + "version 2026.3.0; Please upgrade ESPHome and try again."
+            + "version 2026.4.0; Please upgrade ESPHome and try again."
         )
     return config
 

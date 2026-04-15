@@ -2,7 +2,7 @@
 
 # Installation guide
 
-The code must be compiled into a firmware using ESPHome 2026.3.0 or later. Therefore, a prerequisite
+The code must be compiled into a firmware using ESPHome 2026.4.0 or later. Therefore, a prerequisite
 is that you have ESPHome up and running in some form (command line, docker container, web dashboard,
 possibly from within Home Assistant as an add-on). For information on this, please refer to the
 documentation on the [ESPHome website](https://esphome.io).
