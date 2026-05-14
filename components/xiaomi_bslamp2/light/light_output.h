@@ -23,6 +23,11 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
  public:
   void set_parent(LightHAL *light) { light_ = light; }
 
+  void set_night_light_color_temperature_calibration(float red, float green, float blue) {
+    color_handler_chain.set_night_light_color_temperature_calibration(red, green, blue);
+    apply_current_state();
+  }
+
   /**
    * Returns a LightTraits object, which is used to explain to the outside
    * world (e.g. Home Assistant) what features are supported by this device.
@@ -52,6 +57,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
    * Applies a requested light state to the physicial GPIO outputs.
    */
   void write_state(light::LightState *state) {
+    state_ = state;
     auto values = state->current_values;
 
     color_handler_chain.set_light_color_values(values);
@@ -73,8 +79,14 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
       light_->turn_off();
   }
 
+  void apply_current_state() {
+    if (state_ != nullptr)
+      write_state(state_);
+  }
+
  protected:
   LightHAL *light_;
+  light::LightState *state_{nullptr};
   ColorHandlerChain color_handler_chain;
   CallbackManager<void(std::string)> light_mode_callback_{};
   CallbackManager<void(light::LightColorValues)> state_callback_{};

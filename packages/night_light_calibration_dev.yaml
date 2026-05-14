@@ -1,0 +1,92 @@
+# ------------------------------------------------------------------------
+# Night light color-temperature calibration: raw developer controls
+#
+# Use this package instead of night_light_calibration.yaml when you want
+# direct RGB attenuation inputs for calibration experiments.
+# ------------------------------------------------------------------------
+
+substitutions:
+  night_light_raw_red_calibration_name: Night Light Raw Red Calibration
+  night_light_raw_green_calibration_name: Night Light Raw Green Calibration
+  night_light_raw_blue_calibration_name: Night Light Raw Blue Calibration
+  night_light_raw_red_calibration_initial: "0.968"
+  night_light_raw_green_calibration_initial: "0.968"
+  night_light_raw_blue_calibration_initial: "0.968"
+  night_light_raw_calibration_min: "0.960"
+  night_light_raw_calibration_max: "0.980"
+
+esphome:
+  on_boot:
+    - priority: 600
+      then:
+        - script.execute: apply_raw_night_light_calibration
+
+script:
+  - id: apply_raw_night_light_calibration
+    mode: restart
+    then:
+      - lambda: |-
+          if (isnan(id(my_night_light_raw_red_calibration).state) ||
+              isnan(id(my_night_light_raw_green_calibration).state) ||
+              isnan(id(my_night_light_raw_blue_calibration).state)) {
+            return;
+          }
+
+          const float red = clamp(id(my_night_light_raw_red_calibration).state,
+                                  ${night_light_raw_calibration_min}f,
+                                  ${night_light_raw_calibration_max}f);
+          const float green = clamp(id(my_night_light_raw_green_calibration).state,
+                                    ${night_light_raw_calibration_min}f,
+                                    ${night_light_raw_calibration_max}f);
+          const float blue = clamp(id(my_night_light_raw_blue_calibration).state,
+                                   ${night_light_raw_calibration_min}f,
+                                   ${night_light_raw_calibration_max}f);
+
+          id(my_light).set_night_light_color_temperature_calibration(red, green, blue);
+
+number:
+  - platform: template
+    id: my_night_light_raw_red_calibration
+    name: ${night_light_raw_red_calibration_name}
+    icon: mdi:palette-swatch
+    entity_category: config
+    mode: box
+    optimistic: true
+    restore_value: true
+    min_value: ${night_light_raw_calibration_min}
+    max_value: ${night_light_raw_calibration_max}
+    step: 0.001
+    initial_value: ${night_light_raw_red_calibration_initial}
+    on_value:
+      then:
+        - script.execute: apply_raw_night_light_calibration
+  - platform: template
+    id: my_night_light_raw_green_calibration
+    name: ${night_light_raw_green_calibration_name}
+    icon: mdi:palette-swatch
+    entity_category: config
+    mode: box
+    optimistic: true
+    restore_value: true
+    min_value: ${night_light_raw_calibration_min}
+    max_value: ${night_light_raw_calibration_max}
+    step: 0.001
+    initial_value: ${night_light_raw_green_calibration_initial}
+    on_value:
+      then:
+        - script.execute: apply_raw_night_light_calibration
+  - platform: template
+    id: my_night_light_raw_blue_calibration
+    name: ${night_light_raw_blue_calibration_name}
+    icon: mdi:palette-swatch
+    entity_category: config
+    mode: box
+    optimistic: true
+    restore_value: true
+    min_value: ${night_light_raw_calibration_min}
+    max_value: ${night_light_raw_calibration_max}
+    step: 0.001
+    initial_value: ${night_light_raw_blue_calibration_initial}
+    on_value:
+      then:
+        - script.execute: apply_raw_night_light_calibration

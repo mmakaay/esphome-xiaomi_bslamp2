@@ -27,6 +27,10 @@ namespace bslamp2 {
  */
 class ColorHandlerChain : public ColorHandler {
  public:
+  void set_night_light_color_temperature_calibration(float red, float green, float blue) {
+    night_light_.set_color_temperature_calibration(red, green, blue);
+  }
+
   bool set_light_color_values(light::LightColorValues v) {
     // The actual implementation of the various light modes is in separate
     // targeted classes. These classes are called here in a chain of

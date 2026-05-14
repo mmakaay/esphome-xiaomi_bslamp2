@@ -22,6 +22,7 @@ components of the lamp.
   |                            |  [sensor](#component-sensor) (touched slider level)              |
   | Front Panel Illumination   |  [output](#component-output) (on/off + indicator level)          |
   | Light mode propagation     |  [text_sensor](#component-text_sensor)                           |
+  | Night light calibration    |  [template number](#night-light-calibration)                     |
 
 ## Platform: xiaomi_bslamp2
 
@@ -112,6 +113,53 @@ mode. This makes things a lot easier to control.
 It is possible to control the night light mode separately. An example of this can be found in the
 [example.yaml](../example.yaml), in which holding the power button is bound to activating the night
 light.
+
+### Night light calibration
+
+The `packages/night_light_calibration.yaml` package exposes Home Assistant controls for tuning the
+night light white balance while the lamp is on. This is useful when the color-temperature night
+light mode looks too green, too blue or otherwise uneven.
+
+Internally, this mode uses calibrated RGB attenuation levels. Larger attenuation values dim a color
+channel, so editing raw RGB values directly can feel backwards. The package exposes three easier
+calibration controls instead:
+
+* `Night Light Tint`: positive values reduce green and move the night light toward magenta.
+* `Night Light Temperature`: positive values make the result warmer/amber, negative values make it
+  cooler/bluer.
+* `Night Light Level`: positive values make the night light brighter, negative values make it
+  dimmer without changing the target color balance.
+
+By default, the package clamps the generated RGB attenuation values to the useful `0.960` ..
+`0.980` range and starts from a neutral equal-channel base. Both the clamp range and the base
+values can be overridden with substitutions.
+
+```yaml
+substitutions:
+  night_light_tint_initial: "0.0"
+  night_light_temperature_initial: "0.0"
+  night_light_level_initial: "0.0"
+  night_light_red_calibration_base: "0.968"
+  night_light_green_calibration_base: "0.968"
+  night_light_blue_calibration_base: "0.968"
+  night_light_calibration_min: "0.960"
+  night_light_calibration_max: "0.980"
+
+packages:
+  bslamp2:
+    files:
+      - packages/core.yaml
+      - packages/behavior_default.yaml
+      - packages/night_light_calibration.yaml
+```
+
+Changing these values applies immediately, so the lamp can be calibrated while the night light is
+on.
+
+For development, `packages/night_light_calibration_dev.yaml` can be used instead of
+`packages/night_light_calibration.yaml`. It exposes raw red, green and blue attenuation inputs. Do
+not include both calibration packages in the same device configuration, because they control the
+same night light calibration target.
 
 ### `light.disco_on` Action
 

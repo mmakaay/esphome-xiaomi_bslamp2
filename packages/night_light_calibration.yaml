@@ -1,0 +1,108 @@
+# ------------------------------------------------------------------------
+# Night light color-temperature calibration
+#
+# This package exposes Home Assistant number entities for tuning the night
+# light tint without manipulating raw RGB attenuation values directly.
+# Values are restored by the standard ESPHome template number component.
+# ------------------------------------------------------------------------
+
+substitutions:
+  night_light_tint_name: Night Light Tint
+  night_light_temperature_name: Night Light Temperature
+  night_light_level_name: Night Light Level
+  night_light_tint_initial: "0.0"
+  night_light_temperature_initial: "0.0"
+  night_light_level_initial: "0.0"
+  night_light_red_calibration_base: "0.968"
+  night_light_green_calibration_base: "0.968"
+  night_light_blue_calibration_base: "0.968"
+  night_light_calibration_min: "0.960"
+  night_light_calibration_max: "0.980"
+
+esphome:
+  on_boot:
+    - priority: 600
+      then:
+        - script.execute: apply_night_light_calibration
+
+script:
+  - id: apply_night_light_calibration
+    mode: restart
+    then:
+      - lambda: |-
+          if (isnan(id(my_night_light_tint).state) ||
+              isnan(id(my_night_light_temperature).state) ||
+              isnan(id(my_night_light_level).state)) {
+            return;
+          }
+
+          const float tint = id(my_night_light_tint).state;
+          const float temperature = id(my_night_light_temperature).state;
+          const float level = id(my_night_light_level).state;
+
+          // Positive tint means less green / more magenta. These are attenuation
+          // values, so increasing green makes the green channel dimmer.
+          const float tint_amount = tint * 0.001f;
+          // Positive temperature means warmer / more amber, so blue is dimmed.
+          const float temperature_amount = temperature * 0.001f;
+          // Positive level means brighter, so all attenuation values go down.
+          const float level_amount = level * 0.001f;
+
+          const float red = clamp(${night_light_red_calibration_base}f - level_amount -
+                                      (tint_amount * 0.5f) - (temperature_amount * 0.5f),
+                                  ${night_light_calibration_min}f, ${night_light_calibration_max}f);
+          const float green = clamp(${night_light_green_calibration_base}f - level_amount +
+                                        tint_amount - (temperature_amount * 0.25f),
+                                    ${night_light_calibration_min}f, ${night_light_calibration_max}f);
+          const float blue = clamp(${night_light_blue_calibration_base}f - level_amount -
+                                       (tint_amount * 0.5f) + (temperature_amount * 0.75f),
+                                   ${night_light_calibration_min}f, ${night_light_calibration_max}f);
+
+          id(my_light).set_night_light_color_temperature_calibration(red, green, blue);
+
+number:
+  - platform: template
+    id: my_night_light_tint
+    name: ${night_light_tint_name}
+    icon: mdi:palette
+    entity_category: config
+    mode: slider
+    optimistic: true
+    restore_value: true
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    initial_value: ${night_light_tint_initial}
+    on_value:
+      then:
+        - script.execute: apply_night_light_calibration
+  - platform: template
+    id: my_night_light_temperature
+    name: ${night_light_temperature_name}
+    icon: mdi:thermometer
+    entity_category: config
+    mode: slider
+    optimistic: true
+    restore_value: true
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    initial_value: ${night_light_temperature_initial}
+    on_value:
+      then:
+        - script.execute: apply_night_light_calibration
+  - platform: template
+    id: my_night_light_level
+    name: ${night_light_level_name}
+    icon: mdi:brightness-6
+    entity_category: config
+    mode: slider
+    optimistic: true
+    restore_value: true
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    initial_value: ${night_light_level_initial}
+    on_value:
+      then:
+        - script.execute: apply_night_light_calibration

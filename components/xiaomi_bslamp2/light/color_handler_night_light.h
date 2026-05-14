@@ -3,6 +3,7 @@
 #include "../common.h"
 #include "../light_hal.h"
 #include "color_handler.h"
+#include "esphome/core/helpers.h"
 
 namespace esphome {
 namespace xiaomi {
@@ -24,6 +25,12 @@ namespace bslamp2 {
  */
 class ColorHandlerNightLight : public ColorHandler {
  public:
+  void set_color_temperature_calibration(float red, float green, float blue) {
+    color_temperature_red_ = clamp(red, 0.0f, 1.0f);
+    color_temperature_green_ = clamp(green, 0.0f, 1.0f);
+    color_temperature_blue_ = clamp(blue, 0.0f, 1.0f);
+  }
+
   bool set_light_color_values(light::LightColorValues v) {
     light_mode = LIGHT_MODE_NIGHT;
 
@@ -37,9 +44,9 @@ class ColorHandlerNightLight : public ColorHandler {
     // Based on measurements using the original device firmware, so it
     // matches the night light of the original firmware.
     if (v.get_color_mode() == light::ColorMode::COLOR_TEMPERATURE) {
-      red = 0.968f;
-      green = 0.968f;
-      blue = 0.972f;
+      red = color_temperature_red_;
+      green = color_temperature_green_;
+      blue = color_temperature_blue_;
       white = 0.0f;
     }
     // In RGB mode, the selected color is used to give the night light a
@@ -56,6 +63,11 @@ class ColorHandlerNightLight : public ColorHandler {
 
     return true;
   }
+
+ protected:
+  float color_temperature_red_{0.968f};
+  float color_temperature_green_{0.968f};
+  float color_temperature_blue_{0.972f};
 };
 
 }  // namespace bslamp2
