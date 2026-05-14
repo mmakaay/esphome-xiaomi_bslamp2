@@ -15,6 +15,15 @@ substitutions:
 
   #light_name: RGBWW Light
   #light_mode_text_sensor_name: Light Mode
+  #night_light_tint_name: Night Light Tint
+  #night_light_temperature_name: Night Light Temperature
+  #night_light_level_name: Night Light Level
+  #night_light_tint_initial: "0.0"
+  #night_light_temperature_initial: "0.0"
+  #night_light_level_initial: "0.0"
+  #night_light_red_calibration_base: "0.968"
+  #night_light_green_calibration_base: "0.968"
+  #night_light_blue_calibration_base: "0.968"
   #default_transition_length: 800ms
 
 # --------------------------------------------------------------------------
@@ -28,10 +37,11 @@ substitutions:
 # an example for your own customizations.
 #
 # Available packages are:
-# - core.yaml                : core components & hardware setup
-# - behavior_default.yaml    : default device behavior
-# - ota_feedback.yaml        : enable visual feedback during OTA updates
-# - activate_preset_svc.yaml : 'activate_preset' service for Home Assistant
+# - core.yaml                        : core components & hardware setup
+# - behavior_default.yaml            : default device behavior
+# - night_light_calibration.yaml     : HA controls for night light tint calibration
+# - ota_feedback.yaml                : enable visual feedback during OTA updates
+# - activate_preset_svc.yaml         : 'activate_preset' service for Home Assistant
 # --------------------------------------------------------------------------
 
 packages:
@@ -41,6 +51,7 @@ packages:
     files:
       - packages/core.yaml
       - packages/behavior_default.yaml
+      - packages/night_light_calibration.yaml
       - packages/ota_feedback.yaml
       - packages/activate_preset_svc.yaml
     refresh: 0s
@@ -60,4 +71,3 @@ api:
 ota:
   platform: esphome
   password: !secret ota_password
-

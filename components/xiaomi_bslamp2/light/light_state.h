@@ -2,6 +2,7 @@
 
 #include "../common.h"
 #include "interfaces.h"
+#include "light_output.h"
 #include "esphome/components/light/light_state.h"
 
 namespace esphome {
@@ -45,6 +46,11 @@ class XiaomiBslamp2LightState : public light::LightState, public LightStateDisco
   void disco_apply() {
     this->output_->write_state(this);
     this->next_write_ = false;
+  }
+
+  void set_night_light_color_temperature_calibration(float red, float green, float blue) {
+    auto *output = static_cast<XiaomiBslamp2LightOutput *>(this->output_);
+    output->set_night_light_color_temperature_calibration(red, green, blue);
   }
 
   light::LightCall make_disco_call(bool save_and_publish) {
