@@ -148,7 +148,7 @@ calibration controls that adjust a neutral calibration base by default:
 * `Night Light Level`: positive values make the night light brighter, negative values make it
   dimmer without changing the target color balance.
 
-By default, the package clamps the generated RGB attenuation values to the useful `0.960` ..
+By default, the package clamps the generated RGB attenuation values to the useful `0.920` ..
 `0.980` range and starts from a neutral equal-channel base. Both the clamp range and the
 calibration base values can be overridden with substitutions.
 
@@ -160,7 +160,7 @@ substitutions:
   night_light_calibration_red_base: "0.968"
   night_light_calibration_green_base: "0.968"
   night_light_calibration_blue_base: "0.968"
-  night_light_calibration_min: "0.960"
+  night_light_calibration_min: "0.920"
   night_light_calibration_max: "0.980"
 
 packages:

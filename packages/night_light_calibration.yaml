@@ -16,7 +16,7 @@ substitutions:
   night_light_tint_initial: "0.0"
   night_light_temperature_initial: "0.0"
   night_light_level_initial: "0.0"
-  night_light_calibration_min: "0.960"
+  night_light_calibration_min: "0.920"
   night_light_calibration_max: "0.980"
 
 esphome:
@@ -40,22 +40,36 @@ script:
           const float temperature = id(my_night_light_temperature).state;
           const float level = id(my_night_light_level).state;
 
-          // Positive tint means less green / more magenta. These are attenuation
-          // values, so increasing green makes the green channel dimmer.
-          const float tint_amount = tint * 0.001f;
-          // Positive temperature means warmer / more amber, so blue is dimmed.
-          const float temperature_amount = temperature * 0.001f;
-          // Positive level means brighter, so all attenuation values go down.
-          const float level_amount = level * 0.001f;
+          const float base_red_drive = 1.0f - ${night_light_calibration_red_base}f;
+          const float base_green_drive = 1.0f - ${night_light_calibration_green_base}f;
+          const float base_blue_drive = 1.0f - ${night_light_calibration_blue_base}f;
 
-          const float red = clamp(${night_light_calibration_red_base}f - level_amount -
-                                      (tint_amount * 0.5f) - (temperature_amount * 0.5f),
+          auto approx_exp = [](float x) -> float {
+            return 1.0f + x + 0.5f * x * x;
+          };
+
+          // Work in drive space, where larger values mean a brighter channel.
+          // Quadratic gain approximation keeps tint and temperature perceptible
+          // without pulling in runtime exponential math.
+          const float level_gain = approx_exp(level * 0.027f);
+          const float temperature_amount = temperature * 0.027f;
+          const float tint_amount = tint * 0.035f;
+
+          const float red_drive = base_red_drive * level_gain *
+                                  approx_exp(temperature_amount * 0.5f) *
+                                  approx_exp(tint_amount * 0.5f);
+          const float green_drive = base_green_drive * level_gain *
+                                    approx_exp(temperature_amount * 0.25f) *
+                                    approx_exp(-tint_amount);
+          const float blue_drive = base_blue_drive * level_gain *
+                                   approx_exp(-temperature_amount * 0.75f) *
+                                   approx_exp(tint_amount * 0.5f);
+
+          const float red = clamp(1.0f - red_drive,
                                   ${night_light_calibration_min}f, ${night_light_calibration_max}f);
-          const float green = clamp(${night_light_calibration_green_base}f - level_amount +
-                                        tint_amount - (temperature_amount * 0.25f),
+          const float green = clamp(1.0f - green_drive,
                                     ${night_light_calibration_min}f, ${night_light_calibration_max}f);
-          const float blue = clamp(${night_light_calibration_blue_base}f - level_amount -
-                                       (tint_amount * 0.5f) + (temperature_amount * 0.75f),
+          const float blue = clamp(1.0f - blue_drive,
                                    ${night_light_calibration_min}f, ${night_light_calibration_max}f);
 
           id(my_light).set_night_light_color_temperature_calibration(red, green, blue);
@@ -85,7 +99,7 @@ number:
     optimistic: true
     restore_value: true
     min_value: -10.0
-    max_value: 10.0
+    max_value: 20.0
     step: 0.1
     initial_value: ${night_light_temperature_initial}
     on_value:
@@ -100,7 +114,7 @@ number:
     optimistic: true
     restore_value: true
     min_value: -10.0
-    max_value: 10.0
+    max_value: 20.0
     step: 0.1
     initial_value: ${night_light_level_initial}
     on_value:

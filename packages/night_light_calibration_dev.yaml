@@ -12,7 +12,7 @@ substitutions:
   night_light_raw_red_calibration_initial: "0.968"
   night_light_raw_green_calibration_initial: "0.968"
   night_light_raw_blue_calibration_initial: "0.968"
-  night_light_raw_calibration_min: "0.960"
+  night_light_raw_calibration_min: "0.920"
   night_light_raw_calibration_max: "0.980"
 
 esphome:
