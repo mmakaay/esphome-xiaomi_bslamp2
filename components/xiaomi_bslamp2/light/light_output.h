@@ -24,7 +24,8 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
   void set_parent(LightHAL *light) { light_ = light; }
 
   void set_night_light_color_temperature_calibration(float red, float green, float blue) {
-    color_handler_chain.set_night_light_color_temperature_calibration(red, green, blue);
+    night_light_calibration_ = {red, green, blue};
+    color_handler_chain.set_night_light_color_temperature_calibration(night_light_calibration_);
     apply_current_state();
   }
 
@@ -42,7 +43,10 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
 
   std::unique_ptr<light::LightTransformer> create_default_transition() override {
     return make_unique<XiaomiBslamp2LightTransitionTransformer>(
-      light_, &light_mode_callback_, &state_callback_);
+      light_,
+      &light_mode_callback_,
+      &state_callback_,
+      night_light_calibration_);
   }
 
   void add_on_light_mode_callback(std::function<void(std::string)> &&callback) {
@@ -90,6 +94,7 @@ class XiaomiBslamp2LightOutput : public Component, public light::LightOutput {
   ColorHandlerChain color_handler_chain;
   CallbackManager<void(std::string)> light_mode_callback_{};
   CallbackManager<void(light::LightColorValues)> state_callback_{};
+  NightLightCalibration night_light_calibration_{DEFAULT_NIGHT_LIGHT_CALIBRATION};
 };
 
 }  // namespace bslamp2

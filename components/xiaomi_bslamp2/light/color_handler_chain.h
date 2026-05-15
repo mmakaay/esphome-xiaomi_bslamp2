@@ -27,8 +27,12 @@ namespace bslamp2 {
  */
 class ColorHandlerChain : public ColorHandler {
  public:
+  void set_night_light_color_temperature_calibration(NightLightCalibration calibration) {
+    night_light_.set_color_temperature_calibration(calibration);
+  }
+
   void set_night_light_color_temperature_calibration(float red, float green, float blue) {
-    night_light_.set_color_temperature_calibration(red, green, blue);
+    set_night_light_color_temperature_calibration({red, green, blue});
   }
 
   bool set_light_color_values(light::LightColorValues v) {
