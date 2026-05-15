@@ -18,10 +18,12 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
   explicit XiaomiBslamp2LightTransitionTransformer(
     LightHAL *light,
     CallbackManager<void(std::string)> *light_mode_callback,
-    CallbackManager<void(light::LightColorValues)> *state_callback) :
+    CallbackManager<void(light::LightColorValues)> *state_callback,
+    NightLightCalibration night_light_calibration) :
       light_(light),
       light_mode_callback_(light_mode_callback),
-      state_callback_(state_callback) { }
+      state_callback_(state_callback),
+      night_light_calibration_(night_light_calibration) { }
 
   bool is_finished() override {
       return force_finish_ || get_progress_() >= 1.0f;
@@ -31,6 +33,7 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
     // Determine the GPIO outputs to use for the start and end point.
     // This light transition transformer will then transition linearly between them.
     light_->copy_to(&start_);
+    end_.set_night_light_color_temperature_calibration(night_light_calibration_);
     end_.set_light_color_values(target_values_);
 
     // Update the light mode of the light HAL to the target state, unless
@@ -53,11 +56,17 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
   }
 
   optional<light::LightColorValues> apply() override { 
-    // When transitioning between night mode light colors, then do this immediately.
+    // When transitioning between off and night mode, or between night mode
+    // light colors, then do this immediately.
     // The LED driver circuitry is not capable of doing clean color or brightness
     // transitions at the low levels as used for the night light.
-    if (end_.light_mode == LIGHT_MODE_NIGHT && start_.light_mode == LIGHT_MODE_NIGHT) {
+    if ((end_.light_mode == LIGHT_MODE_NIGHT &&
+         (start_.light_mode == LIGHT_MODE_OFF || start_.light_mode == LIGHT_MODE_NIGHT)) ||
+        (end_.light_mode == LIGHT_MODE_OFF && start_.light_mode == LIGHT_MODE_NIGHT)) {
       light_->set_state(&end_);
+      if (end_.light_mode != LIGHT_MODE_OFF) {
+        light_->turn_on();
+      }
       force_finish_ = true;
     }
     // Otherwise perform a standard transformation.
@@ -92,6 +101,7 @@ class XiaomiBslamp2LightTransitionTransformer : public light::LightTransitionTra
   ColorHandlerChain end_{};
   CallbackManager<void(std::string)> *light_mode_callback_;
   CallbackManager<void(light::LightColorValues)> *state_callback_;
+  NightLightCalibration night_light_calibration_;
 };
 
 }  // namespace bslamp2

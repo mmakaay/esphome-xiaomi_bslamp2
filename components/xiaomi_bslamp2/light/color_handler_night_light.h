@@ -9,6 +9,14 @@ namespace esphome {
 namespace xiaomi {
 namespace bslamp2 {
 
+struct NightLightCalibration {
+  float red;
+  float green;
+  float blue;
+};
+
+static const NightLightCalibration DEFAULT_NIGHT_LIGHT_CALIBRATION{0.968f, 0.968f, 0.972f};
+
 /**
  * This class can handle the GPIO outputs for the night light mode.
  *
@@ -25,10 +33,14 @@ namespace bslamp2 {
  */
 class ColorHandlerNightLight : public ColorHandler {
  public:
+  void set_color_temperature_calibration(NightLightCalibration calibration) {
+    color_temperature_calibration_.red = clamp(calibration.red, 0.0f, 1.0f);
+    color_temperature_calibration_.green = clamp(calibration.green, 0.0f, 1.0f);
+    color_temperature_calibration_.blue = clamp(calibration.blue, 0.0f, 1.0f);
+  }
+
   void set_color_temperature_calibration(float red, float green, float blue) {
-    color_temperature_red_ = clamp(red, 0.0f, 1.0f);
-    color_temperature_green_ = clamp(green, 0.0f, 1.0f);
-    color_temperature_blue_ = clamp(blue, 0.0f, 1.0f);
+    set_color_temperature_calibration({red, green, blue});
   }
 
   bool set_light_color_values(light::LightColorValues v) {
@@ -44,9 +56,9 @@ class ColorHandlerNightLight : public ColorHandler {
     // Based on measurements using the original device firmware, so it
     // matches the night light of the original firmware.
     if (v.get_color_mode() == light::ColorMode::COLOR_TEMPERATURE) {
-      red = color_temperature_red_;
-      green = color_temperature_green_;
-      blue = color_temperature_blue_;
+      red = color_temperature_calibration_.red;
+      green = color_temperature_calibration_.green;
+      blue = color_temperature_calibration_.blue;
       white = 0.0f;
     }
     // In RGB mode, the selected color is used to give the night light a
@@ -65,9 +77,7 @@ class ColorHandlerNightLight : public ColorHandler {
   }
 
  protected:
-  float color_temperature_red_{0.968f};
-  float color_temperature_green_{0.968f};
-  float color_temperature_blue_{0.972f};
+  NightLightCalibration color_temperature_calibration_{DEFAULT_NIGHT_LIGHT_CALIBRATION};
 };
 
 }  // namespace bslamp2
