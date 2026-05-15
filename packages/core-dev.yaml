@@ -17,6 +17,9 @@ substitutions:
   friendly_name: Bedside Lamp
   light_name: RGBWW Light
   light_mode_text_sensor_name: Light Mode
+  night_light_red: "0.968"
+  night_light_green: "0.968"
+  night_light_blue: "0.972"
   default_transition_length: 800ms
 
 # --------------------------------------------------------------------------

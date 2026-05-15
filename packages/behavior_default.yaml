@@ -63,6 +63,10 @@ light:
     id: my_light
     name: ${light_name}
     default_transition_length: ${default_transition_length}
+    night_calibration:
+      red: ${night_light_red}
+      green: ${night_light_green}
+      blue: ${night_light_blue}
 
     # When the brightness changes, update the front panel illumination.
     on_brightness:

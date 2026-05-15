@@ -9,9 +9,8 @@ substitutions:
   name: bedside-lamp
   friendly_name: Bedside Lamp
 
-  # Below are some default values as provided by the core.yaml configuration
-  # package. You can uncomment these and change them if you do not like the
-  # default values.
+  # Below are some default values as provided by the configuration packages.
+  # You can uncomment these and change them if you do not like the defaults.
 
   #light_name: RGBWW Light
   #light_mode_text_sensor_name: Light Mode
@@ -21,9 +20,14 @@ substitutions:
   #night_light_tint_initial: "0.0"
   #night_light_temperature_initial: "0.0"
   #night_light_level_initial: "0.0"
-  #night_light_red_calibration_base: "0.968"
-  #night_light_green_calibration_base: "0.968"
-  #night_light_blue_calibration_base: "0.968"
+  #night_light_red: "0.968"
+  #night_light_green: "0.968"
+  #night_light_blue: "0.972"
+  #night_light_calibration_red_base: "0.968"
+  #night_light_calibration_green_base: "0.968"
+  #night_light_calibration_blue_base: "0.968"
+  #night_light_calibration_min: "0.960"
+  #night_light_calibration_max: "0.980"
   #default_transition_length: 800ms
 
 # --------------------------------------------------------------------------
@@ -39,7 +43,7 @@ substitutions:
 # Available packages are:
 # - core.yaml                        : core components & hardware setup
 # - behavior_default.yaml            : default device behavior
-# - night_light_calibration.yaml     : HA controls for night light tint calibration
+# - night_light_calibration.yaml     : HA controls for night light calibration
 # - ota_feedback.yaml                : enable visual feedback during OTA updates
 # - activate_preset_svc.yaml         : 'activate_preset' service for Home Assistant
 # --------------------------------------------------------------------------

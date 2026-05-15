@@ -31,9 +31,13 @@ CONF_PRESET = "preset"
 CONF_PRESETS = "presets"
 CONF_NEXT = "next"
 CONF_GROUP = "group"
+CONF_NIGHT_CALIBRATION = "night_calibration"
 
 MIRED_MIN = 153
 MIRED_MAX = 588
+DEFAULT_NIGHT_LIGHT_RED = 0.968
+DEFAULT_NIGHT_LIGHT_GREEN = 0.968
+DEFAULT_NIGHT_LIGHT_BLUE = 0.972
 
 XiaomiBslamp2LightState = bslamp2_ns.class_("XiaomiBslamp2LightState", light.LightState)
 XiaomiBslamp2LightOutput = bslamp2_ns.class_("XiaomiBslamp2LightOutput", light.LightOutput)
@@ -96,6 +100,13 @@ CONFIG_SCHEMA = light.RGB_LIGHT_SCHEMA.extend(
         cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(XiaomiBslamp2LightOutput),
         cv.Optional(CONF_RESTORE_MODE, default="RESTORE_DEFAULT_OFF"): cv.enum(
             light.RESTORE_MODES, upper=True, space="_"
+        ),
+        cv.Optional(CONF_NIGHT_CALIBRATION, default={}): cv.Schema(
+            {
+                cv.Optional(CONF_RED, default=DEFAULT_NIGHT_LIGHT_RED): cv.float_range(min=0.0, max=1.0),
+                cv.Optional(CONF_GREEN, default=DEFAULT_NIGHT_LIGHT_GREEN): cv.float_range(min=0.0, max=1.0),
+                cv.Optional(CONF_BLUE, default=DEFAULT_NIGHT_LIGHT_BLUE): cv.float_range(min=0.0, max=1.0),
+            }
         ),
         cv.Optional(CONF_ON_BRIGHTNESS): automation.validate_automation(
             {
@@ -252,6 +263,14 @@ async def light_output_to_code(config):
     await light.register_light(light_output_var, config)
     light_hal_var = await cg.get_variable(config[CONF_LIGHT_HAL_ID])
     cg.add(light_output_var.set_parent(light_hal_var))
+    night_calibration = config[CONF_NIGHT_CALIBRATION]
+    cg.add(
+        light_output_var.set_night_light_color_temperature_calibration(
+            night_calibration[CONF_RED],
+            night_calibration[CONF_GREEN],
+            night_calibration[CONF_BLUE],
+        )
+    )
 
 
 async def on_brightness_to_code(config):
