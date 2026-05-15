@@ -26,7 +26,7 @@ substitutions:
   #night_light_calibration_red_base: "0.968"
   #night_light_calibration_green_base: "0.968"
   #night_light_calibration_blue_base: "0.968"
-  #night_light_calibration_min: "0.960"
+  #night_light_calibration_min: "0.920"
   #night_light_calibration_max: "0.980"
   #default_transition_length: 800ms
 
