@@ -7,15 +7,15 @@
 # ------------------------------------------------------------------------
 
 substitutions:
+  night_light_calibration_red_base: "0.968"
+  night_light_calibration_green_base: "0.968"
+  night_light_calibration_blue_base: "0.968"
   night_light_tint_name: Night Light Tint
   night_light_temperature_name: Night Light Temperature
   night_light_level_name: Night Light Level
   night_light_tint_initial: "0.0"
   night_light_temperature_initial: "0.0"
   night_light_level_initial: "0.0"
-  night_light_red_calibration_base: "0.968"
-  night_light_green_calibration_base: "0.968"
-  night_light_blue_calibration_base: "0.968"
   night_light_calibration_min: "0.960"
   night_light_calibration_max: "0.980"
 
@@ -48,13 +48,13 @@ script:
           // Positive level means brighter, so all attenuation values go down.
           const float level_amount = level * 0.001f;
 
-          const float red = clamp(${night_light_red_calibration_base}f - level_amount -
+          const float red = clamp(${night_light_calibration_red_base}f - level_amount -
                                       (tint_amount * 0.5f) - (temperature_amount * 0.5f),
                                   ${night_light_calibration_min}f, ${night_light_calibration_max}f);
-          const float green = clamp(${night_light_green_calibration_base}f - level_amount +
+          const float green = clamp(${night_light_calibration_green_base}f - level_amount +
                                         tint_amount - (temperature_amount * 0.25f),
                                     ${night_light_calibration_min}f, ${night_light_calibration_max}f);
-          const float blue = clamp(${night_light_blue_calibration_base}f - level_amount -
+          const float blue = clamp(${night_light_calibration_blue_base}f - level_amount -
                                        (tint_amount * 0.5f) + (temperature_amount * 0.75f),
                                    ${night_light_calibration_min}f, ${night_light_calibration_max}f);
 

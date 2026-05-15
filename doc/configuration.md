@@ -116,13 +116,31 @@ light.
 
 ### Night light calibration
 
+The `xiaomi_bslamp2` light platform supports fixed YAML calibration for the color-temperature night
+light mode. These values are the base RGB attenuation levels for the night light:
+
+```yaml
+light:
+  - platform: xiaomi_bslamp2
+    id: my_light
+    night_calibration:
+      red: 0.968
+      green: 0.968
+      blue: 0.972
+```
+
+In `packages/core.yaml`, these values can also be changed through the `night_light_red`,
+`night_light_green` and `night_light_blue` substitutions. The defaults match the previous built-in
+night light calibration; use `0.968` for all three channels if you want a neutral equal-channel
+fixed YAML calibration.
+
 The `packages/night_light_calibration.yaml` package exposes Home Assistant controls for tuning the
 night light white balance while the lamp is on. This is useful when the color-temperature night
 light mode looks too green, too blue or otherwise uneven.
 
 Internally, this mode uses calibrated RGB attenuation levels. Larger attenuation values dim a color
 channel, so editing raw RGB values directly can feel backwards. The package exposes three easier
-calibration controls instead:
+calibration controls that adjust a neutral calibration base by default:
 
 * `Night Light Tint`: positive values reduce green and move the night light toward magenta.
 * `Night Light Temperature`: positive values make the result warmer/amber, negative values make it
@@ -131,17 +149,17 @@ calibration controls instead:
   dimmer without changing the target color balance.
 
 By default, the package clamps the generated RGB attenuation values to the useful `0.960` ..
-`0.980` range and starts from a neutral equal-channel base. Both the clamp range and the base
-values can be overridden with substitutions.
+`0.980` range and starts from a neutral equal-channel base. Both the clamp range and the
+calibration base values can be overridden with substitutions.
 
 ```yaml
 substitutions:
   night_light_tint_initial: "0.0"
   night_light_temperature_initial: "0.0"
   night_light_level_initial: "0.0"
-  night_light_red_calibration_base: "0.968"
-  night_light_green_calibration_base: "0.968"
-  night_light_blue_calibration_base: "0.968"
+  night_light_calibration_red_base: "0.968"
+  night_light_calibration_green_base: "0.968"
+  night_light_calibration_blue_base: "0.968"
   night_light_calibration_min: "0.960"
   night_light_calibration_max: "0.980"
 
@@ -153,8 +171,9 @@ packages:
       - packages/night_light_calibration.yaml
 ```
 
-Changing these values applies immediately, so the lamp can be calibrated while the night light is
-on.
+Changing the fixed YAML `night_calibration` values requires rebuilding and uploading the firmware.
+Changing the Home Assistant calibration controls applies immediately, so the lamp can be tuned while
+the night light is on.
 
 For development, `packages/night_light_calibration_dev.yaml` can be used instead of
 `packages/night_light_calibration.yaml`. It exposes raw red, green and blue attenuation inputs. Do
