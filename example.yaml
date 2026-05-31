@@ -11,24 +11,14 @@ substitutions:
 
   # Below are some default values as provided by the configuration packages.
   # You can uncomment these and change them if you do not like the defaults.
+  # You can also take a look at the packages/* files directly, to find their
+  # full list of customizable substitutions.
 
   #light_name: RGBWW Light
   #light_mode_text_sensor_name: Light Mode
   #night_light_tint_name: Night Light Tint
   #night_light_temperature_name: Night Light Temperature
   #night_light_level_name: Night Light Level
-  #night_light_tint_initial: "0.0"
-  #night_light_temperature_initial: "0.0"
-  #night_light_level_initial: "0.0"
-  #night_light_red: "0.968"
-  #night_light_green: "0.968"
-  #night_light_blue: "0.972"
-  #night_light_calibration_red_base: "0.968"
-  #night_light_calibration_green_base: "0.968"
-  #night_light_calibration_blue_base: "0.968"
-  #night_light_calibration_min: "0.920"
-  #night_light_calibration_max: "0.980"
-  #default_transition_length: 800ms
 
 # --------------------------------------------------------------------------
 # Load configuration packages
