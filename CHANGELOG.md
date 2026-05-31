@@ -21,6 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Thanks to Maxim Khvatalin for the excellent patch!
 
+### Fixed
+
+- The light state is now correctly restored after a power cycle.
+  Two disctinct fixes were required: ESPHome 2023.4.0 changed the default restore_mode
+  from RESTORE_DEFAULT_OFF to ALWAYS_OFF. Override the default so state is saved to
+  flash and restored on boot. Also, the obsolete MyLightStateRTCState struct has been
+  replaced with ESPHome's LightStateRTCState. The old struct had a different memory
+  layout, causing the firmware to read misaligned data when trying to restore the
+  light state.
+
 ## [2026.4.0]
 
 **Note** This release requires ESPHome 2026.4.0 or newer.
