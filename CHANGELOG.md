@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2026.5.0]
+
+**Note** This release requires ESPHome 2026.4.0 or newer.
+
+### Added
+
+- The color-temperature night light is a very dim, warm white. Because it operates at
+  the bottom edge of what the LEDs can produce, small variations between lamps can show
+  up as a tint that looks slightly too green, too blue, or just not quite the color you
+  want. If that bothers you, the night light can now be calibrated.
+
+  To enable the new functionality, add `packages/night_light_calibration.yaml` to your
+  device YAML configuration under `packages` -> `bslamp2` -> `files`. You can also take
+  a look a the `example.yaml`, which does include the new configuration package.
+
+  Thanks to Maxim Khvatalin for the excellent patch!
+
 ## [2026.4.0]
 
 **Note** This release requires ESPHome 2026.4.0 or newer.
