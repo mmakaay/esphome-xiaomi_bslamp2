@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------
 
 substitutions:
+  external_components_source: github://mmakaay/esphome-xiaomi_bslamp2@release/2026.5.0
   name: bedside-lamp
   friendly_name: Bedside Lamp
   light_name: RGBWW Light
@@ -35,12 +36,12 @@ esp32:
       ignore_efuse_custom_mac: true
       ignore_efuse_mac_crc: true
 
-# Retrieve the code for the xiaomi_bslamp2 platform from GitHub.
+# Where to retrieve the code for the xiaomi_bslamp2 platform from. Defaults to
+# GitHub; override the substitution to build from a local checkout instead, e.g.
+#   substitutions:
+#     external_components_source: components
 external_components:
-  - source:
-      type: git
-      url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
-      ref: release/2026.5.0
+  - source: ${external_components_source}
     refresh: 60s
 
 # Disable the reboot timeout. By default, the lamp reboots after 15
