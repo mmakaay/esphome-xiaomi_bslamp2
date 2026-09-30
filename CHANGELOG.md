@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- The light failed to load on ESPHome 2026.10.0 (`module 'esphome.components.light' has no
+  attribute 'RESTORE_MODES'`), after ESPHome replaced `restore_mode` with `restore_state`.
+  The light schema now comes from `light.light_schema()`, so both `restore_mode` and the
+  new `restore_state` are accepted. The default stays `RESTORE_DEFAULT_OFF`.
+
 ## [2026.5.0]
 
 **Note** This release requires ESPHome 2026.4.0 or newer.
