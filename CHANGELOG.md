@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2026.10.0]
 
 ### Fixed
 
@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   attribute 'RESTORE_MODES'`), after ESPHome replaced `restore_mode` with `restore_state`.
   The light schema now comes from `light.light_schema()`, so both `restore_mode` and the
   new `restore_state` are accepted. The default stays `RESTORE_DEFAULT_OFF`.
+  Thanks to GitHub user @randybb for providing the fix for this issue!
+
+### Added
+
+- The core configuration package now allows for overriding the location of the external
+  components by overriding the `external_components_source` substitution. This is primarily
+  useful for developers who want to point ESPHome at a local copy of the component
+  source code.
+  Thanks to GitHub user @mrumpf for providing this feature!
 
 ## [2026.5.0]
 
