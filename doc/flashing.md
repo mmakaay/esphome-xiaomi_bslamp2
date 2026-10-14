@@ -176,6 +176,7 @@ instructures can be found here:
 
 Here's an example on how to backup the original firmware from Linux. First, unplug your lamp's
 power supply, then start the esptool read_flash command:
+(`-p` might differ, depending on what type of device you use for flashing)
 
 ```
 python esptool.py -p /dev/ttyUSB0 read_flash 0x0 0x400000 original-firmware.bin
@@ -198,9 +199,10 @@ In case you need to rollback to the lamp's original firmware at some point, here
 to restore the original firmware from Windows, by fully flashing it back onto the lamp.
 
 First, unplug your lamp's power supply, then start the esptool write_flash command:
+(`-p` might differ, depending on what type of device you use for flashing)
 
 ```
-python.exe .\esptool.py --chip esp32 --port COM3 --baud 115200 write_flash 0x00 original-firmware.bin
+esptool --chip esp32 -p /dev/ttyUSB0 -b 115200 write_flash 0x00 original-firmware.bin
 ```
 
 Make sure that `GPIO0` is connected to GND and plug in the power supply. The output of esptool
@@ -216,41 +218,15 @@ power supply to boot into the restored firmware.
 ## Flash new ESPHome firmware
 
 Setup an ESPHome Project (see [README.md](../README.md)), compile the firmware for the lamp and
-download the `firmware.bin` file to the device to which the serial adapter is connected.
+download the `firmware.factory.bin` file to the device to which the serial adapter is connected.
 
-You can flash the lamp using esphome or esptool. I would strongly recommend using the
-[esphome-flasher](https://github.com/esphome/esphome-flasher) tool. This is a very easy to use GUI
-utility app for flashing ESPHome devices and for viewing serial console logging.
-
-- In the app, select the COM port of your serial adapter.
-- Then select the firmware.bin file to flash onto the lamp.
-- Power up the lamp with `GPIO0` connected to GND.
-- Click the "Flash ESP" button to flash the firmware.
-
-If all went well, the final log output in esphome-flasher looks somewhat like this:
-
-<img src="images/17_flash_ready.png" width="400">
-
-If you want to flash with esptool, you can use the following command.
-
-*Note: unless you know exactly what you're doing with esptool here, I recommend to use the
-esphome-flasher instead.*
+You can flash the lamp using esphome or esptool.
+If you want to flash with esptool, you can use the following command:
+(`-p` might differ, depending on what type of device you use for flashing)
 
 ```
-python esptool.py --chip esp32  -p /dev/ttyUSB0 --baud 115200 \
-    write_flash -z --flash_mode dout --flash_freq 40m --flash_size detect \
-    0x1000 bootloader_dout_40m.bin \
-    0x8000 partitions.bin \
-    0xe000 boot_app0.bin \
-    0x10000 firmware.bin
+esptool --chip esp32 -p /dev/ttyUSB0 -b 115200 write_flash 0x00 firmware.factory.bin
 ```
-
-The required .bin files can be found in the following locations:
-
-- **bootloader_dout_40m.bin**: [from arduino-esp32 package](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc/blob/v1.0.6/tools/sdk/bin/bootloader_dout_40m.bin) in `tools/sdk/bin/`
-- **partitions.bin**: from `<config dir>/<device name>/.pioenvs/<device name>/partitions.bin`
-- **boot_app0.bin**: [from arduino-esp32 package](https://github.com/mmakaay/arduino-esp32-unicore-no-mac-crc/blob/v1.0.6/tools/partitions/boot_app0.bin) in `tools/partitions/`
-- **firmware.bin**: from `<config dir>/<device name>/.pioenvs/<device name>/firmware.bin`
 
 After flashing, power down the lamp, disconnect `GPIO0` from GND and reconnect the power to boot
 into the new ESPHome firmware.
