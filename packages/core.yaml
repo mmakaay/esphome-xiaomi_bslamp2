@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------
 
 substitutions:
-  external_components_source: github://mmakaay/esphome-xiaomi_bslamp2@release/2026.5.0
   name: bedside-lamp
   friendly_name: Bedside Lamp
   light_name: RGBWW Light
@@ -13,6 +12,12 @@ substitutions:
   night_light_green: "0.968"
   night_light_blue: "0.972"
   default_transition_length: 800ms
+
+  # Substitutions that are primarily useful for developers, to point ESPHome
+  # at a local copy of the component sources, and to change the log level
+  # for debugging purposes.
+  external_components_source: github://mmakaay/esphome-xiaomi_bslamp2@release/2026.5.0
+  log_level: WARN
 
 # --------------------------------------------------------------------------
 # Core setup
@@ -58,7 +63,7 @@ api:
 # raising the log level, beware that you might see dropped connections from
 # Home Assistant and the network log viewer.
 logger:
-  level: WARN
+  level: ${log_level}
 
 # ----------------------------------------------------------------------
 # Hardware setup
