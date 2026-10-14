@@ -14,13 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   new `restore_state` are accepted. The default stays `RESTORE_DEFAULT_OFF`.
   Thanks to GitHub user @randybb for providing the fix for this issue!
 
-### Added
+### Developer changes
 
 - The core configuration package now allows for overriding the location of the external
   components by overriding the `external_components_source` substitution. This is primarily
   useful for developers who want to point ESPHome at a local copy of the component
   source code.
   Thanks to GitHub user @mrumpf for providing this feature!
+
+- The core configuration package also allows overriding the log level by overriding the
+  `log_level` substitution. Together with `external_components_source`, this covers the
+  differences between `core.yaml` and `core-dev.yaml` (which I used for my local
+  development environment). Therefore, `core-dev.yaml` has been removed from the
+  configuration packages.
 
 ## [2026.5.0]
 
