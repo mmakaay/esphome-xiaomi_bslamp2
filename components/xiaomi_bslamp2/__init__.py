@@ -4,6 +4,7 @@ from esphome import pins
 from esphome.components.ledc.output import LEDCOutput
 from esphome.components.gpio.output import GPIOBinaryOutput
 from esphome.components.i2c import I2CBus, I2CDevice
+from esphome.core import Version
 from esphome.const import (
     CONF_LIGHT,
     CONF_RED,
@@ -13,8 +14,8 @@ from esphome.const import (
     CONF_I2C,
     CONF_ADDRESS,
     CONF_TRIGGER_PIN,
+    __version__,
 )
-from esphome.util import parse_esphome_version
 from voluptuous import Invalid
 
 CODEOWNERS = ["@mmakaay"]
@@ -50,7 +51,9 @@ FRONT_PANEL_LED_OPTIONS = {
 
 
 def check_version_compatibility(config):
-    esphome_version = parse_esphome_version()
+    parsed = Version.parse(__version__)
+    esphome_version = parsed.major, parsed.minor, parsed.patch
+
     if esphome_version < (2026, 10, 0):
         raise Invalid(
             "This xiaomi_bslamp2 component requires at least ESPHome "
