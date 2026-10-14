@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Solved 'WARNING parse_esphome_version() is deprecated'.
   Thanks to GitHub user @derMicro for the heads up about the warning!
 
+- Simplified the documentation for using the esptool command to write the firmware to the
+  device the very first time. The original documentation was written before the factory
+  firmware bin was produced by ESPHome, which required extra work. Also, removed the
+  reference to the esphome-flasher application, because that one has been deprecated.
+  Thanks to home-assistant community user @n00bundercover for the heads up on this!
+
 ### Developer changes
 
 - The core configuration package now allows for overriding the location of the external
