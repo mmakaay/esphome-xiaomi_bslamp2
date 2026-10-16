@@ -16,7 +16,7 @@ substitutions:
   # Substitutions that are primarily useful for developers, to point ESPHome
   # at a local copy of the component sources, and to change the log level
   # for debugging purposes.
-  external_components_source: github://mmakaay/esphome-xiaomi_bslamp2@release/2026.5.0
+  external_components_source: github://mmakaay/esphome-xiaomi_bslamp2@dev
   log_level: WARN
 
 # --------------------------------------------------------------------------
@@ -29,7 +29,7 @@ esphome:
   comment: Xiaomi Mi Bedside Lamp 2
   project:
       name: Yeelight Technology.MJCTD02YL
-      version: 2026.5.0
+      version: dev
 
 esp32:
   board: esp32doit-devkit-v1
